@@ -3,14 +3,21 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ini4j</groupId>
     <artifactId>ini4j</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.3.0</version>
     <name>ini4j</name>
     <description>The [ini4j] is a simple Java API for handling configuration files in Windows .ini format. Additionally, the library includes Java Preferences API implementation based on the .ini file.</description>
+    <packaging>jar</packaging>
     <url>http://www.ini4j.org</url>
     <scm>
-        <connection>https://ini4j.svn.sourceforge.net/svnroot/ini4j</connection>
+        <connection>scm:svn:https://ini4j.svn.sourceforge.net/svnroot/ini4j/ini4j-0.3.0</connection>
     </scm>
-    <packaging>jar</packaging>
+    <distributionManagement>
+        <site>
+            <id>ini4j-site</id>
+            <name>[ini4j] site on SourceForge</name>
+            <url>scp://shell.sourceforge.net/home/groups/i/in/ini4j/htdocs</url>
+        </site>
+    </distributionManagement>
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -21,10 +28,8 @@
     <developers>
         <developer>
             <id>ivan</id>
-            <name>Ivan</name>
+            <name>Ivan Szkiba</name>
             <email>szkiba@users.sourceforge.net</email>
-            <organization>Codehaus</organization>
-            <organizationUrl>http://mojo.codehaus.org</organizationUrl>
             <roles>
                 <role>architect</role>
                 <role>developer</role>
@@ -63,7 +68,6 @@
             <version>2.3</version>
             <scope>test</scope>
         </dependency>
-        
     </dependencies>
     
     <build>
@@ -92,9 +96,74 @@
                 </configuration>
             </plugin>
             
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>retrotranslator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>translate-project</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>jdk14</classifier>
+                            <attach>true</attach>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>            
+            
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>src</descriptorRef>
+                        <descriptorRef>bin</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>                
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagBase>https://ini4j.svn.sourceforge.net/svnroot/ini4j/TAGS</tagBase>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="src" value="src/test/java/org/ini4j/sample" />
+                                <property name="dst" value="${project.build.directory}/site/sample" />
+                                <mkdir dir="${dst}" />
+                                <copy todir="${dst}">
+                                    <fileset dir="${src}" />
+                                </copy>
+                                <copy file="${src}/dwarfs.ini" tofile="${dst}/dwarfs.ini.txt" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>            
+            
         </plugins>
     </build>
-    
     
     <reporting>
         <plugins>
@@ -155,6 +224,5 @@
             
         </plugins>      
     </reporting>
-    
     
 </project>
