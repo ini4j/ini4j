@@ -3,7 +3,13 @@
 
 Release notes
 
-* 0.3.1 (2008-02-11)
+* 0.3.2 (2008-02-17)
 
-    * Added maven repository support: http://www.ini4j.org/repository/release
-      and http://www.ini4j.org/repository/snapshot
+    * Fix file close problem: in some case IniFile and IniParser left files open.
+      This cause file deletion problem on some OS.
+
+    * Fix Unicode escape problem: \u sequences now generated correctly (4 character
+      with leading zeros)
+
+
+
