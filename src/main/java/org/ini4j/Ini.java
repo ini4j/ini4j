@@ -27,12 +27,10 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Ini extends LinkedHashMap<String, Ini.Section>
+public class Ini extends MultiMapImpl<String, Ini.Section>
 {
-    private static final String OPERATOR = " " + IniParser.OPERATOR + " ";
     private static final char SUBST_CHAR = '$';
     private static final String SUBST_BEGIN = SUBST_CHAR + "{";
     private static final int SUBST_BEGIN_LEN = SUBST_BEGIN.length();
@@ -73,7 +71,7 @@ public class Ini extends LinkedHashMap<String, Ini.Section>
         Section s = new Section(name);
 
         put(name, s);
-
+        //add(name, s);
         return s;
     }
 
@@ -238,9 +236,9 @@ public class Ini extends LinkedHashMap<String, Ini.Section>
         for (Ini.Section s : values())
         {
             formatter.startSection(s.getName());
-            for (Map.Entry<String, String> e : s.entrySet())
+            for (String name : s.keySet())
             {
-                formatter.handleOption(e.getKey(), e.getValue());
+                formatter.handleOption(name, s.get(name));
             }
 
             formatter.endSection();
@@ -249,7 +247,7 @@ public class Ini extends LinkedHashMap<String, Ini.Section>
         formatter.endIni();
     }
 
-    public class Section extends LinkedHashMap<String, String>
+    public class Section extends MultiMapImpl<String, String>
     {
         private Map<Class, Object> _beans;
         private String _name;
@@ -372,7 +370,7 @@ public class Ini extends LinkedHashMap<String, Ini.Section>
 
         @Override public void handleOption(String name, String value)
         {
-            currentSection.put(name, value);
+            currentSection.add(name, value);
         }
 
         @SuppressWarnings("empty-statement")
@@ -386,6 +384,7 @@ public class Ini extends LinkedHashMap<String, Ini.Section>
             Section s = get(sectionName);
 
             currentSection = (s != null) ? s : add(sectionName);
+            //currentSection = add(sectionName);
         }
     }
 }
