@@ -25,6 +25,7 @@ public class IniFormatter implements IniHandler
     public static final String SERVICE_ID = "org.ini4j.IniFormatter";
     public static final String DEFAULT_SERVICE = SERVICE_ID;
     private static final String OPERATOR = " " + IniParser.OPERATOR + " ";
+    private Config _config = Config.getGlobal();
     private PrintWriter output;
 
     public static IniFormatter newInstance(Writer out)
@@ -41,6 +42,11 @@ public class IniFormatter implements IniHandler
         return newInstance(new OutputStreamWriter(out));
     }
 
+    public Config getConfig()
+    {
+        return _config;
+    }
+
     public void endIni()
     {
         getOutput().flush();
@@ -53,11 +59,34 @@ public class IniFormatter implements IniHandler
 
     public void handleOption(String optionName, String optionValue)
     {
-        if (optionValue != null)
+        if (getConfig().isStrictOperator())
         {
-            getOutput().print(escape(optionName));
-            getOutput().print(OPERATOR);
-            getOutput().println(escape(optionValue));
+            if (getConfig().isEmptyOption() || (optionValue != null))
+            {
+                getOutput().print(escape(optionName));
+                getOutput().print(IniParser.OPERATOR);
+            }
+
+            if (optionValue != null)
+            {
+                getOutput().print(escape(optionValue));
+            }
+
+            if (getConfig().isEmptyOption() || (optionValue != null))
+            {
+                getOutput().println();
+            }
+        }
+        else
+        {
+            String value = ((optionValue == null) && getConfig().isEmptyOption()) ? "" : optionValue;
+
+            if (value != null)
+            {
+                getOutput().print(escape(optionName));
+                getOutput().print(OPERATOR);
+                getOutput().println(escape(value));
+            }
         }
     }
 
@@ -77,6 +106,11 @@ public class IniFormatter implements IniHandler
     protected static IniFormatter newInstance()
     {
         return (IniFormatter) ServiceFinder.findService(SERVICE_ID, DEFAULT_SERVICE);
+    }
+
+    protected void setConfig(Config value)
+    {
+        _config = value;
     }
 
     protected PrintWriter getOutput()

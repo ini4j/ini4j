@@ -41,6 +41,7 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
     private static final String SUBST_PROPERTY = "@prop";
     private static final String SUBST_ENVIRONMENT = "@env";
     private Map<Class, Object> _beans;
+    private Config _config = Config.getGlobal();
 
     @SuppressWarnings("empty-statement")
     public Ini()
@@ -66,12 +67,24 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
         load(input);
     }
 
+    public void setConfig(Config value)
+    {
+        _config = value;
+    }
+
     public Section add(String name)
     {
         Section s = new Section(name);
 
-        put(name, s);
-        //add(name, s);
+        if (getConfig().isMultiSection())
+        {
+            add(name, s);
+        }
+        else
+        {
+            put(name, s);
+        }
+
         return s;
     }
 
@@ -161,6 +174,11 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
         return clazz.cast(bean);
     }
 
+    protected Config getConfig()
+    {
+        return _config;
+    }
+
     protected void resolve(StringBuilder buffer, Section owner)
     {
         int begin = -1;
@@ -238,7 +256,12 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
             formatter.startSection(s.getName());
             for (String name : s.keySet())
             {
-                formatter.handleOption(name, s.get(name));
+                int n = getConfig().isMultiOption() ? s.length(name) : 1;
+
+                for (int i = 0; i < n; i++)
+                {
+                    formatter.handleOption(name, s.get(name, i));
+                }
             }
 
             formatter.endSection();
@@ -370,7 +393,14 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
 
         @Override public void handleOption(String name, String value)
         {
-            currentSection.add(name, value);
+            if (getConfig().isMultiOption())
+            {
+                currentSection.add(name, value);
+            }
+            else
+            {
+                currentSection.put(name, value);
+            }
         }
 
         @SuppressWarnings("empty-statement")
@@ -384,7 +414,6 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
             Section s = get(sectionName);
 
             currentSection = (s != null) ? s : add(sectionName);
-            //currentSection = add(sectionName);
         }
     }
 }

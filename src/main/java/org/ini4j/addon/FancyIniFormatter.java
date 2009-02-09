@@ -15,57 +15,37 @@
  */
 package org.ini4j.addon;
 
+import org.ini4j.Config;
 import org.ini4j.IniFormatter;
-import org.ini4j.IniParser;
 
 public class FancyIniFormatter extends IniFormatter
 {
-    private boolean _allowEmptyOption = true;
-    private boolean _allowStrictOperator = true;
-
-    public synchronized void setAllowEmptyOption(boolean flag)
+    public FancyIniFormatter()
     {
-        _allowEmptyOption = flag;
+        Config cfg = getConfig().clone();
+
+        cfg.setEmptyOption(true);
+        cfg.setStrictOperator(true);
+        setConfig(cfg);
     }
 
-    public synchronized void setAllowStrictOperator(boolean flag)
+    @Deprecated public synchronized void setAllowEmptyOption(boolean flag)
     {
-        _allowStrictOperator = flag;
+        getConfig().setEmptyOption(flag);
     }
 
-    public synchronized boolean isAllowEmptyOption()
+    @Deprecated public synchronized void setAllowStrictOperator(boolean flag)
     {
-        return _allowEmptyOption;
+        getConfig().setStrictOperator(flag);
     }
 
-    public synchronized boolean isAllowStrictOperator()
+    @Deprecated public synchronized boolean isAllowEmptyOption()
     {
-        return _allowStrictOperator;
+        return getConfig().isEmptyOption();
     }
 
-    @Override public void handleOption(String optionName, String optionValue)
+    @Deprecated public synchronized boolean isAllowStrictOperator()
     {
-        if (isAllowStrictOperator())
-        {
-            if (isAllowEmptyOption() || (optionValue != null))
-            {
-                getOutput().print(escape(optionName));
-                getOutput().print(IniParser.OPERATOR);
-            }
-
-            if (optionValue != null)
-            {
-                getOutput().print(escape(optionValue));
-            }
-
-            if (isAllowEmptyOption() || (optionValue != null))
-            {
-                getOutput().println();
-            }
-        }
-        else
-        {
-            super.handleOption(optionName, ((optionValue == null) && isAllowEmptyOption()) ? "" : optionValue);
-        }
+        return getConfig().isStrictOperator();
     }
 }
