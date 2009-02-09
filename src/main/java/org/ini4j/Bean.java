@@ -15,6 +15,10 @@
  */
 package org.ini4j;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+
 import java.io.File;
 
 import java.lang.reflect.Method;
@@ -22,11 +26,60 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 
+import java.util.Map;
 import java.util.TimeZone;
 
 class Bean
 {
     private static final String PARSE_METHOD = "valueOf";
+
+    protected static void inject(Object bean, Map<String, String> props)
+    {
+        for (PropertyDescriptor pd : getPropertyDescriptors(bean.getClass()))
+        {
+            try
+            {
+                Method method = pd.getWriteMethod();
+                String name = pd.getName();
+
+                if ((method != null) && props.containsKey(name))
+                {
+                    Object value = parseValue(props.get(name), pd.getPropertyType());
+
+                    method.invoke(bean, value);
+                }
+            }
+            catch (Exception x)
+            {
+                throw new IllegalArgumentException("Failed to set property: " + pd.getDisplayName());
+            }
+        }
+    }
+
+    protected static void inject(Map<String, String> props, Object bean)
+    {
+        for (PropertyDescriptor pd : getPropertyDescriptors(bean.getClass()))
+        {
+            try
+            {
+                Method method = pd.getReadMethod();
+
+                if (method != null)
+                {
+                    Object value = method.invoke(bean, (Object[]) null);
+
+                    if (value != null)
+                    {
+                        props.put(pd.getName(), value.toString());
+                    }
+                }
+            }
+            catch (Exception x)
+            {
+                throw new IllegalArgumentException("Failed to set property: " + pd.getDisplayName());
+            }
+        }
+    }
 
     protected static Object parseSpecialValue(String value, Class clazz) throws IllegalArgumentException
     {
@@ -186,5 +239,17 @@ class Bean
         }
 
         return o;
+    }
+
+    private static PropertyDescriptor[] getPropertyDescriptors(Class clazz)
+    {
+        try
+        {
+            return Introspector.getBeanInfo(clazz).getPropertyDescriptors();
+        }
+        catch (IntrospectionException x)
+        {
+            throw new IllegalArgumentException(x);
+        }
     }
 }

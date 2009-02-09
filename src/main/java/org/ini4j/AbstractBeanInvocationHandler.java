@@ -130,16 +130,16 @@ abstract class AbstractBeanInvocationHandler implements InvocationHandler
             o = getPropertySpi(property, clazz);
             if (o == null)
             {
-                o = Bean.zero(clazz);
+                o = zero(clazz);
             }
             else if ((o instanceof String) && !clazz.equals(String.class))
             {
-                o = Bean.parseValue((String) o, clazz);
+                o = parseValue((String) o, clazz);
             }
         }
         catch (Exception x)
         {
-            o = Bean.zero(clazz);
+            o = zero(clazz);
         }
 
         return o;
@@ -237,6 +237,11 @@ abstract class AbstractBeanInvocationHandler implements InvocationHandler
         return ret;
     }
 
+    protected Object parseValue(String value, Class clazz) throws IllegalArgumentException
+    {
+        return Bean.parseValue(value, clazz);
+    }
+
     protected synchronized void removePropertyChangeListener(String property, PropertyChangeListener listener)
     {
         if (_pcSupport != null)
@@ -251,5 +256,10 @@ abstract class AbstractBeanInvocationHandler implements InvocationHandler
         {
             _vcSupport.removeVetoableChangeListener(property, listener);
         }
+    }
+
+    protected Object zero(Class clazz)
+    {
+        return Bean.zero(clazz);
     }
 }

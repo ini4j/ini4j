@@ -24,6 +24,8 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -32,6 +34,30 @@ import java.util.TimeZone;
 public class BeanTest
 {
     private static final float DELTA = 0.00000001f;
+
+    @Test public void testInject() throws Exception
+    {
+        AbstractTestBase.Dwarf bean = MapBeanHandler.newBean(AbstractTestBase.Dwarf.class);
+
+        bean.setAge(23);
+        bean.setHeight(5.3);
+        URI uri = new URI("http://www.ini4j.org");
+
+        bean.setHomePage(uri);
+        Map<String, String> map = new HashMap<String, String>();
+
+        Bean.inject(map, bean);
+        assertEquals("23", map.get("age"));
+        assertEquals("5.3", map.get("height"));
+        assertEquals(uri.toString(), map.get("homePage"));
+        bean.setAge(0);
+        bean.setHeight(0);
+        bean.setHomePage(null);
+        Bean.inject(bean, map);
+        assertEquals(23, bean.getAge());
+        assertEquals(5.3, bean.getHeight(), DELTA);
+        assertEquals(uri, bean.getHomePage());
+    }
 
     @SuppressWarnings("empty-statement")
     @Test public void testParseValue() throws Exception
