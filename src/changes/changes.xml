@@ -25,10 +25,26 @@
 
     <release version="0.3.4" description="Refactoring and new features" issue="222" due-to="lala">
       <action type="add" dev="szkiba">
-      Changelog now in changes.xml
+
+      </action>
+
+      <action type="update" dev="szkiba">
+      Added MuliMap datatype: multiple value for same key. It used by Ini and
+      Ini.Section classes. 
+      </action>
+
+      <action type="update" dev="szkiba">
+      Move FancyIniParser and FancyIniFormatter functionality to IniParser and
+      IniFormatter. Make them configurable (enable/disable features via Config
+      object).
+      </action>
+      <action type="update" dev="szkiba">
+      Make bean manipulation (BeanTool) and escaping (EscapeTool) replaceable via
+      standard services mechanism (/META-INF/services/XXX)
       </action>
       <action type="add" dev="szkiba">
-      Changelog.txt and ReleaseNodes.txt generated from changes.xml
+      Internal changes: migrating changelog.apt to changes.xml, generating text
+      version of ChangeLog and Releasenotes from changes.xml
       </action>
     </release>
 
