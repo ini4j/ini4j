@@ -121,7 +121,7 @@ public class FancyIniParserTest extends AbstractTestBase
     @SuppressWarnings("empty-statement")
     public void testInclude() throws Exception
     {
-        System.setProperty(IniParser.SERVICE_ID, FancyIniParser.class.getName());
+        System.setProperty(IniParser.class.getName(), FancyIniParser.class.getName());
         Ini ini = new Ini(getClass().getClassLoader().getResource(INCLUDE));
 
         doTestDwarfs(ini.to(Dwarfs.class));
@@ -151,7 +151,7 @@ public class FancyIniParserTest extends AbstractTestBase
      */
     public void testNewInstance() throws Exception
     {
-        System.setProperty(IniParser.SERVICE_ID, FancyIniParser.class.getName());
+        System.setProperty(IniParser.class.getName(), FancyIniParser.class.getName());
         FancyIniParser parser = (FancyIniParser) IniParser.newInstance();
 
         assertNotNull(parser);
@@ -208,7 +208,7 @@ public class FancyIniParserTest extends AbstractTestBase
         parser.parse(new ByteArrayInputStream(MORESECTIONS.getBytes()), handler);
         parser.setMissingSectionName(ANONYMOUS);
         assertEquals(ANONYMOUS, parser.getMissingSectionName());
-        System.setProperty(IniParser.SERVICE_ID, FancyIniParser.class.getName());
+        System.setProperty(IniParser.class.getName(), FancyIniParser.class.getName());
         Ini ini = new Ini(new ByteArrayInputStream(UNNAMED.getBytes()));
 
         assertNotNull(ini);

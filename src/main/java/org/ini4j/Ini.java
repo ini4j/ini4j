@@ -303,12 +303,12 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
 
         public void from(Object bean)
         {
-            Bean.inject(this, bean);
+            BeanTool.getInstance().inject(this, bean);
         }
 
         public void to(Object bean)
         {
-            Bean.inject(bean, this);
+            BeanTool.getInstance().inject(bean, this);
         }
 
         public synchronized <T> T to(Class<T> clazz)

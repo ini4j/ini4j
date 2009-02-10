@@ -22,8 +22,6 @@ import java.io.Writer;
 
 public class IniFormatter implements IniHandler
 {
-    public static final String SERVICE_ID = "org.ini4j.IniFormatter";
-    public static final String DEFAULT_SERVICE = SERVICE_ID;
     private static final String OPERATOR = " " + IniParser.OPERATOR + " ";
     private Config _config = Config.getGlobal();
     private PrintWriter output;
@@ -105,7 +103,7 @@ public class IniFormatter implements IniHandler
 
     protected static IniFormatter newInstance()
     {
-        return (IniFormatter) ServiceFinder.findService(SERVICE_ID, DEFAULT_SERVICE);
+        return ServiceFinder.findService(IniFormatter.class);
     }
 
     protected void setConfig(Config value)
@@ -125,6 +123,6 @@ public class IniFormatter implements IniHandler
 
     protected String escape(String input)
     {
-        return Convert.escape(input);
+        return getConfig().isEscape() ? EscapeTool.getInstance().escape(input) : input;
     }
 }

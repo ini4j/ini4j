@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 ///CLOVER:OFF
 
 /**
@@ -31,7 +29,7 @@ public class ServiceFinderTest extends AbstractTestBase
     static final String BAD_CONFIG_SERVICE = "org.ini4j.BadConfig";
     static final String EMPTY_CONFIG_SERVICE = "org.ini4j.EmptyConfig";
     static final String DUMMY_IMPL = "DummyImpl";
-    
+
     /**
      * Instantiate test.
      *
@@ -41,7 +39,7 @@ public class ServiceFinderTest extends AbstractTestBase
     {
         super(testName);
     }
-    
+
     /**
      * Create test suite.
      *
@@ -50,64 +48,6 @@ public class ServiceFinderTest extends AbstractTestBase
     public static Test suite()
     {
         return new TestSuite(ServiceFinderTest.class);
-    }
-    
-    /**
-     * Test of findServiceClassName method.
-     *
-     * @throws Exception on error
-     */
-    public void testFindServiceClassName() throws Exception
-    {
-        boolean flag = false;
-        
-        try
-        {
-            ServiceFinder.findServiceClassName(IniParser.SERVICE_ID, null);
-        }
-        catch (IllegalArgumentException x)
-        {
-            flag = true;
-        }
-
-        assertTrue(flag);
-
-        System.setProperty(IniParser.SERVICE_ID, DUMMY);
-        assertEquals(DUMMY, ServiceFinder.findServiceClassName(IniParser.SERVICE_ID, IniParser.DEFAULT_SERVICE));
-        
-        // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
-	System.getProperties().remove(IniParser.SERVICE_ID);
-        assertEquals(IniParser.DEFAULT_SERVICE, ServiceFinder.findServiceClassName(IniParser.SERVICE_ID, IniParser.DEFAULT_SERVICE));
-
-        assertEquals(DUMMY_IMPL, ServiceFinder.findServiceClassName(DUMMY_SERVICE, ""));
-
-        assertEquals(DUMMY, ServiceFinder.findServiceClassName(BAD_CONFIG_SERVICE, DUMMY));
-        
-        assertEquals(DUMMY, ServiceFinder.findServiceClassName(EMPTY_CONFIG_SERVICE, DUMMY));
-    }
-    
-    /**
-     * Test of findServiceClass method.
-     *
-     * @throws Exception on error
-     */
-    public void testFindServiceClass() throws Exception
-    {
-        boolean flag = false;
-        
-        System.setProperty(IniParser.SERVICE_ID, DUMMY);
-        try
-        {
-            ServiceFinder.findServiceClass(IniParser.SERVICE_ID, IniParser.DEFAULT_SERVICE);
-        }
-        catch (IllegalArgumentException x)
-        {
-            flag = true;
-        }
-        // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
-	System.getProperties().remove(IniParser.SERVICE_ID);
-        
-        assertTrue(flag);
     }
 
     /**
@@ -118,19 +58,73 @@ public class ServiceFinderTest extends AbstractTestBase
     public void testFindService() throws Exception
     {
         boolean flag = false;
-        
-        System.setProperty(IniParser.SERVICE_ID, AbstractTestBase.class.getName());
+
+        System.setProperty(IniParser.class.getName(), AbstractTestBase.class.getName());
         try
         {
-            ServiceFinder.findService(IniParser.SERVICE_ID, IniParser.DEFAULT_SERVICE);
+            ServiceFinder.findService(IniParser.class);
         }
         catch (IllegalArgumentException x)
         {
             flag = true;
         }
+
         // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
-	System.getProperties().remove(IniParser.SERVICE_ID);
-        
+        System.getProperties().remove(IniParser.class.getName());
         assertTrue(flag);
+    }
+
+    /**
+     * Test of findServiceClass method.
+     *
+     * @throws Exception on error
+     */
+    public void testFindServiceClass() throws Exception
+    {
+        boolean flag = false;
+
+        System.setProperty(IniParser.class.getName(), DUMMY);
+        try
+        {
+            ServiceFinder.findServiceClass(IniParser.class);
+        }
+        catch (IllegalArgumentException x)
+        {
+            flag = true;
+        }
+
+        // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
+        System.getProperties().remove(IniParser.class.getName());
+        assertTrue(flag);
+    }
+
+    /**
+     * Test of findServiceClassName method.
+     *
+     * @throws Exception on error
+     */
+    public void testFindServiceClassName() throws Exception
+    {
+        boolean flag = false;
+
+        try
+        {
+            ServiceFinder.findServiceClassName(IniParser.class.getName(), null);
+        }
+        catch (IllegalArgumentException x)
+        {
+            flag = true;
+        }
+
+        assertTrue(flag);
+        System.setProperty(IniParser.class.getName(), DUMMY);
+        assertEquals(DUMMY, ServiceFinder.findServiceClassName(IniParser.class.getName(), IniParser.class.getName()));
+
+        // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
+        System.getProperties().remove(IniParser.class.getName());
+        assertEquals(IniParser.class.getName(), ServiceFinder.findServiceClassName(IniParser.class.getName(), IniParser.class.getName()));
+        assertEquals(DUMMY_IMPL, ServiceFinder.findServiceClassName(DUMMY_SERVICE, ""));
+        assertEquals(DUMMY, ServiceFinder.findServiceClassName(BAD_CONFIG_SERVICE, DUMMY));
+        assertEquals(DUMMY, ServiceFinder.findServiceClassName(EMPTY_CONFIG_SERVICE, DUMMY));
     }
 }

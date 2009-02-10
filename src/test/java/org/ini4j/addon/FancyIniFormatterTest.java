@@ -51,7 +51,7 @@ public class FancyIniFormatterTest extends AbstractTestBase
 
     @Override public void setUp() throws Exception
     {
-        System.setProperty(IniFormatter.SERVICE_ID, FancyIniFormatter.class.getName());
+        System.setProperty(IniFormatter.class.getName(), FancyIniFormatter.class.getName());
         output = new StringWriter();
         formatter = (FancyIniFormatter) IniFormatter.newInstance(output);
     }

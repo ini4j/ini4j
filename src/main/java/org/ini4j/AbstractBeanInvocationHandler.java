@@ -134,7 +134,7 @@ abstract class AbstractBeanInvocationHandler implements InvocationHandler
             }
             else if ((o instanceof String) && !clazz.equals(String.class))
             {
-                o = parseValue((String) o, clazz);
+                o = parse((String) o, clazz);
             }
         }
         catch (Exception x)
@@ -237,9 +237,9 @@ abstract class AbstractBeanInvocationHandler implements InvocationHandler
         return ret;
     }
 
-    protected Object parseValue(String value, Class clazz) throws IllegalArgumentException
+    protected Object parse(String value, Class clazz) throws IllegalArgumentException
     {
-        return Bean.parseValue(value, clazz);
+        return BeanTool.getInstance().parse(value, clazz);
     }
 
     protected synchronized void removePropertyChangeListener(String property, PropertyChangeListener listener)
@@ -260,6 +260,6 @@ abstract class AbstractBeanInvocationHandler implements InvocationHandler
 
     protected Object zero(Class clazz)
     {
-        return Bean.zero(clazz);
+        return BeanTool.getInstance().zero(clazz);
     }
 }

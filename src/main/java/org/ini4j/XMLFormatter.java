@@ -22,8 +22,6 @@ import java.io.Writer;
 
 public class XMLFormatter implements IniHandler
 {
-    public static final String SERVICE_ID = "org.ini4j.XMLFormatter";
-    public static final String DEFAULT_SERVICE = SERVICE_ID;
     private PrintWriter output;
 
     public static XMLFormatter newInstance(Writer out)
@@ -74,7 +72,7 @@ public class XMLFormatter implements IniHandler
 
     protected static XMLFormatter newInstance()
     {
-        return (XMLFormatter) ServiceFinder.findService(SERVICE_ID, DEFAULT_SERVICE);
+        return ServiceFinder.findService(XMLFormatter.class);
     }
 
     protected PrintWriter getOutput()

@@ -177,6 +177,7 @@ public class MultiMapImpl<K, V> implements MultiMap<K, V>
         return all;
     }
 
+    @SuppressWarnings("unchecked")
     private List<V> getList(Object key, boolean create)
     {
         List<V> values = _impl.get(key);

@@ -23,8 +23,6 @@
             <item name="Tutorial" href="tutorial.html"/>
             <item name="Samples" href="samples.html" />
             <item name="Download" href="http://sourceforge.net/project/showfiles.php?group_id=129580"/>
-            <item name="Change log" href="changelog.html" />
-            <item name="Release notes" href="releasenotes.html" />
             <item name="Goals" href="design.html"/>
             <item name="TODO" href="todo.html"/>
             <item name="Project" href="http://sourceforge.net/projects/ini4j"/>

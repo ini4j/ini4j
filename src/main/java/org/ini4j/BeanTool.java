@@ -29,11 +29,17 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TimeZone;
 
-class Bean
+public class BeanTool
 {
-    private static final String PARSE_METHOD = "valueOf";
+    protected static final String PARSE_METHOD = "valueOf";
+    private static final BeanTool _instance = ServiceFinder.findService(BeanTool.class);
 
-    protected static void inject(Object bean, Map<String, String> props)
+    public static final BeanTool getInstance()
+    {
+        return _instance;
+    }
+
+    public void inject(Object bean, Map<String, String> props)
     {
         for (PropertyDescriptor pd : getPropertyDescriptors(bean.getClass()))
         {
@@ -44,7 +50,7 @@ class Bean
 
                 if ((method != null) && props.containsKey(name))
                 {
-                    Object value = parseValue(props.get(name), pd.getPropertyType());
+                    Object value = parse(props.get(name), pd.getPropertyType());
 
                     method.invoke(bean, value);
                 }
@@ -56,7 +62,7 @@ class Bean
         }
     }
 
-    protected static void inject(Map<String, String> props, Object bean)
+    public void inject(Map<String, String> props, Object bean)
     {
         for (PropertyDescriptor pd : getPropertyDescriptors(bean.getClass()))
         {
@@ -81,50 +87,7 @@ class Bean
         }
     }
 
-    protected static Object parseSpecialValue(String value, Class clazz) throws IllegalArgumentException
-    {
-        Object o;
-
-        try
-        {
-            if (clazz == File.class)
-            {
-                o = new File(value);
-            }
-            else if (clazz == URL.class)
-            {
-                o = new URL(value);
-            }
-            else if (clazz == URI.class)
-            {
-                o = new URI(value);
-            }
-            else if (clazz == Class.class)
-            {
-                o = Class.forName(value);
-            }
-            else if (clazz == TimeZone.class)
-            {
-                o = TimeZone.getTimeZone(value);
-            }
-            else
-            {
-
-                // look for "valueOf" converter method
-                Method parser = clazz.getMethod(PARSE_METHOD, new Class[] { String.class });
-
-                o = parser.invoke(null, new Object[] { value });
-            }
-        }
-        catch (Exception x)
-        {
-            throw (IllegalArgumentException) new IllegalArgumentException().initCause(x);
-        }
-
-        return o;
-    }
-
-    protected static Object parseValue(String value, Class clazz) throws IllegalArgumentException
+    public Object parse(String value, Class clazz) throws IllegalArgumentException
     {
         if (clazz == null)
         {
@@ -198,7 +161,7 @@ class Bean
         return o;
     }
 
-    protected static Object zero(Class clazz)
+    public Object zero(Class clazz)
     {
         Object o = null;
 
@@ -241,7 +204,51 @@ class Bean
         return o;
     }
 
-    private static PropertyDescriptor[] getPropertyDescriptors(Class clazz)
+    @SuppressWarnings("unchecked")
+    protected Object parseSpecialValue(String value, Class clazz) throws IllegalArgumentException
+    {
+        Object o;
+
+        try
+        {
+            if (clazz == File.class)
+            {
+                o = new File(value);
+            }
+            else if (clazz == URL.class)
+            {
+                o = new URL(value);
+            }
+            else if (clazz == URI.class)
+            {
+                o = new URI(value);
+            }
+            else if (clazz == Class.class)
+            {
+                o = Class.forName(value);
+            }
+            else if (clazz == TimeZone.class)
+            {
+                o = TimeZone.getTimeZone(value);
+            }
+            else
+            {
+
+                // look for "valueOf" converter method
+                Method parser = clazz.getMethod(PARSE_METHOD, new Class[] { String.class });
+
+                o = parser.invoke(null, new Object[] { value });
+            }
+        }
+        catch (Exception x)
+        {
+            throw (IllegalArgumentException) new IllegalArgumentException().initCause(x);
+        }
+
+        return o;
+    }
+
+    private PropertyDescriptor[] getPropertyDescriptors(Class clazz)
     {
         try
         {

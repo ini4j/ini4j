@@ -13,6 +13,7 @@ public class Config implements Cloneable
     public static final String PROP_MULTI_SECTION = "multiSection";
     public static final String PROP_STRICT_OPERATOR = "strinctOperator";
     public static final String PROP_UNNAMED_SECTION = "unnamedSection";
+    public static final String PROP_ESCAPE = "escape";
     public static final boolean DEFAULT_EMPTY_OPTION = false;
     public static final boolean DEFAULT_GLOBAL_SECTION = false;
     public static final String DEFAULT_GLOBAL_SECTION_NAME = "?";
@@ -23,8 +24,10 @@ public class Config implements Cloneable
     public static final boolean DEFAULT_MULTI_SECTION = false;
     public static final boolean DEFAULT_STRICT_OPERATOR = false;
     public static final boolean DEFAULT_UNNAMED_SECTION = false;
+    public static final boolean DEFAULT_ESCAPE = true;
     private static final Config _global = new Config();
     private boolean _emptyOption;
+    private boolean _escape;
     private boolean _globalSection;
     private String _globalSectionName;
     private boolean _include;
@@ -45,6 +48,11 @@ public class Config implements Cloneable
         return _global;
     }
 
+    public boolean isEscape()
+    {
+        return _escape;
+    }
+
     public boolean isInclude()
     {
         return _include;
@@ -53,6 +61,11 @@ public class Config implements Cloneable
     public void setEmptyOption(boolean value)
     {
         _emptyOption = value;
+    }
+
+    public void setEscape(boolean value)
+    {
+        _escape = value;
     }
 
     public void setGlobalSection(boolean value)
@@ -171,6 +184,7 @@ public class Config implements Cloneable
         _multiSection = getBoolean(PROP_MULTI_SECTION, DEFAULT_MULTI_SECTION);
         _strictOperator = getBoolean(PROP_STRICT_OPERATOR, DEFAULT_STRICT_OPERATOR);
         _unnamedSection = getBoolean(PROP_UNNAMED_SECTION, DEFAULT_UNNAMED_SECTION);
+        _escape = getBoolean(PROP_ESCAPE, DEFAULT_ESCAPE);
     }
 
     private boolean getBoolean(String name, boolean defaultValue)

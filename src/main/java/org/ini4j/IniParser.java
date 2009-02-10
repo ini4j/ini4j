@@ -41,13 +41,11 @@ public class IniParser
     public static final char OPERATOR = '=';
     public static final char SECTION_BEGIN = '[';
     public static final char SECTION_END = ']';
-    public static final String SERVICE_ID = "org.ini4j.IniParser";
-    public static final String DEFAULT_SERVICE = SERVICE_ID;
     private Config _config = Config.getGlobal();
 
     public static IniParser newInstance()
     {
-        return (IniParser) ServiceFinder.findService(SERVICE_ID, DEFAULT_SERVICE);
+        return ServiceFinder.findService(IniParser.class);
     }
 
     public void setConfig(Config value)
@@ -68,89 +66,6 @@ public class IniParser
     public void parse(URL input, IniHandler handler) throws IOException, InvalidIniFormatException
     {
         parse(new IniSource(input, getConfig().isInclude()), handler);
-    }
-
-    public void parse_(Reader input, IniHandler handler) throws IOException, InvalidIniFormatException
-    {
-        LineNumberReader reader = new LineNumberReader(input);
-
-        handler.startIni();
-        String sectionName = null;
-
-        for (String line = reader.readLine(); line != null; line = reader.readLine())
-        {
-            line = line.trim();
-            if ((line.length() == 0) || (COMMENTS.indexOf(line.charAt(0)) >= 0))
-            {
-                continue;
-            }
-
-            if (line.charAt(0) == SECTION_BEGIN)
-            {
-                if (sectionName != null)
-                {
-                    handler.endSection();
-                }
-
-                if (line.charAt(line.length() - 1) != SECTION_END)
-                {
-                    parseError(line, reader.getLineNumber());
-                }
-
-                sectionName = unescape(line.substring(1, line.length() - 1).trim());
-                if (sectionName.length() == 0)
-                {
-                    parseError(line, reader.getLineNumber());
-                }
-
-                handler.startSection(sectionName);
-            }
-            else
-            {
-                if (sectionName == null)
-                {
-                    parseError(line, reader.getLineNumber());
-                }
-
-                int idx = line.indexOf(OPERATOR);
-
-                if (idx <= 0)
-                {
-                    parseError(line, reader.getLineNumber());
-                }
-
-                String name = unescape(line.substring(0, idx)).trim();
-                String value = unescape(line.substring(idx + 1)).trim();
-
-                if (name.length() == 0)
-                {
-                    parseError(line, reader.getLineNumber());
-                }
-
-                handler.handleOption(name, value);
-            }
-        }
-
-        if (sectionName != null)
-        {
-            handler.endSection();
-        }
-
-        handler.endIni();
-    }
-
-    public void parse_(URL input, IniHandler handler) throws IOException, InvalidIniFormatException
-    {
-        InputStream stream = input.openStream();
-
-        try
-        {
-            parse(stream, handler);
-        }
-        finally
-        {
-            stream.close();
-        }
     }
 
     public void parseXML(InputStream input, IniHandler handler) throws IOException, InvalidIniFormatException
@@ -345,7 +260,7 @@ public class IniParser
 
     protected String unescape(String line)
     {
-        return Convert.unescape(line);
+        return getConfig().isEscape() ? EscapeTool.getInstance().unescape(line) : line;
     }
 
     protected static class IniSource
