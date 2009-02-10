@@ -216,7 +216,32 @@
                     </execution>
                 </executions>
             </plugin>            
-            
+            <plugin>
+                <groupId>com.google.code.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.3.1</version>
+                <inherited>true</inherited>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <encoding>UTF-8</encoding>
+                        <useDefaultExcludes>true</useDefaultExcludes>
+                        <header>src/site/resources/header.txt</header>
+                        <excludes>
+                            <exclude>**/META-INF/services/**</exclude>
+                            <exclude>**/*.txt</exclude>
+                            <exclude>**/*.apt</exclude>
+                            <exclude>**/*.ini</exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>initialize</phase>
+                            <goals>
+                              <goal>format</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+            </plugin>
         </plugins>
     </build>
     
