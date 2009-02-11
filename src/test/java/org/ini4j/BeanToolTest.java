@@ -1,19 +1,18 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j;
 
 import static org.junit.Assert.*;
@@ -35,7 +34,6 @@ import java.util.TimeZone;
  */
 public class BeanToolTest
 {
-    private static final float DELTA = 0.00000001f;
     protected BeanTool instance;
 
     @Before public void setUp() throws Exception
@@ -45,7 +43,7 @@ public class BeanToolTest
 
     @Test public void testInject() throws Exception
     {
-        AbstractTestBase.Dwarf bean = MapBeanHandler.newBean(AbstractTestBase.Dwarf.class);
+        Dwarf bean = MapBeanHandler.newBean(Dwarf.class);
 
         bean.setAge(23);
         bean.setHeight(5.3);
@@ -63,7 +61,7 @@ public class BeanToolTest
         bean.setHomePage(null);
         instance.inject(bean, map);
         assertEquals(23, bean.getAge());
-        assertEquals(5.3, bean.getHeight(), DELTA);
+        assertEquals(5.3, bean.getHeight(), TestHelper.DELTA);
         assertEquals(uri, bean.getHomePage());
     }
 
@@ -77,8 +75,8 @@ public class BeanToolTest
         assertEquals(value, ((Short) instance.parse(input, short.class)).shortValue());
         assertEquals(value, ((Integer) instance.parse(input, int.class)).intValue());
         assertEquals(value, ((Long) instance.parse(input, long.class)).longValue());
-        assertEquals((float) value, ((Float) instance.parse(input, float.class)).floatValue(), DELTA);
-        assertEquals((double) value, ((Double) instance.parse(input, double.class)).doubleValue(), DELTA);
+        assertEquals((float) value, ((Float) instance.parse(input, float.class)).floatValue(), TestHelper.DELTA);
+        assertEquals((double) value, ((Double) instance.parse(input, double.class)).doubleValue(), TestHelper.DELTA);
         assertFalse(((Boolean) instance.parse(input, boolean.class)));
         assertEquals('6', ((Character) instance.parse(input, char.class)).charValue());
 
@@ -145,8 +143,8 @@ public class BeanToolTest
         assertEquals(0, ((Short) instance.zero(short.class)).shortValue());
         assertEquals(0, ((Integer) instance.zero(int.class)).intValue());
         assertEquals(0, ((Long) instance.zero(long.class)).longValue());
-        assertEquals(0.0f, ((Float) instance.zero(float.class)).floatValue(), DELTA);
-        assertEquals(0.0, ((Double) instance.zero(double.class)).doubleValue(), DELTA);
+        assertEquals(0.0f, ((Float) instance.zero(float.class)).floatValue(), TestHelper.DELTA);
+        assertEquals(0.0, ((Double) instance.zero(double.class)).doubleValue(), TestHelper.DELTA);
         assertNotNull((instance.zero(boolean.class)));
         assertFalse(((Boolean) instance.zero(boolean.class)));
         assertEquals('\0', ((Character) instance.zero(char.class)).charValue());

@@ -1,23 +1,24 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -26,39 +27,16 @@ import java.beans.VetoableChangeListener;
 
 import java.lang.reflect.Proxy;
 
-///CLOVER:OFF
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * JUnit test of AbstractBeanInvocationHandler class.
- */
-public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
+public class AbstractBeanInvocationHandlerTest
 {
     private static final String PROP_AGE = "age";
     private static final String PROP_HEIGHT = "height";
+    private TestHelper _helper;
 
-    /**
-     * Instantiate test.
-     *
-     * @param testName name of the test
-     */
-    public AbstractBeanInvocationHandlerTest(String testName)
-    {
-        super(testName);
-    }
-
-    /**
-     * Create test suite.
-     *
-     * @return new test suite
-     */
-    public static Test suite()
-    {
-        return new TestSuite(AbstractBeanInvocationHandlerTest.class);
-    }
-
-    public void testGetProperty() throws Exception
+    @Test public void testGetProperty() throws Exception
     {
         Map<String, String> map = new HashMap<String, String>();
         MapBeanHandler handler = new MapBeanHandler(map);
@@ -81,7 +59,7 @@ public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
         assertFalse(handler.hasProperty(PROP_AGE));
     }
 
-    public void testMisc() throws Exception
+    @Test public void testMisc() throws Exception
     {
         Map<String, String> map = new HashMap<String, String>();
         MapBeanHandler handler = new MapBeanHandler(map);
@@ -110,12 +88,12 @@ public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testNewDwarfs() throws Exception
+    @Test public void testNewDwarfs() throws Exception
     {
-        doTestDwarfs(newDwarfs());
+        _helper.doTestDwarfs(_helper.newDwarfs());
     }
 
-    public void testPropertyChangeListener() throws Exception
+    @Test public void testPropertyChangeListener() throws Exception
     {
         class Listener implements PropertyChangeListener
         {
@@ -138,7 +116,7 @@ public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
             }
         }
 
-        Dwarf d = newDwarf();
+        Dwarf d = _helper.newDwarf();
         Listener l = new Listener(PROP_AGE);
 
         // test add and remove: invalid state should be OK
@@ -170,7 +148,7 @@ public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
         d.removePropertyChangeListener(PROP_AGE, l);
     }
 
-    public void testSetProperty() throws Exception
+    @Test public void testSetProperty() throws Exception
     {
         Map<String, String> map = new HashMap<String, String>();
         MapBeanHandler handler = new MapBeanHandler(map);
@@ -180,7 +158,7 @@ public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
         assertEquals("23", handler.getProperty(PROP_AGE, String.class));
     }
 
-    public void testVetoableChangeListener() throws Exception
+    @Test public void testVetoableChangeListener() throws Exception
     {
         class HeightCheck implements VetoableChangeListener
         {
@@ -196,7 +174,7 @@ public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
             }
         }
 
-        Dwarf d = newDwarf();
+        Dwarf d = _helper.newDwarf();
         HeightCheck l = new HeightCheck();
 
         // test add and remove: invalid state should be OK
@@ -219,20 +197,25 @@ public class AbstractBeanInvocationHandlerTest extends AbstractTestBase
         }
         catch (PropertyVetoException x)
         {
-            assertEquals(33.0, d.getHeight());
+            assertEquals(33.0, d.getHeight(), TestHelper.DELTA);
         }
 
         // set valid value
         d.setHeight(44.0);
-        assertEquals(44.0, d.getHeight());
+        assertEquals(44.0, d.getHeight(), TestHelper.DELTA);
         d.removeVetoableChangeListener(PROP_HEIGHT, l);
 
         // set invalid value without lsitener
         d.setHeight(-4.0);
-        assertEquals(-4.0, d.getHeight());
+        assertEquals(-4.0, d.getHeight(), TestHelper.DELTA);
 
         // test remove: invalid state should be OK
         d.removeVetoableChangeListener(PROP_HEIGHT, l);
+    }
+
+    @Before void setUp() throws Exception
+    {
+        _helper = new TestHelper();
     }
 
     static interface Dummy

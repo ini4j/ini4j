@@ -1,23 +1,24 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,28 +28,14 @@ import java.io.OutputStreamWriter;
 /**
  * JUnit test of Ini class.
  */
-public class IniTest extends AbstractTestBase
+public class IniTest
 {
     private static final String UNICODE_STRING = "áÁéÉíÍóÓöÖőŐúÚüÜűŰ-ÄÖÜäöü";
+    private TestHelper _helper;
 
-    /**
-     * Instantiate test.
-     *
-     * @param testName name of the test
-     */
-    public IniTest(String testName)
+    @Before public void setUp()
     {
-        super(testName);
-    }
-
-    /**
-     * Create test suite.
-     *
-     * @return new test suite
-     */
-    public static Test suite()
-    {
-        return new TestSuite(IniTest.class);
+        _helper = new TestHelper();
     }
 
     /**
@@ -56,13 +43,13 @@ public class IniTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testBeanInterface() throws Exception
+    @Test public void testBeanInterface() throws Exception
     {
-        Dwarfs exp = newDwarfs();
-        Ini ini = loadDwarfs();
+        Dwarfs exp = _helper.newDwarfs();
+        Ini ini = _helper.loadDwarfs();
         Ini.Section sec = ini.get("doc");
         Dwarfs dwarfs = ini.to(Dwarfs.class);
-        Dwarf bean = newDwarf();
+        Dwarf bean = _helper.newDwarf();
 
         sec.to(bean);
         assertEquals(exp.getDoc(), bean);
@@ -76,15 +63,15 @@ public class IniTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testLoad() throws Exception
+    @Test public void testLoad() throws Exception
     {
-        Ini ini = loadDwarfs();
+        Ini ini = _helper.loadDwarfs();
 
-        doTestDwarfs(ini.to(Dwarfs.class));
-        ini = new Ini(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(DWARFS_INI)));
-        doTestDwarfs(ini.to(Dwarfs.class));
-        ini = new Ini(getClass().getClassLoader().getResource(DWARFS_INI));
-        doTestDwarfs(ini.to(Dwarfs.class));
+        _helper.doTestDwarfs(ini.to(Dwarfs.class));
+        ini = new Ini(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_INI)));
+        _helper.doTestDwarfs(ini.to(Dwarfs.class));
+        ini = new Ini(getClass().getClassLoader().getResource(TestHelper.DWARFS_INI));
+        _helper.doTestDwarfs(ini.to(Dwarfs.class));
     }
 
     /**
@@ -92,14 +79,14 @@ public class IniTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testLoadFromXML() throws Exception
+    @Test public void testLoadFromXML() throws Exception
     {
         Ini ini = new Ini();
 
-        ini.loadFromXML(getClass().getClassLoader().getResourceAsStream(DWARFS_XML));
-        doTestDwarfs(ini.to(Dwarfs.class));
-        ini.loadFromXML(getClass().getClassLoader().getResource(DWARFS_XML));
-        doTestDwarfs(ini.to(Dwarfs.class));
+        ini.loadFromXML(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_XML));
+        _helper.doTestDwarfs(ini.to(Dwarfs.class));
+        ini.loadFromXML(getClass().getClassLoader().getResource(TestHelper.DWARFS_XML));
+        _helper.doTestDwarfs(ini.to(Dwarfs.class));
     }
 
     /**
@@ -107,9 +94,9 @@ public class IniTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testRemove() throws Exception
+    @Test public void testRemove() throws Exception
     {
-        Ini ini = loadDwarfs();
+        Ini ini = _helper.loadDwarfs();
 
         ini.remove(ini.get("doc"));
         assertNull(ini.get("doc"));
@@ -120,9 +107,9 @@ public class IniTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testResolve() throws Exception
+    @Test public void testResolve() throws Exception
     {
-        Ini ini = loadDwarfs();
+        Ini ini = _helper.loadDwarfs();
         Ini.Section doc = ini.get("doc");
         Dwarfs dwarfs = ini.to(Dwarfs.class);
         StringBuilder buffer;
@@ -221,21 +208,21 @@ public class IniTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testStore() throws Exception
+    @Test public void testStore() throws Exception
     {
-        Ini ini = loadDwarfs();
+        Ini ini = _helper.loadDwarfs();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         ini.store(buffer);
         Ini dup = new Ini();
 
         dup.load(new ByteArrayInputStream(buffer.toByteArray()));
-        doTestDwarfs(dup.to(Dwarfs.class));
+        _helper.doTestDwarfs(dup.to(Dwarfs.class));
         buffer = new ByteArrayOutputStream();
         ini.store(new OutputStreamWriter(buffer));
         dup = new Ini();
         dup.load(new InputStreamReader(new ByteArrayInputStream(buffer.toByteArray())));
-        doTestDwarfs(dup.to(Dwarfs.class));
+        _helper.doTestDwarfs(dup.to(Dwarfs.class));
     }
 
     /**
@@ -243,31 +230,31 @@ public class IniTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testStoreToXML() throws Exception
+    @Test public void testStoreToXML() throws Exception
     {
-        Ini ini = loadDwarfs();
+        Ini ini = _helper.loadDwarfs();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         ini.storeToXML(buffer);
         Ini dup = new Ini();
 
         dup.loadFromXML(new ByteArrayInputStream(buffer.toByteArray()));
-        doTestDwarfs(dup.to(Dwarfs.class));
+        _helper.doTestDwarfs(dup.to(Dwarfs.class));
         buffer = new ByteArrayOutputStream();
         ini.storeToXML(new OutputStreamWriter(buffer));
         dup = new Ini();
         dup.loadFromXML(new InputStreamReader(new ByteArrayInputStream(buffer.toByteArray())));
-        doTestDwarfs(dup.to(Dwarfs.class));
+        _helper.doTestDwarfs(dup.to(Dwarfs.class));
     }
 
-    public void testToBean() throws Exception
+    @Test public void testToBean() throws Exception
     {
-        Ini ini = loadDwarfs();
+        Ini ini = _helper.loadDwarfs();
         Ini.Section sec = ini.get("doc");
         Dwarf doc = sec.to(Dwarf.class);
     }
 
-    public void testUnicode() throws Exception
+    @Test public void testUnicode() throws Exception
     {
         Ini orig = new Ini();
         Ini.Section bashful = orig.add(Dwarfs.PROP_BASHFUL);

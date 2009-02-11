@@ -1,32 +1,31 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j.addon;
-
-///CLOVER:OFF
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.easymock.EasyMock;
 
-import org.ini4j.AbstractTestBase;
+import org.ini4j.Dwarfs;
 import org.ini4j.Ini;
 import org.ini4j.IniHandler;
 import org.ini4j.IniParser;
 import org.ini4j.InvalidIniFormatException;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 
@@ -35,7 +34,7 @@ import java.net.MalformedURLException;
 /**
  * JUnit test of IniParser class.
  */
-public class FancyIniParserTest extends AbstractTestBase
+public class FancyIniParserTest
 {
     private static final String[] _extraIni = { "[section]\noption\n", "[]\noption=value\n", "option=value\n" };
     private static final String[] _badIni = { "[section\noption=value\n", "[section]\n=value\n" };
@@ -47,27 +46,7 @@ public class FancyIniParserTest extends AbstractTestBase
     private static final String INCLUDE = "org/ini4j/addon/dwarfs-include.ini";
     private static final String NESTED = "org/ini4j/addon/dwarfs-nested.ini";
 
-    /**
-     * Instantiate test.
-     *
-     * @param testName name of the test
-     */
-    public FancyIniParserTest(String testName)
-    {
-        super(testName);
-    }
-
-    /**
-     * Create test suite.
-     *
-     * @return new test suite
-     */
-    public static Test suite()
-    {
-        return new TestSuite(FancyIniParserTest.class);
-    }
-
-    public void testConvertCase() throws Exception
+    @Test public void testConvertCase() throws Exception
     {
         class Handler implements IniHandler
         {
@@ -120,12 +99,12 @@ public class FancyIniParserTest extends AbstractTestBase
     }
 
     @SuppressWarnings("empty-statement")
-    public void testInclude() throws Exception
+    @Test public void testInclude() throws Exception
     {
         System.setProperty(IniParser.class.getName(), FancyIniParser.class.getName());
         Ini ini = new Ini(getClass().getClassLoader().getResource(INCLUDE));
 
-        doTestDwarfs(ini.to(Dwarfs.class));
+        _helper.doTestDwarfs(ini.to(Dwarfs.class));
         try
         {
             ini = new Ini(getClass().getClassLoader().getResourceAsStream(INCLUDE));
@@ -137,7 +116,7 @@ public class FancyIniParserTest extends AbstractTestBase
         }
 
         ini = new Ini(getClass().getClassLoader().getResource(NESTED));
-        doTestDwarfs(ini.to(Dwarfs.class));
+        _helper.doTestDwarfs(ini.to(Dwarfs.class));
         FancyIniParser parser = (FancyIniParser) IniParser.newInstance();
 
         assertTrue(parser.isAllowInclude());
@@ -150,7 +129,7 @@ public class FancyIniParserTest extends AbstractTestBase
      *
      * @throws Exception on error
      */
-    public void testNewInstance() throws Exception
+    @Test public void testNewInstance() throws Exception
     {
         System.setProperty(IniParser.class.getName(), FancyIniParser.class.getName());
         FancyIniParser parser = (FancyIniParser) IniParser.newInstance();

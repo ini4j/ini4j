@@ -1,36 +1,35 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j.addon;
 
 ///CLOVER:OFF
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.ini4j.AbstractTestBase;
 import org.ini4j.Ini;
 import org.ini4j.IniFormatter;
 import org.ini4j.IniHandler;
+import org.ini4j.TestHelper;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class FancyIniFormatterTest extends AbstractTestBase
+public class FancyIniFormatterTest extends TestHelper
 {
     private static final String STRICTOPERATOR = "[section]\noption=value\n\n";
     private static final String NORMALOPERATOR = "[section]\noption = value\n\n";
