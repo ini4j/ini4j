@@ -18,6 +18,7 @@ package org.ini4j.addon;
 import org.easymock.EasyMock;
 
 import org.ini4j.Dwarfs;
+import org.ini4j.Helper;
 import org.ini4j.Ini;
 import org.ini4j.IniHandler;
 import org.ini4j.IniParser;
@@ -104,7 +105,7 @@ public class FancyIniParserTest
         System.setProperty(IniParser.class.getName(), FancyIniParser.class.getName());
         Ini ini = new Ini(getClass().getClassLoader().getResource(INCLUDE));
 
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
         try
         {
             ini = new Ini(getClass().getClassLoader().getResourceAsStream(INCLUDE));
@@ -116,7 +117,7 @@ public class FancyIniParserTest
         }
 
         ini = new Ini(getClass().getClassLoader().getResource(NESTED));
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
         FancyIniParser parser = (FancyIniParser) IniParser.newInstance();
 
         assertTrue(parser.isAllowInclude());
@@ -143,7 +144,7 @@ public class FancyIniParserTest
      * @throws Exception on error
      */
     @SuppressWarnings("empty-statement")
-    public void testParse() throws Exception
+    @Test public void testParse() throws Exception
     {
         FancyIniParser parser = new FancyIniParser();
         IniHandler handler = EasyMock.createNiceMock(IniHandler.class);

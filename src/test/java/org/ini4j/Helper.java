@@ -15,19 +15,19 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.*;
+import org.junit.Assert;
 
 import java.net.URI;
 
 import java.util.prefs.Preferences;
 
-public class TestHelper
+public class Helper
 {
     public static String DWARFS_INI = "org/ini4j/dwarfs.ini";
     public static String DWARFS_XML = "org/ini4j/dwarfs.xml";
     public static final float DELTA = 0.00000001f;
 
-    protected static void assertEquals(Dwarf expected, Dwarf actual)
+    public static void assertEquals(Dwarf expected, Dwarf actual)
     {
         Assert.assertEquals(expected.getAge(), actual.getAge());
         Assert.assertEquals(expected.getHeight(), actual.getHeight(), DELTA);
@@ -35,23 +35,23 @@ public class TestHelper
         Assert.assertEquals(expected.getHomePage().toString(), actual.getHomePage().toString());
     }
 
-    protected static void assertEquals(Dwarf expected, Ini.Section actual)
+    public static void assertEquals(Dwarf expected, Ini.Section actual)
     {
-        Assert.assertEquals("" + expected.getAge(), actual.fetch("age"));
-        Assert.assertEquals("" + expected.getHeight(), actual.fetch("height"));
-        Assert.assertEquals("" + expected.getWeight(), actual.fetch("weight"));
-        Assert.assertEquals("" + expected.getHomePage(), actual.fetch("homePage"));
+        Assert.assertEquals("" + expected.getAge(), actual.fetch(Dwarf.PROP_AGE));
+        Assert.assertEquals("" + expected.getHeight(), actual.fetch(Dwarf.PROP_HEIGHT));
+        Assert.assertEquals("" + expected.getWeight(), actual.fetch(Dwarf.PROP_WEIGHT));
+        Assert.assertEquals("" + expected.getHomePage(), actual.fetch(Dwarf.PROP_HOME_PAGE));
     }
 
-    protected static void assertEquals(Dwarf expected, Preferences actual)
+    public static void assertEquals(Dwarf expected, Preferences actual)
     {
-        Assert.assertEquals("" + expected.getAge(), actual.get("age", null));
-        Assert.assertEquals("" + expected.getHeight(), actual.get("height", null));
-        Assert.assertEquals("" + expected.getWeight(), actual.get("weight", null));
-        Assert.assertEquals("" + expected.getHomePage(), actual.get("homePage", null));
+        Assert.assertEquals("" + expected.getAge(), actual.get(Dwarf.PROP_AGE, null));
+        Assert.assertEquals("" + expected.getHeight(), actual.get(Dwarf.PROP_HEIGHT, null));
+        Assert.assertEquals("" + expected.getWeight(), actual.get(Dwarf.PROP_WEIGHT, null));
+        Assert.assertEquals("" + expected.getHomePage(), actual.get(Dwarf.PROP_HOME_PAGE, null));
     }
 
-    protected void doTestDwarfs(Dwarfs dwarfs) throws Exception
+    public static void doTestDwarfs(Dwarfs dwarfs) throws Exception
     {
         Dwarf d;
 
@@ -69,8 +69,8 @@ public class TestHelper
         Assert.assertEquals("http://doc.dwarfs", d.getHomePage().toString());
         d = dwarfs.getDopey();
         assertHasProperties(d);
-        Assert.assertEquals(dwarfs.getBashful().getWeight(), d.getWeight());
-        Assert.assertEquals(dwarfs.getDoc().getHeight(), d.getHeight());
+        Assert.assertEquals(dwarfs.getBashful().getWeight(), d.getWeight(), DELTA);
+        Assert.assertEquals(dwarfs.getDoc().getHeight(), d.getHeight(), DELTA);
         Assert.assertEquals(23, d.getAge());
         Assert.assertEquals("http://dopey.snowwhite.tale/", d.getHomePage().toString());
         d = dwarfs.getGrumpy();
@@ -99,17 +99,17 @@ public class TestHelper
         Assert.assertEquals(dwarfs.getHappy().getHomePage().toString() + "/~sneezy", d.getHomePage().toString());
     }
 
-    protected Ini loadDwarfs() throws Exception
+    public static Ini loadDwarfs() throws Exception
     {
-        return new Ini(getClass().getClassLoader().getResourceAsStream(DWARFS_INI));
+        return new Ini(Helper.class.getClassLoader().getResourceAsStream(DWARFS_INI));
     }
 
-    protected Dwarf newDwarf()
+    public static Dwarf newDwarf()
     {
         return new DwarfBean();
     }
 
-    protected Dwarfs newDwarfs() throws Exception
+    public static Dwarfs newDwarfs() throws Exception
     {
         DwarfsBean dwarfs = new DwarfsBean();
         Dwarf d;
@@ -160,11 +160,11 @@ public class TestHelper
         return dwarfs;
     }
 
-    private void assertHasProperties(Dwarf dwarf)
+    private static void assertHasProperties(Dwarf dwarf)
     {
-        assertTrue(dwarf.hasWeight());
-        assertTrue(dwarf.hasHeight());
-        assertTrue(dwarf.hasAge());
-        assertTrue(dwarf.hasHomePage());
+        Assert.assertTrue(dwarf.hasWeight());
+        Assert.assertTrue(dwarf.hasHeight());
+        Assert.assertTrue(dwarf.hasAge());
+        Assert.assertTrue(dwarf.hasHomePage());
     }
 }

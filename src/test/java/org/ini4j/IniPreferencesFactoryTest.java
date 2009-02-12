@@ -17,7 +17,6 @@ package org.ini4j;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.prefs.Preferences;
@@ -28,12 +27,6 @@ import java.util.prefs.Preferences;
 public class IniPreferencesFactoryTest
 {
     static final String FACTORY = "java.util.prefs.PreferencesFactory";
-    private TestHelper _helper;
-
-    @Before public void setUp()
-    {
-        _helper = new TestHelper();
-    }
 
     /**
      * Test of getResourceAsStream method.
@@ -46,10 +39,10 @@ public class IniPreferencesFactoryTest
         IniPreferencesFactory factory = new IniPreferencesFactory();
 
         // class path
-        assertNotNull(factory.getResourceAsStream(TestHelper.DWARFS_INI));
+        assertNotNull(factory.getResourceAsStream(Helper.DWARFS_INI));
 
         // url
-        String location = getClass().getClassLoader().getResource(TestHelper.DWARFS_INI).toString();
+        String location = getClass().getClassLoader().getResource(Helper.DWARFS_INI).toString();
 
         assertNotNull(factory.getResourceAsStream(location));
 
@@ -73,17 +66,17 @@ public class IniPreferencesFactoryTest
     @Test public void testSystemRoot() throws Exception
     {
         System.setProperty(FACTORY, IniPreferencesFactory.class.getName());
-        System.setProperty(IniPreferencesFactory.KEY_SYSTEM, TestHelper.DWARFS_INI);
+        System.setProperty(IniPreferencesFactory.KEY_SYSTEM, Helper.DWARFS_INI);
         Preferences prefs = Preferences.systemRoot();
 
         assertNotNull(prefs);
         assertEquals(prefs.getClass(), IniPreferences.class);
         assertSame(prefs, Preferences.systemRoot());
-        Dwarfs dwarfs = _helper.newDwarfs();
+        Dwarfs dwarfs = Helper.newDwarfs();
 
         assertNotNull(prefs);
         assertEquals(prefs.getClass(), IniPreferences.class);
-        assertEquals(dwarfs.getHappy(), prefs.node("happy"));
+        Helper.assertEquals(dwarfs.getHappy(), prefs.node(Dwarfs.PROP_HAPPY));
     }
 
     /**

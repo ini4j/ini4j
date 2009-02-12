@@ -31,7 +31,7 @@ public class ServiceFinderTest
     {
         boolean flag = false;
 
-        System.setProperty(IniParser.class.getName(), TestHelper.class.getName());
+        System.setProperty(IniParser.class.getName(), Helper.class.getName());
         try
         {
             ServiceFinder.findService(IniParser.class);
@@ -51,7 +51,7 @@ public class ServiceFinderTest
      *
      * @throws Exception on error
      */
-    public void testFindServiceClass() throws Exception
+    @Test public void testFindServiceClass() throws Exception
     {
         boolean flag = false;
 
@@ -75,7 +75,7 @@ public class ServiceFinderTest
      *
      * @throws Exception on error
      */
-    public void testFindServiceClassName() throws Exception
+    @Test public void testFindServiceClassName() throws Exception
     {
         boolean flag = false;
 

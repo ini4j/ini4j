@@ -17,7 +17,6 @@ package org.ini4j;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.InputStreamReader;
@@ -25,12 +24,6 @@ import java.io.InputStreamReader;
 public class IniPreferencesTest
 {
     private static final String DUMMY = "dummy";
-    private TestHelper _helper;
-
-    @Before public void setUp()
-    {
-        _helper = new TestHelper();
-    }
 
     /**
      * Test of constructors.
@@ -39,17 +32,17 @@ public class IniPreferencesTest
      */
     @Test public void testConstructor() throws Exception
     {
-        Ini ini = _helper.loadDwarfs();
+        Ini ini = Helper.loadDwarfs();
         IniPreferences prefs = new IniPreferences(ini);
 
         assertSame(ini, prefs.getIni());
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
-        prefs = new IniPreferences(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_INI));
-        assertEquals(ini.get("doc").to(Dwarf.class), prefs.node("doc"));
-        prefs = new IniPreferences(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_INI)));
-        assertEquals(ini.get("happy").to(Dwarf.class), prefs.node("happy"));
-        prefs = new IniPreferences(getClass().getClassLoader().getResource(TestHelper.DWARFS_INI));
-        assertEquals(ini.get("happy").to(Dwarf.class), prefs.node("happy"));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
+        prefs = new IniPreferences(getClass().getClassLoader().getResourceAsStream(Helper.DWARFS_INI));
+        Helper.assertEquals(ini.get(Dwarfs.PROP_DOC).to(Dwarf.class), prefs.node(Dwarfs.PROP_DOC));
+        prefs = new IniPreferences(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(Helper.DWARFS_INI)));
+        Helper.assertEquals(ini.get(Dwarfs.PROP_HAPPY).to(Dwarf.class), prefs.node(Dwarfs.PROP_HAPPY));
+        prefs = new IniPreferences(getClass().getClassLoader().getResource(Helper.DWARFS_INI));
+        Helper.assertEquals(ini.get(Dwarfs.PROP_HAPPY).to(Dwarf.class), prefs.node(Dwarfs.PROP_HAPPY));
     }
 
     /**
@@ -71,14 +64,14 @@ public class IniPreferencesTest
         assertEquals(0, prefs.childrenNamesSpi().length);
 
         // childNode for new and for existing section
-        assertNotNull(prefs.node("doc"));
+        assertNotNull(prefs.node(Dwarfs.PROP_DOC));
         assertEquals(1, prefs.childrenNamesSpi().length);
-        ini.add("happy");
-        assertNotNull(prefs.node("happy"));
+        ini.add(Dwarfs.PROP_HAPPY);
+        assertNotNull(prefs.node(Dwarfs.PROP_HAPPY));
         assertEquals(2, prefs.childrenNamesSpi().length);
 
         // SectionPreferences
-        IniPreferences.SectionPreferences sec = (IniPreferences.SectionPreferences) prefs.node("doc");
+        IniPreferences.SectionPreferences sec = (IniPreferences.SectionPreferences) prefs.node(Dwarfs.PROP_DOC);
 
         assertEquals(0, sec.childrenNamesSpi().length);
 
@@ -92,22 +85,22 @@ public class IniPreferencesTest
         assertEquals(0, sec.keysSpi().length);
 
         // add one key
-        sec.put("age", "87");
+        sec.put(Dwarf.PROP_AGE, "87");
         sec.flush();
-        assertEquals("87", sec.getSpi("age"));
+        assertEquals("87", sec.getSpi(Dwarf.PROP_AGE));
 
         // has one key
         assertEquals(1, sec.keysSpi().length);
 
         // remove key
-        sec.remove("age");
+        sec.remove(Dwarf.PROP_AGE);
         sec.flush();
 
         // has 0 key
         assertEquals(0, sec.keysSpi().length);
         sec.removeNode();
         prefs.flush();
-        assertNull(ini.get("doc"));
+        assertNull(ini.get(Dwarfs.PROP_DOC));
     }
 
     /**
@@ -162,7 +155,7 @@ public class IniPreferencesTest
         }
 
         // SectionPreferences
-        IniPreferences.SectionPreferences sec = (IniPreferences.SectionPreferences) prefs.node("doc");
+        IniPreferences.SectionPreferences sec = (IniPreferences.SectionPreferences) prefs.node(Dwarfs.PROP_DOC);
 
         try
         {

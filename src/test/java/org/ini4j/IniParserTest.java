@@ -22,7 +22,6 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
-///CLOVER:OFF
 
 /**
  * JUnit test of IniParser class.
@@ -39,7 +38,7 @@ public class IniParserTest
      *
      * @throws Exception on error
      */
-    public void testNewInstance() throws Exception
+    @Test public void testNewInstance() throws Exception
     {
         assertNotNull(IniParser.newInstance());
     }

@@ -15,44 +15,26 @@
  */
 package org.ini4j.addon;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.ini4j.Dwarf;
+import org.ini4j.Dwarfs;
+import org.ini4j.Helper;
 import org.ini4j.IniPreferences;
-import org.ini4j.TestHelper;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 import java.util.NoSuchElementException;
 import java.util.prefs.Preferences;
-///CLOVER:OFF
 
 /**
  * JUnit test of PreferencesWrapper class.
  */
-public class StrictPreferencesTest extends TestHelper
+public class StrictPreferencesTest
 {
-    public static final String DOC = "doc";
-    public static final String OPTION = "height";
+    public static final String DOC = Dwarfs.PROP_DOC;
+    public static final String OPTION = Dwarf.PROP_HEIGHT;
     public static final String MISSING = "no such option";
-
-    /**
-     * Instantiate test.
-     *
-     * @param testName name of the test
-     */
-    public StrictPreferencesTest(String testName)
-    {
-        super(testName);
-    }
-
-    /**
-     * Create test suite.
-     *
-     * @return new test suite
-     */
-    public static Test suite()
-    {
-        return new TestSuite(StrictPreferencesTest.class);
-    }
 
     /**
      * Test of all get methods.
@@ -60,10 +42,10 @@ public class StrictPreferencesTest extends TestHelper
      * @throws Exception on error
      */
     @SuppressWarnings("empty-statement")
-    public void testGets() throws Exception
+    @Test public void testGets() throws Exception
     {
         String value;
-        Preferences root = new IniPreferences(loadDwarfs());
+        Preferences root = new IniPreferences(Helper.loadDwarfs());
         Preferences peer = root.node(DOC);
         StrictPreferences pref = new StrictPreferences(peer);
 

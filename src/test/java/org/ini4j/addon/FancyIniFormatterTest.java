@@ -15,21 +15,21 @@
  */
 package org.ini4j.addon;
 
-///CLOVER:OFF
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.ini4j.Ini;
 import org.ini4j.IniFormatter;
 import org.ini4j.IniHandler;
-import org.ini4j.TestHelper;
+
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class FancyIniFormatterTest extends TestHelper
+public class FancyIniFormatterTest
 {
     private static final String STRICTOPERATOR = "[section]\noption=value\n\n";
     private static final String NORMALOPERATOR = "[section]\noption = value\n\n";
@@ -39,30 +39,20 @@ public class FancyIniFormatterTest extends TestHelper
     private FancyIniFormatter formatter;
     private StringWriter output;
 
-    public FancyIniFormatterTest(String testName)
-    {
-        super(testName);
-    }
-
-    public static Test suite()
-    {
-        return new TestSuite(FancyIniFormatterTest.class);
-    }
-
-    @Override public void setUp() throws Exception
+    @Before public void setUp() throws Exception
     {
         System.setProperty(IniFormatter.class.getName(), FancyIniFormatter.class.getName());
         output = new StringWriter();
         formatter = (FancyIniFormatter) IniFormatter.newInstance(output);
     }
 
-    public void testDefaults() throws Exception
+    @Test public void testDefaults() throws Exception
     {
         assertTrue(formatter.isAllowStrictOperator());
         assertTrue(formatter.isAllowEmptyOption());
     }
 
-    public void testEmptyOption() throws Exception
+    @Test public void testEmptyOption() throws Exception
     {
         formatter.setAllowEmptyOption(true);
         IniHelper ini = new IniHelper(new StringReader(STRICTOPERATOR));
@@ -72,7 +62,7 @@ public class FancyIniFormatterTest extends TestHelper
         assertEquals(WITHDUMMY, output.toString());
     }
 
-    public void testNoEmptyOption() throws Exception
+    @Test public void testNoEmptyOption() throws Exception
     {
         formatter.setAllowEmptyOption(false);
         IniHelper ini = new IniHelper(new StringReader(STRICTOPERATOR));
@@ -83,7 +73,7 @@ public class FancyIniFormatterTest extends TestHelper
         assertEquals(STRICTOPERATOR, output.toString());
     }
 
-    public void testNoStrictOperator() throws Exception
+    @Test public void testNoStrictOperator() throws Exception
     {
         formatter.setAllowStrictOperator(false);
         IniHelper ini = new IniHelper(new StringReader(NORMALOPERATOR));
@@ -92,7 +82,7 @@ public class FancyIniFormatterTest extends TestHelper
         assertEquals(NORMALOPERATOR, output.toString());
     }
 
-    public void testStrictOperator() throws Exception
+    @Test public void testStrictOperator() throws Exception
     {
         formatter.setAllowStrictOperator(true);
         IniHelper ini = new IniHelper(new StringReader(STRICTOPERATOR));

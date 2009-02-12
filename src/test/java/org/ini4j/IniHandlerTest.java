@@ -19,7 +19,6 @@ import org.easymock.classextension.EasyMock;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -32,12 +31,6 @@ public class IniHandlerTest
     private static final String GRUMPY_HEIGHT = "${dopey/height}";
     private static final String SLEEPY_HEIGHT = "${doc/height}8";
     private static final String SNEEZY_HOME_PAGE = "${happy/homePage}/~sneezy";
-    private TestHelper _helper;
-
-    @Before public void setUp()
-    {
-        _helper = new TestHelper();
-    }
 
     @Test public void testHandler() throws Exception
     {
@@ -46,18 +39,18 @@ public class IniHandlerTest
 
         handler = newHandler();
         EasyMock.replay(handler);
-        parser.parse(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_INI), handler);
+        parser.parse(getClass().getClassLoader().getResourceAsStream(Helper.DWARFS_INI), handler);
         EasyMock.verify(handler);
         handler = newHandler();
         EasyMock.replay(handler);
-        parser.parseXML(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_XML), handler);
+        parser.parseXML(getClass().getClassLoader().getResourceAsStream(Helper.DWARFS_XML), handler);
         EasyMock.verify(handler);
     }
 
-    @Test protected IniHandler newHandler() throws Exception
+    protected IniHandler newHandler() throws Exception
     {
         IniHandler handler = EasyMock.createMock(IniHandler.class);
-        Dwarfs dwarfs = _helper.newDwarfs();
+        Dwarfs dwarfs = Helper.newDwarfs();
         Dwarf dwarf;
 
         handler.startIni();

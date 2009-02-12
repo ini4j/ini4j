@@ -43,7 +43,7 @@ public class BeanToolTest
 
     @Test public void testInject() throws Exception
     {
-        Dwarf bean = MapBeanHandler.newBean(Dwarf.class);
+        Dwarf bean = new DwarfBean();
 
         bean.setAge(23);
         bean.setHeight(5.3);
@@ -53,15 +53,15 @@ public class BeanToolTest
         Map<String, String> map = new HashMap<String, String>();
 
         instance.inject(map, bean);
-        assertEquals("23", map.get("age"));
-        assertEquals("5.3", map.get("height"));
-        assertEquals(uri.toString(), map.get("homePage"));
+        assertEquals("23", map.get(Dwarf.PROP_AGE));
+        assertEquals("5.3", map.get(Dwarf.PROP_HEIGHT));
+        assertEquals(uri.toString(), map.get(Dwarf.PROP_HOME_PAGE));
         bean.setAge(0);
         bean.setHeight(0);
         bean.setHomePage(null);
         instance.inject(bean, map);
         assertEquals(23, bean.getAge());
-        assertEquals(5.3, bean.getHeight(), TestHelper.DELTA);
+        assertEquals(5.3, bean.getHeight(), Helper.DELTA);
         assertEquals(uri, bean.getHomePage());
     }
 
@@ -75,8 +75,8 @@ public class BeanToolTest
         assertEquals(value, ((Short) instance.parse(input, short.class)).shortValue());
         assertEquals(value, ((Integer) instance.parse(input, int.class)).intValue());
         assertEquals(value, ((Long) instance.parse(input, long.class)).longValue());
-        assertEquals((float) value, ((Float) instance.parse(input, float.class)).floatValue(), TestHelper.DELTA);
-        assertEquals((double) value, ((Double) instance.parse(input, double.class)).doubleValue(), TestHelper.DELTA);
+        assertEquals((float) value, ((Float) instance.parse(input, float.class)).floatValue(), Helper.DELTA);
+        assertEquals((double) value, ((Double) instance.parse(input, double.class)).doubleValue(), Helper.DELTA);
         assertFalse(((Boolean) instance.parse(input, boolean.class)));
         assertEquals('6', ((Character) instance.parse(input, char.class)).charValue());
 
@@ -143,8 +143,8 @@ public class BeanToolTest
         assertEquals(0, ((Short) instance.zero(short.class)).shortValue());
         assertEquals(0, ((Integer) instance.zero(int.class)).intValue());
         assertEquals(0, ((Long) instance.zero(long.class)).longValue());
-        assertEquals(0.0f, ((Float) instance.zero(float.class)).floatValue(), TestHelper.DELTA);
-        assertEquals(0.0, ((Double) instance.zero(double.class)).doubleValue(), TestHelper.DELTA);
+        assertEquals(0.0f, ((Float) instance.zero(float.class)).floatValue(), Helper.DELTA);
+        assertEquals(0.0, ((Double) instance.zero(double.class)).doubleValue(), Helper.DELTA);
         assertNotNull((instance.zero(boolean.class)));
         assertFalse(((Boolean) instance.zero(boolean.class)));
         assertEquals('\0', ((Character) instance.zero(char.class)).charValue());

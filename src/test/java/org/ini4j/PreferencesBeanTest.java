@@ -17,7 +17,6 @@ package org.ini4j;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.prefs.Preferences;
@@ -25,14 +24,8 @@ import java.util.prefs.Preferences;
 /**
  * JUnit test of PreferencesBean class.
  */
-public class PreferencesBeanTest extends TestHelper
+public class PreferencesBeanTest
 {
-    private TestHelper _helper;
-
-    @Before public void setUp()
-    {
-        _helper = new TestHelper();
-    }
 
     /**
      * Test of newInstance method.
@@ -42,10 +35,10 @@ public class PreferencesBeanTest extends TestHelper
     @Test public void testNewInstance() throws Exception
     {
         Preferences prefs = new IniPreferences(new Ini());
-        DwarfExt doc = PreferencesBean.newInstance(DwarfExt.class, prefs.node("doc"));
+        DwarfExt doc = PreferencesBean.newInstance(DwarfExt.class, prefs.node(Dwarfs.PROP_DOC));
 
         doc.setWeight(67.4);
-        assertEquals(67.4, doc.getWeight(), TestHelper.DELTA);
+        assertEquals(67.4, doc.getWeight(), Helper.DELTA);
         assertTrue(doc.hasWeight());
         assertFalse(doc.hasDummy());
     }

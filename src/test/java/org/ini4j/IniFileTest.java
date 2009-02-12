@@ -100,10 +100,10 @@ public class IniFileTest
 
         assertEquals(IniFile.Mode.RW, f.getMode());
         assertEquals(tmp, f.getFile());
-        f.node("doc").put("weight", "65");
+        f.node(Dwarfs.PROP_DOC).put(Dwarf.PROP_WEIGHT, "65");
         f.flush();
         f = new IniFile(tmp);
-        assertEquals(f.node("doc").get("weight", null), "65");
+        assertEquals(f.node(Dwarfs.PROP_DOC).get(Dwarf.PROP_WEIGHT, null), "65");
         tmp.delete();
     }
 }

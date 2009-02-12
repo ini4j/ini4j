@@ -17,7 +17,6 @@ package org.ini4j;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -31,12 +30,6 @@ import java.io.OutputStreamWriter;
 public class IniTest
 {
     private static final String UNICODE_STRING = "áÁéÉíÍóÓöÖőŐúÚüÜűŰ-ÄÖÜäöü";
-    private TestHelper _helper;
-
-    @Before public void setUp()
-    {
-        _helper = new TestHelper();
-    }
 
     /**
      * Test of bean related methods.
@@ -45,17 +38,16 @@ public class IniTest
      */
     @Test public void testBeanInterface() throws Exception
     {
-        Dwarfs exp = _helper.newDwarfs();
-        Ini ini = _helper.loadDwarfs();
-        Ini.Section sec = ini.get("doc");
-        Dwarfs dwarfs = ini.to(Dwarfs.class);
-        Dwarf bean = _helper.newDwarf();
+        Dwarfs exp = Helper.newDwarfs();
+        Ini ini = Helper.loadDwarfs();
+        Ini.Section sec = ini.get(Dwarfs.PROP_DOC);
+        Dwarf bean = Helper.newDwarf();
 
         sec.to(bean);
-        assertEquals(exp.getDoc(), bean);
+        Helper.assertEquals(exp.getDoc(), bean);
         sec.clear();
         sec.from(bean);
-        assertEquals(exp.getDoc(), sec);
+        Helper.assertEquals(exp.getDoc(), sec);
     }
 
     /**
@@ -65,13 +57,13 @@ public class IniTest
      */
     @Test public void testLoad() throws Exception
     {
-        Ini ini = _helper.loadDwarfs();
+        Ini ini = Helper.loadDwarfs();
 
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
-        ini = new Ini(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_INI)));
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
-        ini = new Ini(getClass().getClassLoader().getResource(TestHelper.DWARFS_INI));
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
+        ini = new Ini(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(Helper.DWARFS_INI)));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
+        ini = new Ini(getClass().getClassLoader().getResource(Helper.DWARFS_INI));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
     }
 
     /**
@@ -83,10 +75,10 @@ public class IniTest
     {
         Ini ini = new Ini();
 
-        ini.loadFromXML(getClass().getClassLoader().getResourceAsStream(TestHelper.DWARFS_XML));
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
-        ini.loadFromXML(getClass().getClassLoader().getResource(TestHelper.DWARFS_XML));
-        _helper.doTestDwarfs(ini.to(Dwarfs.class));
+        ini.loadFromXML(getClass().getClassLoader().getResourceAsStream(Helper.DWARFS_XML));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
+        ini.loadFromXML(getClass().getClassLoader().getResource(Helper.DWARFS_XML));
+        Helper.doTestDwarfs(ini.to(Dwarfs.class));
     }
 
     /**
@@ -96,10 +88,10 @@ public class IniTest
      */
     @Test public void testRemove() throws Exception
     {
-        Ini ini = _helper.loadDwarfs();
+        Ini ini = Helper.loadDwarfs();
 
-        ini.remove(ini.get("doc"));
-        assertNull(ini.get("doc"));
+        ini.remove(ini.get(Dwarfs.PROP_DOC));
+        assertNull(ini.get(Dwarfs.PROP_DOC));
     }
 
     /**
@@ -109,8 +101,8 @@ public class IniTest
      */
     @Test public void testResolve() throws Exception
     {
-        Ini ini = _helper.loadDwarfs();
-        Ini.Section doc = ini.get("doc");
+        Ini ini = Helper.loadDwarfs();
+        Ini.Section doc = ini.get(Dwarfs.PROP_DOC);
         Dwarfs dwarfs = ini.to(Dwarfs.class);
         StringBuilder buffer;
         String input;
@@ -210,19 +202,19 @@ public class IniTest
      */
     @Test public void testStore() throws Exception
     {
-        Ini ini = _helper.loadDwarfs();
+        Ini ini = Helper.loadDwarfs();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         ini.store(buffer);
         Ini dup = new Ini();
 
         dup.load(new ByteArrayInputStream(buffer.toByteArray()));
-        _helper.doTestDwarfs(dup.to(Dwarfs.class));
+        Helper.doTestDwarfs(dup.to(Dwarfs.class));
         buffer = new ByteArrayOutputStream();
         ini.store(new OutputStreamWriter(buffer));
         dup = new Ini();
         dup.load(new InputStreamReader(new ByteArrayInputStream(buffer.toByteArray())));
-        _helper.doTestDwarfs(dup.to(Dwarfs.class));
+        Helper.doTestDwarfs(dup.to(Dwarfs.class));
     }
 
     /**
@@ -232,25 +224,25 @@ public class IniTest
      */
     @Test public void testStoreToXML() throws Exception
     {
-        Ini ini = _helper.loadDwarfs();
+        Ini ini = Helper.loadDwarfs();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         ini.storeToXML(buffer);
         Ini dup = new Ini();
 
         dup.loadFromXML(new ByteArrayInputStream(buffer.toByteArray()));
-        _helper.doTestDwarfs(dup.to(Dwarfs.class));
+        Helper.doTestDwarfs(dup.to(Dwarfs.class));
         buffer = new ByteArrayOutputStream();
         ini.storeToXML(new OutputStreamWriter(buffer));
         dup = new Ini();
         dup.loadFromXML(new InputStreamReader(new ByteArrayInputStream(buffer.toByteArray())));
-        _helper.doTestDwarfs(dup.to(Dwarfs.class));
+        Helper.doTestDwarfs(dup.to(Dwarfs.class));
     }
 
     @Test public void testToBean() throws Exception
     {
-        Ini ini = _helper.loadDwarfs();
-        Ini.Section sec = ini.get("doc");
+        Ini ini = Helper.loadDwarfs();
+        Ini.Section sec = ini.get(Dwarfs.PROP_DOC);
         Dwarf doc = sec.to(Dwarf.class);
     }
 

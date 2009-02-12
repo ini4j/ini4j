@@ -15,6 +15,9 @@
  */
 package org.ini4j.addon;
 
+import org.ini4j.Dwarf;
+import org.ini4j.Dwarfs;
+import org.ini4j.Helper;
 import org.ini4j.IniPreferences;
 
 import static org.junit.Assert.*;
@@ -33,9 +36,9 @@ import java.util.prefs.Preferences;
  */
 public class PreferencesWrapperTest
 {
-    public static final String DOC = "doc";
-    public static final String HAPPY = "happy";
-    public static final String OPTION = "height";
+    public static final String DOC = Dwarfs.PROP_DOC;
+    public static final String HAPPY = Dwarfs.PROP_HAPPY;
+    public static final String OPTION = Dwarf.PROP_HEIGHT;
 
     /**
      * Test of all methods.
@@ -45,7 +48,7 @@ public class PreferencesWrapperTest
     @Test public void testCalls() throws Exception
     {
         String value;
-        Preferences root = new IniPreferences(_helper.loadDwarfs());
+        Preferences root = new IniPreferences(Helper.loadDwarfs());
         Preferences toor = new PreferencesWrapper(root);
         Preferences peer = root.node(DOC);
         Preferences pref = new PreferencesWrapper(peer);
@@ -87,14 +90,14 @@ public class PreferencesWrapperTest
         // putFloat-getFloat
         peer.remove(OPTION);
         pref.putFloat(OPTION, 1.0f);
-        assertEquals(1.0f, pref.getFloat(OPTION, 1.0f));
-        assertEquals(1.0f, peer.getFloat(OPTION, 1.0f));
+        assertEquals(1.0f, pref.getFloat(OPTION, 1.0f), Helper.DELTA);
+        assertEquals(1.0f, peer.getFloat(OPTION, 1.0f), Helper.DELTA);
 
         // putDouble-getDouble
         peer.remove(OPTION);
         pref.putDouble(OPTION, 1.0);
-        assertEquals(1.0, pref.getDouble(OPTION, 1.0));
-        assertEquals(1.0, peer.getDouble(OPTION, 1.0));
+        assertEquals(1.0, pref.getDouble(OPTION, 1.0), Helper.DELTA);
+        assertEquals(1.0, peer.getDouble(OPTION, 1.0), Helper.DELTA);
 
         // putBoolean-getBoolean
         peer.remove(OPTION);

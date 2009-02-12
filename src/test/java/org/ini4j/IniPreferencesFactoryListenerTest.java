@@ -71,7 +71,7 @@ public class IniPreferencesFactoryListenerTest
         IniPreferencesFactoryListener listener = new IniPreferencesFactoryListener();
 
         listener.contextInitialized(event);
-        assertNotNull(listener.getResourceAsStream(TestHelper.DWARFS_INI));
+        assertNotNull(listener.getResourceAsStream(Helper.DWARFS_INI));
         listener.contextDestroyed(event);
     }
 }

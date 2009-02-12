@@ -17,7 +17,6 @@ package org.ini4j;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
@@ -32,9 +31,8 @@ import java.util.Map;
 
 public class AbstractBeanInvocationHandlerTest
 {
-    private static final String PROP_AGE = "age";
-    private static final String PROP_HEIGHT = "height";
-    private TestHelper _helper;
+    private static final String PROP_AGE = Dwarf.PROP_AGE;
+    private static final String PROP_HEIGHT = Dwarf.PROP_HEIGHT;
 
     @Test public void testGetProperty() throws Exception
     {
@@ -90,7 +88,7 @@ public class AbstractBeanInvocationHandlerTest
      */
     @Test public void testNewDwarfs() throws Exception
     {
-        _helper.doTestDwarfs(_helper.newDwarfs());
+        Helper.doTestDwarfs(Helper.newDwarfs());
     }
 
     @Test public void testPropertyChangeListener() throws Exception
@@ -116,7 +114,7 @@ public class AbstractBeanInvocationHandlerTest
             }
         }
 
-        Dwarf d = _helper.newDwarf();
+        Dwarf d = Helper.newDwarf();
         Listener l = new Listener(PROP_AGE);
 
         // test add and remove: invalid state should be OK
@@ -174,7 +172,7 @@ public class AbstractBeanInvocationHandlerTest
             }
         }
 
-        Dwarf d = _helper.newDwarf();
+        Dwarf d = Helper.newDwarf();
         HeightCheck l = new HeightCheck();
 
         // test add and remove: invalid state should be OK
@@ -197,25 +195,20 @@ public class AbstractBeanInvocationHandlerTest
         }
         catch (PropertyVetoException x)
         {
-            assertEquals(33.0, d.getHeight(), TestHelper.DELTA);
+            assertEquals(33.0, d.getHeight(), Helper.DELTA);
         }
 
         // set valid value
         d.setHeight(44.0);
-        assertEquals(44.0, d.getHeight(), TestHelper.DELTA);
+        assertEquals(44.0, d.getHeight(), Helper.DELTA);
         d.removeVetoableChangeListener(PROP_HEIGHT, l);
 
         // set invalid value without lsitener
         d.setHeight(-4.0);
-        assertEquals(-4.0, d.getHeight(), TestHelper.DELTA);
+        assertEquals(-4.0, d.getHeight(), Helper.DELTA);
 
         // test remove: invalid state should be OK
         d.removeVetoableChangeListener(PROP_HEIGHT, l);
-    }
-
-    @Before void setUp() throws Exception
-    {
-        _helper = new TestHelper();
     }
 
     static interface Dummy
@@ -227,5 +220,41 @@ public class AbstractBeanInvocationHandlerTest
         void dummy();
 
         void removeDummy();
+    }
+
+    static class MapBeanHandler extends AbstractBeanInvocationHandler
+    {
+        private Map<String, String> _map;
+
+        MapBeanHandler(Map<String, String> map)
+        {
+            super();
+            _map = map;
+        }
+
+        protected static <T> T newBean(Class<T> clazz)
+        {
+            return newBean(clazz, new HashMap<String, String>());
+        }
+
+        protected static <T> T newBean(Class<T> clazz, Map<String, String> map)
+        {
+            return clazz.cast(Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz }, new MapBeanHandler(map)));
+        }
+
+        @Override protected Object getPropertySpi(String property, Class clazz)
+        {
+            return _map.get(property);
+        }
+
+        @Override protected void setPropertySpi(String property, Object value, Class clazz)
+        {
+            _map.put(property, value.toString());
+        }
+
+        @Override protected boolean hasPropertySpi(String property)
+        {
+            return _map.containsKey(property);
+        }
     }
 }
