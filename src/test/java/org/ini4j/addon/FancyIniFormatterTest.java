@@ -15,6 +15,7 @@
  */
 package org.ini4j.addon;
 
+import org.ini4j.Config;
 import org.ini4j.Ini;
 import org.ini4j.IniFormatter;
 import org.ini4j.IniHandler;
@@ -48,6 +49,7 @@ public class FancyIniFormatterTest
 
     @Test public void testDefaults() throws Exception
     {
+        formatter.setConfig(new Config());
         assertTrue(formatter.isAllowStrictOperator());
         assertTrue(formatter.isAllowEmptyOption());
     }

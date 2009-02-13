@@ -1,19 +1,18 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j;
 
 import java.io.IOException;
@@ -98,14 +97,14 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
     {
         Builder builder = new Builder();
 
-        IniParser.newInstance().parse(input, builder);
+        IniParser.newInstance(getConfig()).parse(input, builder);
     }
 
     public void load(URL input) throws IOException, InvalidIniFormatException
     {
         Builder builder = new Builder();
 
-        IniParser.newInstance().parse(input, builder);
+        IniParser.newInstance(getConfig()).parse(input, builder);
     }
 
     public void loadFromXML(InputStream input) throws IOException, InvalidIniFormatException
@@ -117,14 +116,14 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
     {
         Builder builder = new Builder();
 
-        IniParser.newInstance().parseXML(input, builder);
+        IniParser.newInstance(getConfig()).parseXML(input, builder);
     }
 
     public void loadFromXML(URL input) throws IOException, InvalidIniFormatException
     {
         Builder builder = new Builder();
 
-        IniParser.newInstance().parseXML(input, builder);
+        IniParser.newInstance(getConfig()).parseXML(input, builder);
     }
 
     public Section remove(Section section)
@@ -134,12 +133,12 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
 
     public void store(OutputStream output) throws IOException
     {
-        store(IniFormatter.newInstance(output));
+        store(IniFormatter.newInstance(output, getConfig()));
     }
 
     public void store(Writer output) throws IOException
     {
-        store(IniFormatter.newInstance(output));
+        store(IniFormatter.newInstance(output, getConfig()));
     }
 
     public void storeToXML(OutputStream output) throws IOException
@@ -422,9 +421,16 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
 
         @Override public void startSection(String sectionName)
         {
-            Section s = get(sectionName);
+            if (getConfig().isMultiSection())
+            {
+                currentSection = add(sectionName);
+            }
+            else
+            {
+                Section s = get(sectionName);
 
-            currentSection = (s != null) ? s : add(sectionName);
+                currentSection = (s != null) ? s : add(sectionName);
+            }
         }
     }
 }

@@ -30,6 +30,8 @@ import java.io.OutputStreamWriter;
 public class IniTest
 {
     private static final String UNICODE_STRING = "áÁéÉíÍóÓöÖőŐúÚüÜűŰ-ÄÖÜäöü";
+    private static final String DOC_HOME_DIR = "c:\\Documents and Settings\\doc";
+    private static final String DOPEY_HOME_DIR = "c:\\\\Documents and Settings\\\\dopey";
 
     /**
      * Test of bean related methods.
@@ -48,6 +50,41 @@ public class IniTest
         sec.clear();
         sec.from(bean);
         Helper.assertEquals(exp.getDoc(), sec);
+    }
+
+    @Test public void testConfig() throws Exception
+    {
+        Config cfg = Config.getGlobal().clone();
+
+        cfg.setMuliSection(true);
+        Ini ini = Helper.loadDwarfs(cfg);
+
+        assertEquals(2, ini.length(Dwarfs.PROP_HAPPY));
+        Ini.Section happy1 = ini.get(Dwarfs.PROP_HAPPY, 0);
+        Ini.Section happy2 = ini.get(Dwarfs.PROP_HAPPY, 1);
+
+        assertEquals(5, happy1.size());
+        assertEquals(1, happy2.size());
+        cfg.setMuliSection(false);
+        cfg.setMultiOption(true);
+        ini = Helper.loadDwarfs(cfg);
+        Ini.Section happy = ini.get(Dwarfs.PROP_HAPPY);
+
+        assertEquals(5, happy.size());
+        assertEquals(2, happy.length(Dwarf.PROP_HOME_PAGE));
+    }
+
+    @Test public void testEscape() throws Exception
+    {
+        Config config = Config.getGlobal().clone();
+
+        config.setEscape(false);
+        Ini ini = Helper.loadDwarfs(config);
+        Ini.Section doc = ini.get(Dwarfs.PROP_DOC);
+        Ini.Section dopey = ini.get(Dwarfs.PROP_DOPEY);
+
+        assertEquals(DOC_HOME_DIR, doc.get(Dwarf.PROP_HOME_DIR));
+        assertEquals(DOPEY_HOME_DIR, dopey.get(Dwarf.PROP_HOME_DIR));
     }
 
     /**

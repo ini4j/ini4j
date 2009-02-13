@@ -17,6 +17,7 @@ package org.ini4j.addon;
 
 import org.easymock.EasyMock;
 
+import org.ini4j.Config;
 import org.ini4j.Dwarfs;
 import org.ini4j.Helper;
 import org.ini4j.Ini;
@@ -97,6 +98,18 @@ public class FancyIniParserTest
         parser.parse(new ByteArrayInputStream(MIXEDCASE.getBytes()), handler);
         assertTrue(handler.sectionOK);
         assertTrue(handler.optionOK);
+    }
+
+    @Test public void testDefaults() throws Exception
+    {
+        FancyIniParser parser = new FancyIniParser();
+
+        parser.setConfig(new Config());
+        assertTrue(parser.isAllowEmptyOption());
+        assertTrue(parser.isAllowMissingSection());
+        assertFalse(parser.isAllowOptionCaseConversion());
+        assertFalse(parser.isAllowSectionCaseConversion());
+        assertTrue(parser.isAllowUnnamedSection());
     }
 
     @SuppressWarnings("empty-statement")

@@ -50,12 +50,16 @@ public class BeanToolTest
         URI uri = new URI("http://www.ini4j.org");
 
         bean.setHomePage(uri);
+        String dir = "/home/happy";
+
+        bean.setHomeDir(dir);
         Map<String, String> map = new HashMap<String, String>();
 
         instance.inject(map, bean);
         assertEquals("23", map.get(Dwarf.PROP_AGE));
         assertEquals("5.3", map.get(Dwarf.PROP_HEIGHT));
         assertEquals(uri.toString(), map.get(Dwarf.PROP_HOME_PAGE));
+        assertEquals(dir, map.get(Dwarf.PROP_HOME_DIR));
         bean.setAge(0);
         bean.setHeight(0);
         bean.setHomePage(null);
@@ -63,6 +67,7 @@ public class BeanToolTest
         assertEquals(23, bean.getAge());
         assertEquals(5.3, bean.getHeight(), Helper.DELTA);
         assertEquals(uri, bean.getHomePage());
+        assertEquals(dir, bean.getHomeDir());
     }
 
     @SuppressWarnings("empty-statement")

@@ -27,6 +27,7 @@ public class DwarfBean implements Dwarf
 {
     private int _age;
     private double _height;
+    private String _homeDir;
     private URI _homePage;
     private final PropertyChangeSupport _pcSupport;
     private final VetoableChangeSupport _vcSupport;
@@ -65,6 +66,20 @@ public class DwarfBean implements Dwarf
         _height = value;
 
         _pcSupport.firePropertyChange(PROP_HEIGHT, old, value);
+    }
+
+    @Override public String getHomeDir()
+    {
+        return _homeDir;
+    }
+
+    @Override public void setHomeDir(String value)
+    {
+        String old = _homeDir;
+
+        _homeDir = value;
+
+        _pcSupport.firePropertyChange(PROP_HOME_DIR, old, value);
     }
 
     @Override public URI getHomePage()
