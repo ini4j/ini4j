@@ -81,12 +81,13 @@ public class MultiMapTest
         map.add(KEY3, VALUE1);
         map.add(KEY3, VALUE2);
         map.add(KEY3, VALUE3);
-        map.remove(KEY3, 1);
         assertEquals(VALUE2, map.get(KEY3, 1));
         map.remove(KEY3, 1);
-        assertEquals(0, map.length(KEY3));
+        assertEquals(VALUE3, map.get(KEY3, 1));
+        map.remove(KEY3, 1);
         assertEquals(VALUE1, map.get(KEY3));
         map.remove(KEY3);
+        assertEquals(0, map.length(KEY3));
         assertFalse(map.containsKey(KEY3));
         map.remove(KEY2);
         assertFalse(map.containsKey(KEY2));
