@@ -1,19 +1,18 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j;
 
 public class Config implements Cloneable
@@ -27,7 +26,7 @@ public class Config implements Cloneable
     public static final String PROP_LOWER_CASE_SECTION = "lowerCaseSection";
     public static final String PROP_MULTI_OPTION = "multiOption";
     public static final String PROP_MULTI_SECTION = "multiSection";
-    public static final String PROP_STRICT_OPERATOR = "strinctOperator";
+    public static final String PROP_STRICT_OPERATOR = "strictOperator";
     public static final String PROP_UNNAMED_SECTION = "unnamedSection";
     public static final String PROP_ESCAPE = "escape";
     public static final boolean DEFAULT_EMPTY_OPTION = false;
@@ -114,14 +113,14 @@ public class Config implements Cloneable
         _lowerCaseSection = value;
     }
 
-    public void setMuliSection(boolean value)
-    {
-        _multiSection = value;
-    }
-
     public void setMultiOption(boolean value)
     {
         _multiOption = value;
+    }
+
+    public void setMultiSection(boolean value)
+    {
+        _multiSection = value;
     }
 
     public boolean isEmptyOption()
@@ -207,13 +206,13 @@ public class Config implements Cloneable
     {
         String key = KEY_PREFIX + name;
 
-        return System.getProperties().contains(key) ? Boolean.getBoolean(key) : defaultValue;
+        return System.getProperties().containsKey(key) ? Boolean.getBoolean(key) : defaultValue;
     }
 
     private String getString(String name, String defaultValue)
     {
         String key = KEY_PREFIX + name;
 
-        return System.getProperties().contains(key) ? System.getProperty(key) : defaultValue;
+        return System.getProperties().containsKey(key) ? System.getProperty(key) : defaultValue;
     }
 }

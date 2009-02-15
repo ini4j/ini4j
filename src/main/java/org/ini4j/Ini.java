@@ -22,24 +22,26 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Proxy;
 
 import java.net.URL;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Ini extends MultiMapImpl<String, Ini.Section>
 {
     private static final char SUBST_CHAR = '$';
-    private static final String SUBST_BEGIN = SUBST_CHAR + "{";
-    private static final int SUBST_BEGIN_LEN = SUBST_BEGIN.length();
-    private static final String SUBST_END = "}";
-    private static final int SUBST_END_LEN = SUBST_END.length();
-    private static final char SUBST_ESCAPE = '\\';
-    private static final char SUBST_SEPARATOR = '/';
-    private static final String SUBST_PROPERTY = "@prop";
-    private static final String SUBST_ENVIRONMENT = "@env";
+    private static final String SECTION_SYSTEM_PROPERTIES = "@prop";
+    private static final String SECTION_ENVIRONMENT = "@env";
+    private static final Pattern expr = Pattern.compile("(?<!\\\\)\\$\\{(([^\\[]+)(\\[([0-9]+)\\])?/)?([^\\[]+)(\\[(([0-9]+))\\])?\\}");
+    private static final int G_SECTION = 2;
+    private static final int G_SECTION_IDX = 4;
+    private static final int G_OPTION = 5;
+    private static final int G_OPTION_IDX = 7;
     private Map<Class, Object> _beans;
     private Config _config = Config.getGlobal();
 
@@ -86,6 +88,29 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
         }
 
         return s;
+    }
+
+    public <T> T as(Class<T> clazz)
+    {
+        Object bean;
+
+        if (_beans == null)
+        {
+            _beans = new HashMap<Class, Object>();
+            bean = null;
+        }
+        else
+        {
+            bean = _beans.get(clazz);
+        }
+
+        if (bean == null)
+        {
+            bean = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { clazz }, new BeanInvocationHandler());
+            _beans.put(clazz, bean);
+        }
+
+        return clazz.cast(bean);
     }
 
     public void load(InputStream input) throws IOException, InvalidIniFormatException
@@ -151,27 +176,9 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
         store(XMLFormatter.newInstance(output));
     }
 
-    public <T> T to(Class<T> clazz)
+    @Deprecated public <T> T to(Class<T> clazz)
     {
-        Object bean;
-
-        if (_beans == null)
-        {
-            _beans = new HashMap<Class, Object>();
-            bean = null;
-        }
-        else
-        {
-            bean = _beans.get(clazz);
-        }
-
-        if (bean == null)
-        {
-            bean = Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { clazz }, new BeanInvocationHandler());
-            _beans.put(clazz, bean);
-        }
-
-        return clazz.cast(bean);
+        return as(clazz);
     }
 
     protected Config getConfig()
@@ -181,69 +188,39 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
 
     protected void resolve(StringBuilder buffer, Section owner)
     {
-        int begin = -1;
-        int end = -1;
+        Matcher m = expr.matcher(buffer);
 
-        for (int i = buffer.indexOf(SUBST_BEGIN); (i >= 0); i = buffer.indexOf(SUBST_BEGIN, i + 1))
+        while (m.find())
         {
-            if ((i + 2) > buffer.length())
-            {
-                break;
-            }
-
-            if ((i != 0) && (buffer.charAt(i - 1) == SUBST_ESCAPE))
+            if (m.groupCount() < G_OPTION_IDX)
             {
                 continue;
             }
 
-            begin = i;
-            end = buffer.indexOf(SUBST_END, i);
-            if (end < 0)
+            String sectionName = m.group(G_SECTION);
+            String optionName = m.group(G_OPTION);
+            int sectionIndex = (m.group(G_SECTION_IDX) == null) ? 0 : Integer.parseInt(m.group(G_SECTION_IDX));
+            int optionIndex = (m.group(G_OPTION_IDX) == null) ? 0 : Integer.parseInt(m.group(G_OPTION_IDX));
+            Section section = (sectionName == null) ? owner : get(sectionName, sectionIndex);
+            String value;
+
+            if (SECTION_ENVIRONMENT.equals(sectionName))
             {
-                break;
+                value = System.getenv(optionName);
+            }
+            else if (SECTION_SYSTEM_PROPERTIES.equals(sectionName))
+            {
+                value = System.getProperty(optionName);
+            }
+            else
+            {
+                value = (section == null) ? null : section.fetch(optionName, optionIndex);
             }
 
-            if ((begin >= 0) && (end > 0))
+            if (value != null)
             {
-                String var = buffer.substring(begin + SUBST_BEGIN_LEN, end);
-                String group = null;
-                int sep = var.indexOf(SUBST_SEPARATOR);
-                String value = null;
-
-                if (sep > 0)
-                {
-                    group = var.substring(0, sep);
-                    var = var.substring(sep + 1);
-                }
-
-                if (var != null)
-                {
-                    if (group == null)
-                    {
-                        value = owner.fetch(var);
-                    }
-                    else if (SUBST_ENVIRONMENT.equals(group))
-                    {
-                        value = System.getenv(var);
-                    }
-                    else if (SUBST_PROPERTY.equals(group))
-                    {
-                        value = System.getProperty(var);
-                    }
-                    else
-                    {
-                        owner = get(group);
-                        if (owner != null)
-                        {
-                            value = owner.fetch(var);
-                        }
-                    }
-                }
-
-                if (value != null)
-                {
-                    buffer.replace(begin, end + SUBST_END_LEN, value);
-                }
+                buffer.replace(m.start(), m.end(), value);
+                m.reset(buffer);
             }
         }
     }
@@ -286,32 +263,7 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
             return _name;
         }
 
-        public String fetch(Object key)
-        {
-            String value = get(key);
-
-            if ((value != null) && (value.indexOf(SUBST_CHAR) >= 0))
-            {
-                StringBuilder buffer = new StringBuilder(value);
-
-                resolve(buffer, this);
-                value = buffer.toString();
-            }
-
-            return value;
-        }
-
-        public void from(Object bean)
-        {
-            BeanTool.getInstance().inject(this, bean);
-        }
-
-        public void to(Object bean)
-        {
-            BeanTool.getInstance().inject(bean, this);
-        }
-
-        public synchronized <T> T to(Class<T> clazz)
+        public synchronized <T> T as(Class<T> clazz)
         {
             Object bean;
 
@@ -334,16 +286,83 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
             return clazz.cast(bean);
         }
 
+        public String fetch(Object key)
+        {
+            return fetch(key, 0);
+        }
+
+        public String fetch(Object key, int index)
+        {
+            String value = get(key, index);
+
+            if ((value != null) && (value.indexOf(SUBST_CHAR) >= 0))
+            {
+                StringBuilder buffer = new StringBuilder(value);
+
+                resolve(buffer, this);
+                value = buffer.toString();
+            }
+
+            return value;
+        }
+
+        public void from(Object bean)
+        {
+            BeanTool.getInstance().inject(this, bean);
+        }
+
+        @Deprecated public <T> T to(Class<T> clazz)
+        {
+            return as(clazz);
+        }
+
+        public void to(Object bean)
+        {
+            BeanTool.getInstance().inject(bean, this);
+        }
+
         class BeanInvocationHandler extends AbstractBeanInvocationHandler
         {
             @Override protected Object getPropertySpi(String property, Class<?> clazz)
             {
-                return fetch(property);
+                Object ret;
+
+                if (clazz.isArray())
+                {
+                    String[] all = containsKey(property) ? new String[length(property)] : null;
+
+                    if (all != null)
+                    {
+                        for (int i = 0; i < all.length; i++)
+                        {
+                            all[i] = fetch(property, i);
+                        }
+                    }
+
+                    ret = all;
+                }
+                else
+                {
+                    ret = fetch(property);
+                }
+
+                return ret;
             }
 
             @Override protected void setPropertySpi(String property, Object value, Class<?> clazz)
             {
-                put(property, value.toString());
+                if (clazz.isArray())
+                {
+                    remove(property);
+                    for (int i = 0; i < Array.getLength(value); i++)
+                    {
+                        add(property, Array.get(value, i).toString());
+                    }
+                }
+                else
+                {
+                    put(property, value.toString());
+                }
             }
 
             @Override protected boolean hasPropertySpi(String property)
@@ -355,20 +374,50 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
 
     class BeanInvocationHandler extends AbstractBeanInvocationHandler
     {
-        private Map<String, Object> _sectionBeans = new HashMap<String, Object>();
+        private MultiMap<String, Object> _sectionBeans = new MultiMapImpl<String, Object>();
 
         @Override protected Object getPropertySpi(String property, Class<?> clazz)
         {
-            Object o = _sectionBeans.get(property);
+            Object o;
 
-            if (o == null)
+            if (clazz.isArray())
             {
-                Section section = get(property);
-
-                if (section != null)
+                if (!_sectionBeans.containsKey(property))
                 {
-                    o = section.to(clazz);
-                    _sectionBeans.put(property, o);
+                    if (containsKey(property))
+                    {
+                        for (int i = 0; i < length(property); i++)
+                        {
+                            _sectionBeans.add(property, get(property, i).as(clazz.getComponentType()));
+                        }
+                    }
+                }
+
+                if (_sectionBeans.containsKey(property))
+                {
+                    o = Array.newInstance(clazz.getComponentType(), _sectionBeans.length(property));
+                    for (int i = 0; i < _sectionBeans.length(property); i++)
+                    {
+                        Array.set(o, i, _sectionBeans.get(property, i));
+                    }
+                }
+                else
+                {
+                    o = null;
+                }
+            }
+            else
+            {
+                o = _sectionBeans.get(property);
+                if (o == null)
+                {
+                    Section section = get(property);
+
+                    if (section != null)
+                    {
+                        o = section.as(clazz);
+                        _sectionBeans.put(property, o);
+                    }
                 }
             }
 
@@ -377,12 +426,30 @@ public class Ini extends MultiMapImpl<String, Ini.Section>
 
         @Override protected void setPropertySpi(String property, Object value, Class<?> clazz)
         {
-            throw new UnsupportedOperationException("read only bean");
+            remove(property);
+            if (value != null)
+            {
+                if (clazz.isArray())
+                {
+                    for (int i = 0; i < Array.getLength(value); i++)
+                    {
+                        Section sec = add(property);
+
+                        sec.from(Array.get(value, i));
+                    }
+                }
+                else
+                {
+                    Section sec = add(property);
+
+                    sec.from(value);
+                }
+            }
         }
 
         @Override protected boolean hasPropertySpi(String property)
         {
-            return false;
+            return containsKey(property);
         }
     }
 

@@ -1,23 +1,23 @@
 /**
  * Copyright 2005,2009 Ivan SZKIBA
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.ini4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,12 +65,31 @@ public class MultiMapImpl<K, V> implements MultiMap<K, V>
 
     @Override public boolean containsValue(Object value)
     {
-        throw new UnsupportedOperationException();
+        boolean ret = false;
+
+        for (List<V> all : _impl.values())
+        {
+            if (all.contains(value))
+            {
+                ret = true;
+
+                break;
+            }
+        }
+
+        return ret;
     }
 
     @Override public Set<Entry<K, V>> entrySet()
     {
-        throw new UnsupportedOperationException();
+        Set<Entry<K, V>> ret = new HashSet<Entry<K, V>>();
+
+        for (K key : keySet())
+        {
+            ret.add(new ShadowEntry(key));
+        }
+
+        return ret;
     }
 
     @Override public V get(Object key)
@@ -131,11 +150,24 @@ public class MultiMapImpl<K, V> implements MultiMap<K, V>
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     @Override public void putAll(Map<? extends K, ? extends V> map)
     {
-        for (K key : map.keySet())
+        if (map instanceof MultiMap)
         {
-            put(key, map.get(key));
+            MultiMap<K, V> mm = (MultiMap<K, V>) map;
+
+            for (Object key : mm.keySet())
+            {
+                putAll((K) key, mm.getAll(key));
+            }
+        }
+        else
+        {
+            for (K key : map.keySet())
+            {
+                put(key, map.get(key));
+            }
         }
     }
 
@@ -205,5 +237,30 @@ public class MultiMapImpl<K, V> implements MultiMap<K, V>
         }
 
         return values;
+    }
+
+    class ShadowEntry implements Map.Entry<K, V>
+    {
+        private final K _key;
+
+        ShadowEntry(K key)
+        {
+            _key = key;
+        }
+
+        @Override public K getKey()
+        {
+            return _key;
+        }
+
+        @Override public V getValue()
+        {
+            return get(_key);
+        }
+
+        @Override public V setValue(V value)
+        {
+            return put(_key, value);
+        }
     }
 }

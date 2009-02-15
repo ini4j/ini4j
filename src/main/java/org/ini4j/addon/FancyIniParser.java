@@ -18,7 +18,7 @@ package org.ini4j.addon;
 import org.ini4j.Config;
 import org.ini4j.IniParser;
 
-public class FancyIniParser extends IniParser
+@Deprecated public class FancyIniParser extends IniParser
 {
     public FancyIniParser()
     {

@@ -21,6 +21,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class MultiMapTest
 {
@@ -61,16 +65,81 @@ public class MultiMapTest
         assertArrayEquals(VALUES, values);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testContainsValue()
+    @Test public void testContainsValue()
     {
-        map.containsValue(VALUE1);
+        map.putAll(KEY1, Arrays.asList(VALUES));
+        assertTrue(map.containsValue(VALUE1));
+        assertTrue(map.containsValue(VALUE2));
+        assertTrue(map.containsValue(VALUE3));
+        map.clear();
+        map.put(KEY2, VALUE1);
+        assertFalse(map.containsValue(VALUE3));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testEntrySetValue()
+    @Test public void testEntrySet()
     {
-        map.entrySet();
+        map.putAll(KEY1, Arrays.asList(VALUES));
+        map.put(KEY2, VALUE2);
+        map.put(KEY3, VALUE3);
+        Set<Entry<String, String>> set = map.entrySet();
+
+        assertNotNull(set);
+        assertEquals(3, set.size());
+        for (Entry<String, String> e : set)
+        {
+            if (e.getKey().equals(KEY1))
+            {
+                assertEquals(VALUES[0], e.getValue());
+                e.setValue(VALUES[1]);
+            }
+            else if (e.getKey().equals(KEY2))
+            {
+                assertEquals(VALUE2, e.getValue());
+                e.setValue(VALUE3);
+            }
+            else if (e.getKey().equals(KEY3))
+            {
+                assertEquals(VALUE3, e.getValue());
+                e.setValue(VALUE2);
+            }
+        }
+
+        assertEquals(VALUES[1], map.get(KEY1));
+        assertEquals(VALUES.length, map.length(KEY1));
+        assertEquals(VALUE3, map.get(KEY2));
+        assertEquals(VALUE2, map.get(KEY3));
+    }
+
+    @Test public void testPut()
+    {
+        map.put(KEY1, VALUE1);
+        map.add(KEY1, VALUE2);
+        assertEquals(VALUE2, map.get(KEY1, 1));
+        map.put(KEY1, VALUE3, 1);
+        assertEquals(VALUE3, map.get(KEY1, 1));
+        map.put(KEY1, VALUE2, 0);
+        assertEquals(VALUE2, map.get(KEY1));
+    }
+
+    @Test public void testPutAll()
+    {
+        map.put(KEY1, VALUE1);
+        map.put(KEY2, VALUE1);
+        map.add(KEY2, VALUE2);
+        MultiMap<String, String> other = new MultiMapImpl<String, String>();
+
+        other.putAll(map);
+        assertEquals(2, other.size());
+        assertEquals(2, other.length(KEY2));
+        assertEquals(1, other.length(KEY1));
+        assertEquals(VALUE1, map.get(KEY1));
+        assertEquals(VALUE1, map.get(KEY2, 0));
+        assertEquals(VALUE2, map.get(KEY2, 1));
+        Map<String, String> regular = new HashMap<String, String>(map);
+
+        map.clear();
+        map.putAll(regular);
+        assertEquals(regular.keySet(), map.keySet());
     }
 
     @Test public void testRemove()
@@ -86,7 +155,7 @@ public class MultiMapTest
         assertEquals(VALUE3, map.get(KEY3, 1));
         map.remove(KEY3, 1);
         assertEquals(VALUE1, map.get(KEY3));
-        map.remove(KEY3);
+        map.remove(KEY3, 0);
         assertEquals(0, map.length(KEY3));
         assertFalse(map.containsKey(KEY3));
         map.remove(KEY2);
@@ -95,6 +164,8 @@ public class MultiMapTest
         assertFalse(map.containsKey(KEY1));
         assertEquals(0, map.size());
         assertTrue(map.isEmpty());
+        assertNull(map.remove(KEY1));
+        assertNull(map.remove(KEY1, 1));
     }
 
     @Test public void testValues()

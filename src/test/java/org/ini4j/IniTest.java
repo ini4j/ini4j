@@ -56,7 +56,7 @@ public class IniTest
     {
         Config cfg = Config.getGlobal().clone();
 
-        cfg.setMuliSection(true);
+        cfg.setMultiSection(true);
         Ini ini = Helper.loadDwarfs(cfg);
 
         assertEquals(2, ini.length(Dwarfs.PROP_HAPPY));
@@ -65,7 +65,7 @@ public class IniTest
 
         assertEquals(5, happy1.size());
         assertEquals(1, happy2.size());
-        cfg.setMuliSection(false);
+        cfg.setMultiSection(false);
         cfg.setMultiOption(true);
         ini = Helper.loadDwarfs(cfg);
         Ini.Section happy = ini.get(Dwarfs.PROP_HAPPY);
@@ -166,12 +166,12 @@ public class IniTest
         assertEquals(System.getProperty("user.home"), buffer.toString());
 
         // system environment
-        input = "${@env/path}";
+        input = "${@env/PATH}";
         buffer = new StringBuilder(input);
         try
         {
             ini.resolve(buffer, doc);
-            assertEquals(System.getenv("path"), buffer.toString());
+            assertEquals(System.getenv("PATH"), buffer.toString());
         }
         catch (Error e)
         {

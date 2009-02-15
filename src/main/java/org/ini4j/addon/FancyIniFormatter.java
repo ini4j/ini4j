@@ -18,7 +18,7 @@ package org.ini4j.addon;
 import org.ini4j.Config;
 import org.ini4j.IniFormatter;
 
-public class FancyIniFormatter extends IniFormatter
+@Deprecated public class FancyIniFormatter extends IniFormatter
 {
     public FancyIniFormatter()
     {

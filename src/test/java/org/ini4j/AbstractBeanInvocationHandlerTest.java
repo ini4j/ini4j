@@ -114,7 +114,7 @@ public class AbstractBeanInvocationHandlerTest
             }
         }
 
-        Dwarf d = Helper.newDwarf();
+        Dwarf d = MapBeanHandler.newBean(Dwarf.class);
         Listener l = new Listener(PROP_AGE);
 
         // test add and remove: invalid state should be OK
@@ -172,7 +172,7 @@ public class AbstractBeanInvocationHandlerTest
             }
         }
 
-        Dwarf d = Helper.newDwarf();
+        Dwarf d = MapBeanHandler.newBean(Dwarf.class);
         HeightCheck l = new HeightCheck();
 
         // test add and remove: invalid state should be OK
