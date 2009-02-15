@@ -23,7 +23,7 @@
   </properties>
   <body>
 
-    <release version="0.3.4" description="Refactoring and new features" issue="222" due-to="lala">
+    <release version="0.4.0" description="Refactoring and new features" issue="222" due-to="lala">
       <action type="add" dev="szkiba">
 
       </action>
