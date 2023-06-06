@@ -137,7 +137,7 @@ public class RegTest extends Ini4jCase
 
         Reg reg = new Reg();
 
-        reg.exec(new String[] { "/bin/true" });
+        reg.exec(new String[] { "/bin/pwd" });
         try
         {
             reg.exec(new String[] { "/bin/ls", "no such file" });
