@@ -1,4 +1,6 @@
 /*
+ * Copyright 2023 ini4j GitHub Organization
+ *
  * Copyright 2005,2009 Ivan SZKIBA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

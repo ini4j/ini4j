@@ -1,4 +1,6 @@
 /*
+ * Copyright 2023 ini4j GitHub Organization
+ *
  * Copyright 2005,2009 Ivan SZKIBA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -61,7 +63,8 @@ public class Helper
             Config.PROP_UNNAMED_SECTION, Config.PROP_ESCAPE, Config.PROP_ESCAPE_NEWLINE
         };
     private static final String[] FACTORY_PROPERTIES = { IniFormatter.class.getName(), IniParser.class.getName() };
-    public static final String HEADER_COMMENT = " Copyright 2005,2009 Ivan SZKIBA\n" + "\n"
+    public static final String HEADER_COMMENT = " Copyright 2023 ini4j GitHub Organization\n" + "\n"
+        + " Copyright 2005,2009 Ivan SZKIBA\n" + "\n"
         + " Licensed under the Apache License, Version 2.0 (the \"License\");\n"
         + " you may not use this file except in compliance with the License.\n" + " You may obtain a copy of the License at\n" + "\n"
         + "      http://www.apache.org/licenses/LICENSE-2.0\n" + "\n" + " Unless required by applicable law or agreed to in writing, software\n"
