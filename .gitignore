@@ -1,0 +1,21 @@
+*.swp
+*.drawio.bkp
+.DS_Store
+.cache
+tmp/
+
+# intellij files
+.idea
+.idea_modules/
+*.ipr
+*.iws
+*.iml
+
+# fleet files
+.fleet/
+
+# python files
+.python-version
+
+# maven files
+target/
