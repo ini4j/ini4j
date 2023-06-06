@@ -204,28 +204,9 @@ public class RegEscapeTool extends EscapeTool
         return type;
     }
 
-    // XXX Java 1.4 compatibility hack
     private String bytes2string(byte[] bytes)
     {
-        String str;
-
-        try
-        {
-            str = new String(bytes, 0, bytes.length - 2, HEX_CHARSET);
-        }
-        catch (NoSuchMethodError x)
-        {
-            try
-            {
-                str = new String(bytes, 0, bytes.length, HEX_CHARSET.name());
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-                throw new IllegalStateException(ex);
-            }
-        }
-
-        return str;
+        return new String(bytes, 0, bytes.length - 2, HEX_CHARSET);
     }
 
     private String[] splitMulti(String value)
@@ -259,27 +240,8 @@ public class RegEscapeTool extends EscapeTool
         return values;
     }
 
-    // XXX Java 1.4 compatibility hack
     private byte[] string2bytes(String value)
     {
-        byte[] bytes;
-
-        try
-        {
-            bytes = value.getBytes(HEX_CHARSET);
-        }
-        catch (NoSuchMethodError x)
-        {
-            try
-            {
-                bytes = value.getBytes(HEX_CHARSET.name());
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-                throw new IllegalStateException(ex);
-            }
-        }
-
-        return bytes;
+        return value.getBytes(HEX_CHARSET);
     }
 }

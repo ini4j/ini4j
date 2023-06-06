@@ -49,8 +49,7 @@ public class ServiceFinderTest extends Ini4jCase
             flag = true;
         }
 
-        // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
-        System.getProperties().remove(IniParser.class.getName());
+        System.clearProperty(IniParser.class.getName());
         assertTrue(flag);
     }
 
@@ -68,8 +67,7 @@ public class ServiceFinderTest extends Ini4jCase
             flag = true;
         }
 
-        // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
-        System.getProperties().remove(IniParser.class.getName());
+        System.clearProperty(IniParser.class.getName());
         assertTrue(flag);
     }
 
@@ -78,8 +76,7 @@ public class ServiceFinderTest extends Ini4jCase
         System.setProperty(IniParser.class.getName(), DUMMY);
         assertEquals(DUMMY, ServiceFinder.findServiceClassName(IniParser.class.getName()));
 
-        // System.clearProperty(IniParser.SERVICE_ID); missing in 1.4
-        System.getProperties().remove(IniParser.class.getName());
+        System.clearProperty(IniParser.class.getName());
         assertNull(ServiceFinder.findServiceClassName(IniParser.class.getName()));
         assertEquals(DUMMY_IMPL, ServiceFinder.findServiceClassName(DUMMY_SERVICE));
         assertNull(DUMMY, ServiceFinder.findServiceClassName(BAD_CONFIG_SERVICE));

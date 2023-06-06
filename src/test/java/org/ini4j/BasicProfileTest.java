@@ -221,15 +221,9 @@ public class BasicProfileTest extends Ini4jCase
         // system environment
         input = "${@env/PATH}";
         buffer = new StringBuilder(input);
-        try
-        {
-            prof.resolve(buffer, doc);
-            assertEquals(System.getenv("PATH"), buffer.toString());
-        }
-        catch (Error e)
-        {
-            // retroweaver + JDK 1.4 throws Error on getenv
-        }
+
+        prof.resolve(buffer, doc);
+        assertEquals(System.getenv("PATH"), buffer.toString());
 
         // unknown variable
         input = "${no such name}";
