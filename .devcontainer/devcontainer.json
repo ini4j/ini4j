@@ -1,0 +1,79 @@
+{
+  "name": "ini4j",
+  "image": "mcr.microsoft.com/devcontainers/base:2-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": { "version": "2.72.0" },
+    "ghcr.io/devcontainers/features/copilot-cli:1": {},
+    "ghcr.io/devcontainers-extra/features/go-task:1": { "version": "v3.46.3" },
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": true,
+      "mavenVersion": "3.9.12",
+      "installAnt": true,
+      "antVersion": "1.10.14"
+    },
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" },
+    "ghcr.io/szkiba/devcontainer-features/mdcode:1": { "version": "0.2.0" },
+    "ghcr.io/devcontainers-extra/features/apt-packages:1": { "packages": "subversion,rcs" }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "java.compile.nullAnalysis.mode": "automatic",
+
+        // Website development settings
+        "[typescript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true,
+          "enablePromptUseWorkspaceTsdk": true,
+          "tsdk": "node_modules/typescript/lib"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+        "[astro]": {
+          "editor.defaultFormatter": "astro-build.astro-vscode",
+          "editor.formatOnSave": true
+        },
+        "[mdx]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true
+        },
+
+        // --- Conventional Commits Scopes ---
+        "conventionalCommits.scopes": ["java", "docs", "website", "release"]
+      },
+      "extensions": [
+        // Core Build Tool
+        "task.vscode-task",
+
+        // General Utilities
+        "vivaxy.vscode-conventional-commits",
+        "adam-bender.commit-message-editor",
+        "EditorConfig.EditorConfig",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+
+        // Java Language Support
+        "vscjava.vscode-java-pack",
+
+        // Website development support
+        "astro-build.astro-vscode",
+        "unifiedjs.vscode-mdx",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "containerEnv": {
+    "MAVEN_OPTS": "-Xmx1024m"
+  },
+  "remoteEnv": {
+    "GH_TOKEN": "${localEnv:GH_TOKEN}",
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+  },
+  "remoteUser": "vscode"
+}
