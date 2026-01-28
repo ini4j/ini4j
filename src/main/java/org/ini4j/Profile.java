@@ -43,7 +43,7 @@ public interface Profile extends MultiMap<String, Profile.Section>, CommentedMap
 
     Section remove(Profile.Section section);
 
-    String remove(Object sectionName, Object optionName);
+    String removeOption(Object sectionName, Object optionName);
 
     interface Section extends OptionMap
     {

@@ -145,7 +145,7 @@ public class BeanTool
             }
             else if (clazz == Character.class)
             {
-                o = new Character(value.charAt(0));
+                o = Character.valueOf(value.charAt(0));
             }
             else
             {
@@ -179,15 +179,15 @@ public class BeanTool
             }
             else if (clazz == Character.TYPE)
             {
-                o = new Character('\0');
+                o = Character.valueOf('\0');
             }
             else if (clazz == Double.TYPE)
             {
-                o = new Double(0.0);
+                o = Double.valueOf(0.0);
             }
             else if (clazz == Float.TYPE)
             {
-                o = new Float(0.0f);
+                o = Float.valueOf(0.0f);
             }
             else if (clazz == Integer.TYPE)
             {
@@ -279,7 +279,7 @@ public class BeanTool
             }
             else if (clazz == Character.TYPE)
             {
-                o = new Character(value.charAt(0));
+                o = Character.valueOf(value.charAt(0));
             }
             else if (clazz == Double.TYPE)
             {

@@ -58,7 +58,10 @@ public class Helper
         {
             Config.PROP_EMPTY_OPTION, Config.PROP_GLOBAL_SECTION, Config.PROP_GLOBAL_SECTION_NAME, Config.PROP_INCLUDE, Config.PROP_LOWER_CASE_OPTION,
             Config.PROP_LOWER_CASE_SECTION, Config.PROP_MULTI_OPTION, Config.PROP_MULTI_SECTION, Config.PROP_STRICT_OPERATOR,
-            Config.PROP_UNNAMED_SECTION, Config.PROP_ESCAPE, Config.PROP_ESCAPE_NEWLINE
+            Config.PROP_UNNAMED_SECTION, Config.PROP_ESCAPE, Config.PROP_ESCAPE_NEWLINE,
+            Config.PROP_ESCAPE_KEY_ONLY, Config.PROP_PATH_SEPARATOR, Config.PROP_TREE, Config.PROP_PROPERTY_FIRST_UPPER,
+            Config.PROP_FILE_ENCODING, Config.PROP_LINE_SEPARATOR, Config.PROP_COMMENT, Config.PROP_HEADER_COMMENT,
+            Config.PROP_EMPTY_SECTION
         };
     private static final String[] FACTORY_PROPERTIES = { IniFormatter.class.getName(), IniParser.class.getName() };
     public static final String HEADER_COMMENT = " Copyright 2005,2009 Ivan SZKIBA\n" + "\n"

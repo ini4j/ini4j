@@ -16,12 +16,12 @@
 package org.ini4j;
 
 import junit.framework.TestCase;
-
+import org.junit.Before;
 import org.ini4j.test.Helper;
 
 public class Ini4jCase extends TestCase
 {
-    @Override protected void setUp() throws Exception
+    @Override @Before public void setUp() throws Exception
     {
         super.setUp();
         Helper.resetConfig();
