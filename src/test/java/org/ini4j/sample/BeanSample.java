@@ -15,41 +15,38 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                          ----------
-//|                          BeanSample
-//|
-//|BeanSample
-//|
-//| Accessing the whole .ini file as Java Beans-style beans.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//| Source code for beans: {{{Dwarf.java.html}Dwarf}},
-//| {{{Dwarfs.java.html}Dwarfs}}
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                          ----------
+// |                          BeanSample
+// |
+// |BeanSample
+// |
+// | Accessing the whole .ini file as Java Beans-style beans.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// | Source code for beans: {{{Dwarf.java.html}Dwarf}},
+// | {{{Dwarfs.java.html}Dwarfs}}
+// |
+// </editor-fold>
+// {
+import java.io.FileInputStream;
 import org.ini4j.Ini;
 
-import java.io.FileInputStream;
+public class BeanSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-public class BeanSample
-{
-    public static final String FILENAME = "dwarfs.ini";
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Dwarfs dwarfs = new Ini(new FileInputStream(filename)).as(Dwarfs.class);
+    Dwarf happy = dwarfs.getHappy();
+    Dwarf doc = dwarfs.getDoc();
 
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Dwarfs dwarfs = new Ini(new FileInputStream(filename)).as(Dwarfs.class);
-        Dwarf happy = dwarfs.getHappy();
-        Dwarf doc = dwarfs.getDoc();
-
-        System.out.println("Happy's age: " + happy.getAge());
-        doc.setAge(44);
-        System.out.println("Doc's age: " + doc.getAge());
-    }
+    System.out.println("Happy's age: " + happy.getAge());
+    doc.setAge(44);
+    System.out.println("Doc's age: " + doc.getAge());
+  }
 }
-//}
+// }

@@ -15,43 +15,38 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                                 ----------
-//|                                 DumpSample
-//|
-//|DumpSample
-//|
-//| Writing the .ini file received as input to the stand output.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                                 ----------
+// |                                 DumpSample
+// |
+// |DumpSample
+// |
+// | Writing the .ini file received as input to the stand output.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// </editor-fold>
+// {
+import java.io.FileReader;
 import org.ini4j.Ini;
 
-import java.io.FileReader;
+public class DumpSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-public class DumpSample
-{
-    public static final String FILENAME = "dwarfs.ini";
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Ini ini = new Ini(new FileReader(filename));
 
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Ini ini = new Ini(new FileReader(filename));
+    for (Ini.Section section : ini.values()) {
+      System.out.println("[" + section.getName() + "]");
+      for (String option : section.keySet()) {
+        System.out.println(option + " = " + section.fetch(option));
+      }
 
-        for (Ini.Section section : ini.values())
-        {
-            System.out.println("[" + section.getName() + "]");
-            for (String option : section.keySet())
-            {
-                System.out.println(option + " = " + section.fetch(option));
-            }
-
-            System.out.println();
-        }
+      System.out.println();
     }
+  }
 }
-//}
+// }

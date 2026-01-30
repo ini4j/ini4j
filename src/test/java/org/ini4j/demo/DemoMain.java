@@ -16,38 +16,32 @@
 package org.ini4j.demo;
 
 import java.awt.Dimension;
-
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-public class DemoMain implements Runnable
-{
-    private Demo _demo;
+public class DemoMain implements Runnable {
+  private Demo _demo;
 
-    public static void main(String[] args)
-    {
-        try
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception x)
-        {
-            x.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(new DemoMain());
+  public static void main(String[] args) {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception x) {
+      x.printStackTrace();
     }
 
-    @Override public void run()
-    {
-        JFrame frame = new JFrame("TopLevelDemo");
+    SwingUtilities.invokeLater(new DemoMain());
+  }
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(800, 600));
-        _demo = new Demo(frame.getContentPane());
-        _demo.init();
-        frame.pack();
-        frame.setVisible(true);
-    }
+  @Override
+  public void run() {
+    JFrame frame = new JFrame("TopLevelDemo");
+
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setPreferredSize(new Dimension(800, 600));
+    _demo = new Demo(frame.getContentPane());
+    _demo.init();
+    frame.pack();
+    frame.setVisible(true);
+  }
 }

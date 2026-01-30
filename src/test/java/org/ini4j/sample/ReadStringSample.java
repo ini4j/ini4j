@@ -15,37 +15,33 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                           ----------------
-//|                           ReadStringSample
-//|
-//|ReadStringSample
-//|
-//| This sample presents accessing String type values.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                           ----------------
+// |                           ReadStringSample
+// |
+// |ReadStringSample
+// |
+// | This sample presents accessing String type values.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// </editor-fold>
+// {
+import java.io.File;
+import java.util.prefs.Preferences;
 import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 
-import java.io.File;
+public class ReadStringSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-import java.util.prefs.Preferences;
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Preferences prefs = new IniPreferences(new Ini(new File(filename)));
 
-public class ReadStringSample
-{
-    public static final String FILENAME = "dwarfs.ini";
-
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Preferences prefs = new IniPreferences(new Ini(new File(filename)));
-
-        System.out.println("grumpy/homePage: " + prefs.node("grumpy").get("homePage", null));
-    }
+    System.out.println("grumpy/homePage: " + prefs.node("grumpy").get("homePage", null));
+  }
 }
-//}
+// }

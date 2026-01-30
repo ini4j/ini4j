@@ -15,62 +15,54 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                             --------------
-//|                             ListenerSample
-//|
-//|ListenerSample
-//|
-//| This advanced sample presents the event-controlled usage. The \[ini4j\]
-//| library fully supports the events defined in Preferences API.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                             --------------
+// |                             ListenerSample
+// |
+// |ListenerSample
+// |
+// | This advanced sample presents the event-controlled usage. The \[ini4j\]
+// | library fully supports the events defined in Preferences API.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// </editor-fold>
+// {
+import java.io.FileInputStream;
+import java.util.prefs.*;
 import org.ini4j.IniPreferences;
 
-import java.io.FileInputStream;
+public class ListenerSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-import java.util.prefs.*;
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Preferences prefs = new IniPreferences(new FileInputStream(filename));
+    Listener listener = new Listener();
 
-public class ListenerSample
-{
-    public static final String FILENAME = "dwarfs.ini";
+    prefs.addNodeChangeListener(listener);
+    Preferences jerry = prefs.node("jerry");
 
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Preferences prefs = new IniPreferences(new FileInputStream(filename));
-        Listener listener = new Listener();
+    jerry.addPreferenceChangeListener(listener);
+    jerry.put("color", "blue");
+    jerry.put("color", "gray");
+    jerry.putInt("age", 2);
+  }
 
-        prefs.addNodeChangeListener(listener);
-        Preferences jerry = prefs.node("jerry");
-
-        jerry.addPreferenceChangeListener(listener);
-        jerry.put("color", "blue");
-        jerry.put("color", "gray");
-        jerry.putInt("age", 2);
+  static class Listener implements NodeChangeListener, PreferenceChangeListener {
+    public void childAdded(NodeChangeEvent event) {
+      System.out.println("node added: " + event.getChild().name());
     }
 
-    static class Listener implements NodeChangeListener, PreferenceChangeListener
-    {
-        public void childAdded(NodeChangeEvent event)
-        {
-            System.out.println("node added: " + event.getChild().name());
-        }
-
-        public void childRemoved(NodeChangeEvent event)
-        {
-            System.out.println("node removed: " + event.getChild().name());
-        }
-
-        public void preferenceChange(PreferenceChangeEvent event)
-        {
-            System.out.println("preference changed: " + event.getKey() + " = " + event.getNewValue());
-        }
+    public void childRemoved(NodeChangeEvent event) {
+      System.out.println("node removed: " + event.getChild().name());
     }
+
+    public void preferenceChange(PreferenceChangeEvent event) {
+      System.out.println("preference changed: " + event.getKey() + " = " + event.getNewValue());
+    }
+  }
 }
-//}
+// }

@@ -19,128 +19,110 @@ import bsh.ConsoleInterface;
 import bsh.EvalError;
 import bsh.Interpreter;
 import bsh.NameSpace;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import org.ini4j.Config;
 import org.ini4j.Ini;
 import org.ini4j.Options;
 import org.ini4j.Persistable;
 import org.ini4j.Reg;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
+public class DemoModel implements Runnable {
+  public static enum Mode {
+    INI,
+    REG,
+    OPTIONS;
+  }
 
-public class DemoModel implements Runnable
-{
-    public static enum Mode
-    {
-        INI,
-        REG,
-        OPTIONS;
+  private Persistable _data;
+  private Interpreter _interpreter;
+  private Mode _mode = Mode.INI;
+
+  public DemoModel(ConsoleInterface console) {
+    _interpreter = new Interpreter(console);
+    NameSpace namespace = _interpreter.getNameSpace();
+
+    namespace.importPackage("org.ini4j.spi");
+    namespace.importPackage("org.ini4j");
+    namespace.importPackage("org.ini4j.sample");
+  }
+
+  public Object getData() {
+    return _data;
+  }
+
+  public Mode getMode() {
+    return _mode;
+  }
+
+  public void setMode(Mode mode) {
+    _mode = mode;
+  }
+
+  public void clear() throws EvalError {
+    _interpreter.unset("data");
+  }
+
+  public String help() throws IOException {
+    return readResource("help.txt");
+  }
+
+  public String load() throws IOException {
+    return readResource(_mode.name().toLowerCase() + "-data.txt");
+  }
+
+  public void parse(String text) throws IOException, EvalError {
+    Persistable data = newData();
+
+    data.load(new StringReader(text));
+    _interpreter.set("data", data);
+    _data = data;
+  }
+
+  @Override
+  public void run() {
+    _interpreter.setExitOnEOF(false);
+    _interpreter.run();
+  }
+
+  public String tip() throws IOException {
+    return readResource(_mode.name().toLowerCase() + "-tip.txt");
+  }
+
+  private Persistable newData() {
+    Persistable ret = null;
+
+    switch (_mode) {
+      case INI:
+        ret = new Ini();
+        break;
+
+      case REG:
+        ret = new Reg();
+        break;
+
+      case OPTIONS:
+        ret = new Options();
+        break;
     }
 
-    private Persistable _data;
-    private Interpreter _interpreter;
-    private Mode _mode = Mode.INI;
+    return ret;
+  }
 
-    public DemoModel(ConsoleInterface console)
-    {
-        _interpreter = new Interpreter(console);
-        NameSpace namespace = _interpreter.getNameSpace();
+  private String readResource(String path) throws IOException {
+    InputStream in = getClass().getResourceAsStream(path);
+    Reader reader = new InputStreamReader(in, Config.DEFAULT_FILE_ENCODING);
+    StringBuilder str = new StringBuilder();
+    char[] buff = new char[8192];
+    int n;
 
-        namespace.importPackage("org.ini4j.spi");
-        namespace.importPackage("org.ini4j");
-        namespace.importPackage("org.ini4j.sample");
+    while ((n = reader.read(buff)) >= 0) {
+      str.append(buff, 0, n);
     }
 
-    public Object getData()
-    {
-        return _data;
-    }
-
-    public Mode getMode()
-    {
-        return _mode;
-    }
-
-    public void setMode(Mode mode)
-    {
-        _mode = mode;
-    }
-
-    public void clear() throws EvalError
-    {
-        _interpreter.unset("data");
-    }
-
-    public String help() throws IOException
-    {
-        return readResource("help.txt");
-    }
-
-    public String load() throws IOException
-    {
-        return readResource(_mode.name().toLowerCase() + "-data.txt");
-    }
-
-    public void parse(String text) throws IOException, EvalError
-    {
-        Persistable data = newData();
-
-        data.load(new StringReader(text));
-        _interpreter.set("data", data);
-        _data = data;
-    }
-
-    @Override public void run()
-    {
-        _interpreter.setExitOnEOF(false);
-        _interpreter.run();
-    }
-
-    public String tip() throws IOException
-    {
-        return readResource(_mode.name().toLowerCase() + "-tip.txt");
-    }
-
-    private Persistable newData()
-    {
-        Persistable ret = null;
-
-        switch (_mode)
-        {
-
-            case INI:
-                ret = new Ini();
-                break;
-
-            case REG:
-                ret = new Reg();
-                break;
-
-            case OPTIONS:
-                ret = new Options();
-                break;
-        }
-
-        return ret;
-    }
-
-    private String readResource(String path) throws IOException
-    {
-        InputStream in = getClass().getResourceAsStream(path);
-        Reader reader = new InputStreamReader(in, Config.DEFAULT_FILE_ENCODING);
-        StringBuilder str = new StringBuilder();
-        char[] buff = new char[8192];
-        int n;
-
-        while ((n = reader.read(buff)) >= 0)
-        {
-            str.append(buff, 0, n);
-        }
-
-        return str.toString();
-    }
+    return str.toString();
+  }
 }

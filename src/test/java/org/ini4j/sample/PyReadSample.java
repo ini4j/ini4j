@@ -15,38 +15,35 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                                 ----------------------------------
-//|                                 Using Python like ConfigParser API
-//|
-//|Using Python like ConfigParser API
-//|
-//| For Python programmers the simlest API to use is ConfigParser.
-//| This sample presents accessing .ini files as Python ConfigParser objects.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs-py.ini.html}dwarfs-py.ini}}
-//| file.
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                                 ----------------------------------
+// |                                 Using Python like ConfigParser API
+// |
+// |Using Python like ConfigParser API
+// |
+// | For Python programmers the simlest API to use is ConfigParser.
+// | This sample presents accessing .ini files as Python ConfigParser objects.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs-py.ini.html}dwarfs-py.ini}}
+// | file.
+// |
+// </editor-fold>
+// {
 import org.ini4j.ConfigParser;
 
-public class PyReadSample
-{
-    public static final String FILENAME = "dwarfs-py.ini";
+public class PyReadSample {
+  public static final String FILENAME = "dwarfs-py.ini";
 
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        ConfigParser config = new ConfigParser();
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    ConfigParser config = new ConfigParser();
 
-        config.read(filename);
-        for (String key : config.options("sleepy"))
-        {
-            System.out.println("sleepy/" + key + " = " + config.get("sleepy", key));
-        }
+    config.read(filename);
+    for (String key : config.options("sleepy")) {
+      System.out.println("sleepy/" + key + " = " + config.get("sleepy", key));
     }
+  }
 }
-//}
+// }

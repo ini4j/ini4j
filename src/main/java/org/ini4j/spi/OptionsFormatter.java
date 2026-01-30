@@ -15,35 +15,29 @@
  */
 package org.ini4j.spi;
 
-import org.ini4j.Config;
-
 import java.io.PrintWriter;
 import java.io.Writer;
+import org.ini4j.Config;
 
-public class OptionsFormatter extends AbstractFormatter implements OptionsHandler
-{
-    public static OptionsFormatter newInstance(Writer out, Config config)
-    {
-        OptionsFormatter instance = newInstance();
+public class OptionsFormatter extends AbstractFormatter implements OptionsHandler {
+  public static OptionsFormatter newInstance(Writer out, Config config) {
+    OptionsFormatter instance = newInstance();
 
-        instance.setOutput((out instanceof PrintWriter) ? (PrintWriter) out : new PrintWriter(out));
-        instance.setConfig(config);
+    instance.setOutput((out instanceof PrintWriter) ? (PrintWriter) out : new PrintWriter(out));
+    instance.setConfig(config);
 
-        return instance;
-    }
+    return instance;
+  }
 
-    public void endOptions()
-    {
-        getOutput().flush();
-    }
+  public void endOptions() {
+    getOutput().flush();
+  }
 
-    public void startOptions()
-    {
-        assert true;
-    }
+  public void startOptions() {
+    assert true;
+  }
 
-    private static OptionsFormatter newInstance()
-    {
-        return ServiceFinder.findService(OptionsFormatter.class);
-    }
+  private static OptionsFormatter newInstance() {
+    return ServiceFinder.findService(OptionsFormatter.class);
+  }
 }

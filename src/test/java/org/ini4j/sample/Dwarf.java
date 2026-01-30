@@ -18,72 +18,70 @@ package org.ini4j.sample;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
-
 import java.net.URI;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                ---------------
-//|                Dwarf interface
-//|
-//|Dwarf interface
-//|
-//| This is a very simple bean interface with a few getter and setter. Some of
-//| the properties are java primitive types. The <<<homePage>>> property has a
-//| complex type (java.net.URI). It is not a problem for \[ini4j\] to do the
-//| required type conversion automatically between java.lang.String and the tpye
-//| of the given property. The <<<fortuneNumber>>> property is indexed, just to
-//| show you may use indexed properties as well.
-//|
-//</editor-fold>
-//{
-public interface Dwarf
-{
-    String PROP_AGE = "age";
-    String PROP_FORTUNE_NUMBER = "fortuneNumber";
-    String PROP_HEIGHT = "height";
-    String PROP_HOME_DIR = "homeDir";
-    String PROP_HOME_PAGE = "homePage";
-    String PROP_WEIGHT = "weight";
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                ---------------
+// |                Dwarf interface
+// |
+// |Dwarf interface
+// |
+// | This is a very simple bean interface with a few getter and setter. Some of
+// | the properties are java primitive types. The <<<homePage>>> property has a
+// | complex type (java.net.URI). It is not a problem for \[ini4j\] to do the
+// | required type conversion automatically between java.lang.String and the tpye
+// | of the given property. The <<<fortuneNumber>>> property is indexed, just to
+// | show you may use indexed properties as well.
+// |
+// </editor-fold>
+// {
+public interface Dwarf {
+  String PROP_AGE = "age";
+  String PROP_FORTUNE_NUMBER = "fortuneNumber";
+  String PROP_HEIGHT = "height";
+  String PROP_HOME_DIR = "homeDir";
+  String PROP_HOME_PAGE = "homePage";
+  String PROP_WEIGHT = "weight";
 
-    int getAge();
+  int getAge();
 
-    void setAge(int age);
+  void setAge(int age);
 
-    int[] getFortuneNumber();
+  int[] getFortuneNumber();
 
-    void setFortuneNumber(int[] value);
+  void setFortuneNumber(int[] value);
 
-    double getHeight();
+  double getHeight();
 
-    void setHeight(double height) throws PropertyVetoException;
+  void setHeight(double height) throws PropertyVetoException;
 
-    String getHomeDir();
+  String getHomeDir();
 
-    void setHomeDir(String dir);
+  void setHomeDir(String dir);
 
-    URI getHomePage();
+  URI getHomePage();
 
-    void setHomePage(URI location);
+  void setHomePage(URI location);
 
-    double getWeight();
+  double getWeight();
 
-    void setWeight(double weight);
+  void setWeight(double weight);
 
-    void addPropertyChangeListener(String property, PropertyChangeListener listener);
+  void addPropertyChangeListener(String property, PropertyChangeListener listener);
 
-    void addVetoableChangeListener(String property, VetoableChangeListener listener);
+  void addVetoableChangeListener(String property, VetoableChangeListener listener);
 
-    boolean hasAge();
+  boolean hasAge();
 
-    boolean hasHeight();
+  boolean hasHeight();
 
-    boolean hasHomePage();
+  boolean hasHomePage();
 
-    boolean hasWeight();
+  boolean hasWeight();
 
-    void removePropertyChangeListener(String property, PropertyChangeListener listener);
+  void removePropertyChangeListener(String property, PropertyChangeListener listener);
 
-    void removeVetoableChangeListener(String property, VetoableChangeListener listener);
+  void removeVetoableChangeListener(String property, VetoableChangeListener listener);
 }
-//}
+// }

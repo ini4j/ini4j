@@ -17,25 +17,21 @@ package org.ini4j.spi;
 
 import org.ini4j.Registry.Type;
 
-public class TypeValuesPair
-{
-    private final Type _type;
-    private final String[] _values;
+public class TypeValuesPair {
+  private final Type _type;
+  private final String[] _values;
 
-    @SuppressWarnings("PMD.ArrayIsStoredDirectly")
-    public TypeValuesPair(Type type, String[] values)
-    {
-        _type = type;
-        _values = values;
-    }
+  @SuppressWarnings("PMD.ArrayIsStoredDirectly")
+  public TypeValuesPair(Type type, String[] values) {
+    _type = type;
+    _values = values;
+  }
 
-    public Type getType()
-    {
-        return _type;
-    }
+  public Type getType() {
+    return _type;
+  }
 
-    public String[] getValues()
-    {
-        return _values;
-    }
+  public String[] getValues() {
+    return _values;
+  }
 }

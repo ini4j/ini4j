@@ -15,41 +15,38 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                               --------------
-//|                               NoImportSample
-//|
-//|NoImportSample
-//|
-//| Using [ini4j] without class level dependency (no Java imports). You may use
-//| \[ini4j\] library as full Preferences implementation for user and system
-//| root.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                               --------------
+// |                               NoImportSample
+// |
+// |NoImportSample
+// |
+// | Using [ini4j] without class level dependency (no Java imports). You may use
+// | \[ini4j\] library as full Preferences implementation for user and system
+// | root.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// </editor-fold>
+// {
 import java.util.prefs.Preferences;
 
-public class NoImportSample
-{
+public class NoImportSample {
 
-    static
-    {
-        System.setProperty("java.util.prefs.PreferencesFactory", "org.ini4j.IniPreferencesFactory");
+  static {
+    System.setProperty("java.util.prefs.PreferencesFactory", "org.ini4j.IniPreferencesFactory");
 
-        // you should set file:///... like URL as property value to work
-        System.setProperty("org.ini4j.prefs.user", "org/ini4j/sample/dwarfs.ini");
-    }
+    // you should set file:///... like URL as property value to work
+    System.setProperty("org.ini4j.prefs.user", "org/ini4j/sample/dwarfs.ini");
+  }
 
-    public static void main(String[] args) throws Exception
-    {
-        Preferences prefs = Preferences.userRoot();
+  public static void main(String[] args) throws Exception {
+    Preferences prefs = Preferences.userRoot();
 
-        System.out.println("grumpy/homePage: " + prefs.node("grumpy").get("homePage", null));
-        System.out.println(prefs.getClass());
-    }
+    System.out.println("grumpy/homePage: " + prefs.node("grumpy").get("homePage", null));
+    System.out.println(prefs.getClass());
+  }
 }
-//}
+// }

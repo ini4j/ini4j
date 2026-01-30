@@ -15,37 +15,36 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                ---------------
-//|                Dwarfs interface
-//|
-//|Dwarfs interface
-//|
-//</editor-fold>
-//{
-public interface Dwarfs
-{
-    String PROP_BASHFUL = "bashful";
-    String PROP_DOC = "doc";
-    String PROP_DOPEY = "dopey";
-    String PROP_GRUMPY = "grumpy";
-    String PROP_HAPPY = "happy";
-    String PROP_SLEEPY = "sleepy";
-    String PROP_SNEEZY = "sneezy";
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                ---------------
+// |                Dwarfs interface
+// |
+// |Dwarfs interface
+// |
+// </editor-fold>
+// {
+public interface Dwarfs {
+  String PROP_BASHFUL = "bashful";
+  String PROP_DOC = "doc";
+  String PROP_DOPEY = "dopey";
+  String PROP_GRUMPY = "grumpy";
+  String PROP_HAPPY = "happy";
+  String PROP_SLEEPY = "sleepy";
+  String PROP_SNEEZY = "sneezy";
 
-    Dwarf getBashful();
+  Dwarf getBashful();
 
-    Dwarf getDoc();
+  Dwarf getDoc();
 
-    Dwarf getDopey();
+  Dwarf getDopey();
 
-    Dwarf getGrumpy();
+  Dwarf getGrumpy();
 
-    Dwarf getHappy();
+  Dwarf getHappy();
 
-    Dwarf getSleepy();
+  Dwarf getSleepy();
 
-    Dwarf getSneezy();
+  Dwarf getSneezy();
 }
-//}
+// }

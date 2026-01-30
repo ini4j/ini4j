@@ -15,41 +15,37 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                          -------------------
-//|                          ReadPrimitiveSample
-//|
-//|ReadPrimitiveSample
-//|
-//| Reading some Java primitive type values.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//{
-//</editor-fold>
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                          -------------------
+// |                          ReadPrimitiveSample
+// |
+// |ReadPrimitiveSample
+// |
+// | Reading some Java primitive type values.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// {
+// </editor-fold>
+import java.io.File;
+import java.util.prefs.Preferences;
 import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 
-import java.io.File;
+public class ReadPrimitiveSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-import java.util.prefs.Preferences;
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Preferences prefs = new IniPreferences(new Ini(new File(filename)));
+    Preferences dopey = prefs.node("dopey");
+    int age = dopey.getInt("age", 0);
+    float weight = dopey.getFloat("weight", 0);
 
-public class ReadPrimitiveSample
-{
-    public static final String FILENAME = "dwarfs.ini";
-
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Preferences prefs = new IniPreferences(new Ini(new File(filename)));
-        Preferences dopey = prefs.node("dopey");
-        int age = dopey.getInt("age", 0);
-        float weight = dopey.getFloat("weight", 0);
-
-        System.out.println("dopey/age: " + age);
-        System.out.println("dopey/weight: " + weight);
-    }
+    System.out.println("dopey/age: " + age);
+    System.out.println("dopey/weight: " + weight);
+  }
 }
-//}
+// }

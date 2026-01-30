@@ -18,26 +18,21 @@ package org.ini4j.demo;
 import javax.swing.JApplet;
 import javax.swing.UIManager;
 
-public class DemoApplet extends JApplet
-{
-    private static final long serialVersionUID = -7269388726751989763L;
+public class DemoApplet extends JApplet {
+  private static final long serialVersionUID = -7269388726751989763L;
 
-    public DemoApplet()
-    {
-        try
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception x)
-        {
-            x.printStackTrace();
-        }
+  public DemoApplet() {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception x) {
+      x.printStackTrace();
     }
+  }
 
-    @Override public void init()
-    {
-        Demo demo = new Demo(getContentPane());
+  @Override
+  public void init() {
+    Demo demo = new Demo(getContentPane());
 
-        demo.init();
-    }
+    demo.init();
+  }
 }

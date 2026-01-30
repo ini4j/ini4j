@@ -15,38 +15,36 @@
  */
 package org.ini4j;
 
-import org.ini4j.Registry.Type;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import org.ini4j.Registry.Type;
 import org.junit.Test;
 
-public class BasicRegistryKeyTest extends Ini4jCase
-{
-    private static final String KEY = "key";
-    private static final String DUMMY = "dummy";
-    private static final String OPTION = "option";
+public class BasicRegistryKeyTest extends Ini4jCase {
+  private static final String KEY = "key";
+  private static final String DUMMY = "dummy";
+  private static final String OPTION = "option";
 
-    @Test public void testWrapped() throws Exception
-    {
-        BasicRegistry reg = new BasicRegistry();
-        Registry.Key parent = reg.add(KEY);
-        Registry.Key child = parent.addChild(DUMMY);
+  @Test
+  public void testWrapped() throws Exception {
+    BasicRegistry reg = new BasicRegistry();
+    Registry.Key parent = reg.add(KEY);
+    Registry.Key child = parent.addChild(DUMMY);
 
-        assertSame(parent, child.getParent());
-        assertSame(child, parent.getChild(DUMMY));
-        Registry.Key kid = child.addChild(KEY);
+    assertSame(parent, child.getParent());
+    assertSame(child, parent.getChild(DUMMY));
+    Registry.Key kid = child.addChild(KEY);
 
-        assertSame(kid, parent.lookup(DUMMY, KEY));
-        parent.put(OPTION, DUMMY);
-        parent.putType(OPTION, Type.REG_BINARY);
-        assertEquals(Type.REG_BINARY, parent.getType(OPTION));
-        parent.removeType(OPTION);
-        assertNull(parent.getType(OPTION));
-        parent.putType(OPTION, Type.REG_BINARY);
-        parent.remove(OPTION);
-        assertNull(parent.getType(OPTION));
-    }
+    assertSame(kid, parent.lookup(DUMMY, KEY));
+    parent.put(OPTION, DUMMY);
+    parent.putType(OPTION, Type.REG_BINARY);
+    assertEquals(Type.REG_BINARY, parent.getType(OPTION));
+    parent.removeType(OPTION);
+    assertNull(parent.getType(OPTION));
+    parent.putType(OPTION, Type.REG_BINARY);
+    parent.remove(OPTION);
+    assertNull(parent.getType(OPTION));
+  }
 }

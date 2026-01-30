@@ -15,9 +15,8 @@
  */
 package org.ini4j.spi;
 
-interface HandlerBase
-{
-    void handleComment(String comment);
+interface HandlerBase {
+  void handleComment(String comment);
 
-    void handleOption(String optionName, String optionValue);
+  void handleOption(String optionName, String optionValue);
 }

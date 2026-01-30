@@ -15,17 +15,18 @@
  */
 package org.ini4j.spi;
 
-public interface IniHandler extends HandlerBase
-{
-    void endIni();
+public interface IniHandler extends HandlerBase {
+  void endIni();
 
-    void endSection();
+  void endSection();
 
-    @Override void handleComment(String comment);
+  @Override
+  void handleComment(String comment);
 
-    @Override void handleOption(String optionName, String optionValue);
+  @Override
+  void handleOption(String optionName, String optionValue);
 
-    void startIni();
+  void startIni();
 
-    void startSection(String sectionName);
+  void startSection(String sectionName);
 }

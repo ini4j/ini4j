@@ -17,12 +17,10 @@ package org.ini4j;
 
 import java.io.IOException;
 
-public class InvalidFileFormatException extends IOException
-{
-    private static final long serialVersionUID = -4354616830804732309L;
+public class InvalidFileFormatException extends IOException {
+  private static final long serialVersionUID = -4354616830804732309L;
 
-    public InvalidFileFormatException(String message)
-    {
-        super(message);
-    }
+  public InvalidFileFormatException(String message) {
+    super(message);
+  }
 }

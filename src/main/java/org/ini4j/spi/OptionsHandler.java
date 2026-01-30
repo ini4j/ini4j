@@ -15,13 +15,14 @@
  */
 package org.ini4j.spi;
 
-public interface OptionsHandler extends HandlerBase
-{
-    void endOptions();
+public interface OptionsHandler extends HandlerBase {
+  void endOptions();
 
-    @Override void handleComment(String comment);
+  @Override
+  void handleComment(String comment);
 
-    @Override void handleOption(String optionName, String optionValue);
+  @Override
+  void handleOption(String optionName, String optionValue);
 
-    void startOptions();
+  void startOptions();
 }

@@ -15,41 +15,36 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                               ------------
-//|                               StreamSample
-//|
-//|StreamSample
-//|
-//| This sample demonstrates that the Preferences API may be used without a
-//| filesystem access. In this case, naturally, there's no way of saving the
-//| altered settings, they may only be accessed in the memory.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                               ------------
+// |                               StreamSample
+// |
+// |StreamSample
+// |
+// | This sample demonstrates that the Preferences API may be used without a
+// | filesystem access. In this case, naturally, there's no way of saving the
+// | altered settings, they may only be accessed in the memory.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// </editor-fold>
+// {
+import java.io.FileInputStream;
+import java.util.prefs.Preferences;
 import org.ini4j.IniPreferences;
 
-import java.io.FileInputStream;
+public class StreamSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-import java.util.prefs.Preferences;
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Preferences prefs = new IniPreferences(new FileInputStream(filename));
 
-public class StreamSample
-{
-    public static final String FILENAME = "dwarfs.ini";
-
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Preferences prefs = new IniPreferences(new FileInputStream(filename));
-
-        for (String key : prefs.node("sleepy").keys())
-        {
-            System.out.println("sleepy/" + key + " = " + prefs.node("sleepy").get(key, null));
-        }
+    for (String key : prefs.node("sleepy").keys()) {
+      System.out.println("sleepy/" + key + " = " + prefs.node("sleepy").get(key, null));
     }
+  }
 }
-//}
+// }

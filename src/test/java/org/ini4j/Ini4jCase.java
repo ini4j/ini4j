@@ -16,19 +16,18 @@
 package org.ini4j;
 
 import junit.framework.TestCase;
-import org.junit.Before;
 import org.ini4j.test.Helper;
+import org.junit.Before;
 
-public class Ini4jCase extends TestCase
-{
-    @Override @Before public void setUp() throws Exception
-    {
-        super.setUp();
-        Helper.resetConfig();
-    }
+public class Ini4jCase extends TestCase {
+  @Override
+  @Before
+  public void setUp() throws Exception {
+    super.setUp();
+    Helper.resetConfig();
+  }
 
-    protected void missing(Class<? extends Exception> clazz)
-    {
-        fail("Missing exception: " + clazz.getName());
-    }
+  protected void missing(Class<? extends Exception> clazz) {
+    fail("Missing exception: " + clazz.getName());
+  }
 }
