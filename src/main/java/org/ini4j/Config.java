@@ -42,6 +42,7 @@ public class Config implements Cloneable, Serializable {
   public static final String PROP_LINE_SEPARATOR = "lineSeparator";
   public static final String PROP_COMMENT = "comment";
   public static final String PROP_HEADER_COMMENT = "headerComment";
+  public static final String PROP_MAX_RESOLVE_DEPTH = "maxResolveDepth";
   public static final boolean DEFAULT_EMPTY_OPTION = false;
   public static final boolean DEFAULT_EMPTY_SECTION = false;
   public static final boolean DEFAULT_GLOBAL_SECTION = false;
@@ -63,6 +64,7 @@ public class Config implements Cloneable, Serializable {
   public static final char DEFAULT_PATH_SEPARATOR = '/';
   public static final String DEFAULT_LINE_SEPARATOR = getSystemProperty("line.separator", "\n");
   public static final Charset DEFAULT_FILE_ENCODING = Charset.forName("UTF-8");
+  public static final int DEFAULT_MAX_RESOLVE_DEPTH = 16;
   private static final Config GLOBAL = new Config();
   private static final long serialVersionUID = 2865793267410367814L;
   private boolean _comment;
@@ -86,6 +88,7 @@ public class Config implements Cloneable, Serializable {
   private boolean _strictOperator;
   private boolean _tree;
   private boolean _unnamedSection;
+  private int _maxResolveDepth;
 
   public Config() {
     reset();
@@ -295,6 +298,14 @@ public class Config implements Cloneable, Serializable {
     return _escapeKeyOnly;
   }
 
+  public int getMaxResolveDepth() {
+    return _maxResolveDepth;
+  }
+
+  public void setMaxResolveDepth(int value) {
+    _maxResolveDepth = value;
+  }
+
   @Override
   public Config clone() {
     try {
@@ -326,6 +337,7 @@ public class Config implements Cloneable, Serializable {
     _fileEncoding = getCharset(PROP_FILE_ENCODING, DEFAULT_FILE_ENCODING);
     _comment = getBoolean(PROP_COMMENT, DEFAULT_COMMENT);
     _headerComment = getBoolean(PROP_HEADER_COMMENT, DEFAULT_HEADER_COMMENT);
+    _maxResolveDepth = getInt(PROP_MAX_RESOLVE_DEPTH, DEFAULT_MAX_RESOLVE_DEPTH);
   }
 
   private boolean getBoolean(String name, boolean defaultValue) {
@@ -348,5 +360,19 @@ public class Config implements Cloneable, Serializable {
 
   private String getString(String name, String defaultValue) {
     return getSystemProperty(KEY_PREFIX + name, defaultValue);
+  }
+
+  private int getInt(String name, int defaultValue) {
+    String value = getSystemProperty(KEY_PREFIX + name);
+
+    if (value == null) {
+      return defaultValue;
+    }
+
+    try {
+      return Integer.parseInt(value);
+    } catch (NumberFormatException e) {
+      return defaultValue;
+    }
   }
 }

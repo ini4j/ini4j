@@ -47,6 +47,10 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
     _propertyFirstUpper = propertyFirstUpper;
   }
 
+  Config getConfig() {
+    return Config.getGlobal();
+  }
+
   @Override
   public String getComment() {
     return _comment;
@@ -159,6 +163,14 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
   }
 
   void resolve(StringBuilder buffer, Section owner) {
+    resolve(buffer, owner, 0);
+  }
+
+  void resolve(StringBuilder buffer, Section owner, int depth) {
+    if (depth >= getConfig().getMaxResolveDepth()) {
+      throw new CircularReferenceException(getConfig().getMaxResolveDepth());
+    }
+
     Matcher m = EXPRESSION.matcher(buffer);
 
     while (m.find()) {
@@ -172,6 +184,15 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
         value = Config.getEnvironment(optionName);
       } else if (SECTION_SYSTEM_PROPERTIES.equals(sectionName)) {
         value = Config.getSystemProperty(optionName);
+      } else if (section instanceof BasicProfileSection) {
+        BasicProfileSection bps = (BasicProfileSection) section;
+        if (optionIndex == -1) {
+          // When no index specified, use the default behavior: get the last value
+          int len = bps.length(optionName);
+          value = (len == 0) ? null : bps.fetchInternal(optionName, len - 1, depth + 1);
+        } else {
+          value = bps.fetchInternal(optionName, optionIndex, depth + 1);
+        }
       } else if (section != null) {
         value =
             (optionIndex == -1)
