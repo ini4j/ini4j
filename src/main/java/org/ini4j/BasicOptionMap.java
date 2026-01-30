@@ -44,6 +44,14 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
     _propertyFirstUpper = propertyFirstUpper;
   }
 
+  Config getConfig() {
+    return Config.getGlobal();
+  }
+
+  boolean hasVariableSubstitution(String value) {
+    return (value != null) && (value.indexOf(SUBST_CHAR) >= 0);
+  }
+
   @Override
   @SuppressWarnings(Warnings.UNCHECKED)
   public <T> T getAll(Object key, Class<T> clazz) {
@@ -99,12 +107,16 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
 
   @Override
   public String fetch(Object key, int index) {
+    return fetchInternal(key, index, 0);
+  }
+
+  protected String fetchInternal(Object key, int index, int depth) {
     String value = get(key, index);
 
-    if ((value != null) && (value.indexOf(SUBST_CHAR) >= 0)) {
+    if (hasVariableSubstitution(value)) {
       StringBuilder buffer = new StringBuilder(value);
 
-      resolve(buffer);
+      resolve(buffer, depth);
       value = buffer.toString();
     }
 
@@ -238,6 +250,14 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
   }
 
   void resolve(StringBuilder buffer) {
+    resolve(buffer, 0);
+  }
+
+  void resolve(StringBuilder buffer, int depth) {
+    if (depth >= getConfig().getMaxResolveDepth()) {
+      throw new CircularReferenceException(getConfig().getMaxResolveDepth());
+    }
+
     Matcher m = EXPRESSION.matcher(buffer);
 
     while (m.find()) {
@@ -250,7 +270,13 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
       } else if (name.startsWith(SYSTEM_PROPERTY_PREFIX)) {
         value = Config.getSystemProperty(name.substring(SYSTEM_PROPERTY_PREFIX_LEN));
       } else {
-        value = (index == -1) ? fetch(name) : fetch(name, index);
+        if (index == -1) {
+          // When no index specified, use the default behavior: get the last value
+          int len = length(name);
+          value = (len == 0) ? null : fetchInternal(name, len - 1, depth + 1);
+        } else {
+          value = fetchInternal(name, index, depth + 1);
+        }
       }
 
       if (value != null) {

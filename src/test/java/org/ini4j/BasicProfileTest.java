@@ -39,6 +39,53 @@ public class BasicProfileTest extends Ini4jCase {
   private static final String LOCATION_2 = "http://ini4j.org";
 
   /*
+   * Test case for CVE-2022-41404
+   * https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-41404
+   *
+   * Original issue:
+   * When resolving variables in INI files, it was possible to create a circular
+   * dependency that would lead to a StackOverflowError, effectively crashing the JVM.
+   * This happened because there was no limit on the depth of recursion when resolving variables.
+   * Fix:
+   * A maximum recursion depth was introduced to prevent infinite loops during variable resolution.
+   * When the limit is reached, an IllegalArgumentException is thrown instead of allowing
+   * the recursion to continue indefinitely.
+   *
+   * Thanks to [bingdian](https://sourceforge.net/u/bingdians/profile/)
+   * for the original vulnerability report on SourceForge ticket #56.
+   */
+  @Test
+  public void testFetchRecursiveInfiniteLoop() {
+    // 1. Setup a circular dependency
+    // section/a -> section/b -> section/a ...
+    Ini ini = new Ini();
+    ini.put("section", "a", "${section/b}");
+    ini.put("section", "b", "${section/a}");
+
+    try {
+      // 2. Trigger the resolution
+      ini.fetch("section", "a");
+
+      // If we get here, the depth limit didn't work (or wasn't hit)
+      fail("Should have thrown CircularReferenceException due to infinite recursion");
+
+    } catch (CircularReferenceException e) {
+      // 3. SUCCESS (After Fix)
+      // The fix converts a crash into a safe exception
+      // System.out.println("Verified: " + e.getMessage());
+      assertTrue(
+          "Message should indicate recursion/loop",
+          e.getMessage().contains("Circular reference") || e.getMessage().contains("depth limit"));
+
+    } catch (StackOverflowError e) {
+      // 4. FAILURE (Before Fix)
+      // This block catches the JVM crash so JUnit can report it cleanly
+      // instead of effectively killing the test runner.
+      fail("Reproduced CVE-2022-41404: StackOverflowError occurred during variable resolution");
+    }
+  }
+
+  /*
    * thanx to Gary Pampara for bug report
    */
   @Test

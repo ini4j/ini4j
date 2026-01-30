@@ -34,6 +34,11 @@ class BasicProfileSection extends BasicOptionMap implements Profile.Section {
   }
 
   @Override
+  Config getConfig() {
+    return _profile.getConfig();
+  }
+
+  @Override
   public Profile.Section getChild(String key) {
     return _profile.get(childName(key));
   }
@@ -114,6 +119,20 @@ class BasicProfileSection extends BasicOptionMap implements Profile.Section {
   @Override
   void resolve(StringBuilder buffer) {
     _profile.resolve(buffer, this);
+  }
+
+  @Override
+  protected String fetchInternal(Object key, int index, int depth) {
+    String value = get(key, index);
+
+    if (hasVariableSubstitution(value)) {
+      StringBuilder buffer = new StringBuilder(value);
+
+      _profile.resolve(buffer, this, depth);
+      value = buffer.toString();
+    }
+
+    return value;
   }
 
   private String childName(String key) {

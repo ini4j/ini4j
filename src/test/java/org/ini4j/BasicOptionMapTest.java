@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 import org.ini4j.sample.Dwarf;
@@ -52,6 +53,43 @@ public class BasicOptionMapTest extends Ini4jCase {
     assertEquals("Hi Joe!", map.fetch("player.greeting"));
     assertEquals("foo.bar", map.fetch("player.domain"));
     assertEquals("Joe@foo.bar", map.fetch("player.email"));
+  }
+
+  /*
+   * Test case for CVE-2022-41404
+   * https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-41404
+   *
+   * Tests that BasicOptionMap properly prevents infinite recursion when
+   * resolving circular variable references within a single option map.
+   *
+   * Example: a -> ${b}, b -> ${a}
+   *
+   * Thanks to [bingdian](https://sourceforge.net/u/bingdians/profile/)
+   * for the original vulnerability report on SourceForge ticket #56.
+   */
+  @Test
+  public void testFetchCircularReference() {
+    OptionMap map = new BasicOptionMap();
+
+    // Setup circular dependency: a -> b -> a
+    map.put("a", "${b}");
+    map.put("b", "${a}");
+
+    try {
+      // Trigger the resolution
+      map.fetch("a");
+
+      fail("Should have thrown CircularReferenceException due to circular reference");
+
+    } catch (CircularReferenceException e) {
+      // SUCCESS: The fix prevents infinite recursion
+      assertTrue(
+          "Message should indicate circular reference detected",
+          e.getMessage().contains("Circular reference") || e.getMessage().contains("depth limit"));
+
+    } catch (StackOverflowError e) {
+      fail("Reproduced CVE-2022-41404: StackOverflowError occurred during variable resolution");
+    }
   }
 
   @Test

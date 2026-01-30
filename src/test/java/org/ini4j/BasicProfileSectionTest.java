@@ -19,6 +19,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.ini4j.sample.Dwarf;
 import org.ini4j.sample.Dwarfs;
@@ -87,5 +89,43 @@ public class BasicProfileSectionTest extends Ini4jCase {
     Helper.assertEquals(DwarfsData.happy, dwarfs.getChild(Dwarfs.PROP_HAPPY).as(Dwarf.class));
     Helper.assertEquals(DwarfsData.sleepy, dwarfs.getChild(Dwarfs.PROP_SLEEPY).as(Dwarf.class));
     Helper.assertEquals(DwarfsData.sneezy, dwarfs.getChild(Dwarfs.PROP_SNEEZY).as(Dwarf.class));
+  }
+
+  /*
+   * Test case for CVE-2022-41404
+   * https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-41404
+   *
+   * Tests that BasicProfileSection properly prevents infinite recursion when
+   * resolving circular variable references across different sections.
+   *
+   * Example: section1/a -> ${section2/b}, section2/b -> ${section1/a}
+   *
+   * Thanks to [bingdian](https://sourceforge.net/u/bingdians/profile/)
+   * for the original vulnerability report on SourceForge ticket #56.
+   */
+  @Test
+  public void testFetchCircularReferenceAcrossSections() {
+    Ini ini = new Ini();
+
+    // Setup circular dependency across sections
+    ini.put("section1", "a", "${section2/b}");
+    ini.put("section2", "b", "${section1/a}");
+
+    try {
+      // Trigger the resolution through a section
+      Profile.Section section1 = ini.get("section1");
+      section1.fetch("a");
+
+      fail("Should have thrown CircularReferenceException due to circular reference");
+
+    } catch (CircularReferenceException e) {
+      // SUCCESS: The fix prevents infinite recursion
+      assertTrue(
+          "Message should indicate circular reference detected",
+          e.getMessage().contains("Circular reference") || e.getMessage().contains("depth limit"));
+
+    } catch (StackOverflowError e) {
+      fail("Reproduced CVE-2022-41404: StackOverflowError occurred during variable resolution");
+    }
   }
 }
