@@ -15,80 +15,77 @@
  */
 package org.ini4j;
 
-import org.ini4j.sample.Dwarf;
-import org.ini4j.sample.Dwarfs;
-
-import org.ini4j.test.DwarfsData;
-import org.ini4j.test.Helper;
-import org.ini4j.test.TaleData;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import org.ini4j.sample.Dwarf;
+import org.ini4j.sample.Dwarfs;
+import org.ini4j.test.DwarfsData;
+import org.ini4j.test.Helper;
+import org.ini4j.test.TaleData;
 import org.junit.Test;
 
-public class BasicProfileSectionTest extends Ini4jCase
-{
-    @Test public void testAddChild() throws Exception
-    {
-        Profile prof = Helper.newTaleIni();
-        Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
-        Profile.Section doc = dwarfs.getChild(Dwarfs.PROP_DOC);
-        Profile.Section dopey2 = doc.addChild(Dwarfs.PROP_DOPEY);
+public class BasicProfileSectionTest extends Ini4jCase {
+  @Test
+  public void testAddChild() throws Exception {
+    Profile prof = Helper.newTaleIni();
+    Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
+    Profile.Section doc = dwarfs.getChild(Dwarfs.PROP_DOC);
+    Profile.Section dopey2 = doc.addChild(Dwarfs.PROP_DOPEY);
 
-        assertSame(doc, dopey2.getParent());
-        assertSame(dopey2, dwarfs.lookup(Dwarfs.PROP_DOC, Dwarfs.PROP_DOPEY));
-        assertSame(dopey2, dwarfs.lookup(Dwarfs.PROP_DOC + '/' + Dwarfs.PROP_DOPEY));
-        assertEquals(1, doc.childrenNames().length);
-        doc.removeChild(Dwarfs.PROP_DOPEY);
-        assertEquals(0, doc.childrenNames().length);
-        assertNull(dwarfs.lookup(Dwarfs.PROP_DOC, Dwarfs.PROP_DOPEY));
-        assertNull(dwarfs.lookup(Dwarfs.PROP_DOC + '/' + Dwarfs.PROP_DOPEY));
-    }
+    assertSame(doc, dopey2.getParent());
+    assertSame(dopey2, dwarfs.lookup(Dwarfs.PROP_DOC, Dwarfs.PROP_DOPEY));
+    assertSame(dopey2, dwarfs.lookup(Dwarfs.PROP_DOC + '/' + Dwarfs.PROP_DOPEY));
+    assertEquals(1, doc.childrenNames().length);
+    doc.removeChild(Dwarfs.PROP_DOPEY);
+    assertEquals(0, doc.childrenNames().length);
+    assertNull(dwarfs.lookup(Dwarfs.PROP_DOC, Dwarfs.PROP_DOPEY));
+    assertNull(dwarfs.lookup(Dwarfs.PROP_DOC + '/' + Dwarfs.PROP_DOPEY));
+  }
 
-    @Test public void testGetChild() throws Exception
-    {
-        Profile prof = Helper.newTaleIni();
-        Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
+  @Test
+  public void testGetChild() throws Exception {
+    Profile prof = Helper.newTaleIni();
+    Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
 
-        assertArrayEquals(DwarfsData.dwarfNames, dwarfs.childrenNames());
-        assertSame(prof.get(TaleData.bashful.name), dwarfs.getChild(Dwarfs.PROP_BASHFUL));
-        assertSame(prof.get(TaleData.doc.name), dwarfs.getChild(Dwarfs.PROP_DOC));
-        assertSame(prof.get(TaleData.dopey.name), dwarfs.getChild(Dwarfs.PROP_DOPEY));
-        assertSame(prof.get(TaleData.grumpy.name), dwarfs.getChild(Dwarfs.PROP_GRUMPY));
-        assertSame(prof.get(TaleData.happy.name), dwarfs.getChild(Dwarfs.PROP_HAPPY));
-        assertSame(prof.get(TaleData.sleepy.name), dwarfs.getChild(Dwarfs.PROP_SLEEPY));
-        assertSame(prof.get(TaleData.sneezy.name), dwarfs.getChild(Dwarfs.PROP_SNEEZY));
-    }
+    assertArrayEquals(DwarfsData.dwarfNames, dwarfs.childrenNames());
+    assertSame(prof.get(TaleData.bashful.name), dwarfs.getChild(Dwarfs.PROP_BASHFUL));
+    assertSame(prof.get(TaleData.doc.name), dwarfs.getChild(Dwarfs.PROP_DOC));
+    assertSame(prof.get(TaleData.dopey.name), dwarfs.getChild(Dwarfs.PROP_DOPEY));
+    assertSame(prof.get(TaleData.grumpy.name), dwarfs.getChild(Dwarfs.PROP_GRUMPY));
+    assertSame(prof.get(TaleData.happy.name), dwarfs.getChild(Dwarfs.PROP_HAPPY));
+    assertSame(prof.get(TaleData.sleepy.name), dwarfs.getChild(Dwarfs.PROP_SLEEPY));
+    assertSame(prof.get(TaleData.sneezy.name), dwarfs.getChild(Dwarfs.PROP_SNEEZY));
+  }
 
-    @Test public void testGetParent() throws Exception
-    {
-        Profile prof = Helper.newTaleIni();
-        Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
+  @Test
+  public void testGetParent() throws Exception {
+    Profile prof = Helper.newTaleIni();
+    Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
 
-        assertNull(dwarfs.getParent());
-        assertSame(dwarfs, prof.get(TaleData.bashful.name).getParent());
-        assertSame(dwarfs, prof.get(TaleData.doc.name).getParent());
-        assertSame(dwarfs, prof.get(TaleData.dopey.name).getParent());
-        assertSame(dwarfs, prof.get(TaleData.grumpy.name).getParent());
-        assertSame(dwarfs, prof.get(TaleData.happy.name).getParent());
-        assertSame(dwarfs, prof.get(TaleData.sleepy.name).getParent());
-        assertSame(dwarfs, prof.get(TaleData.sneezy.name).getParent());
-    }
+    assertNull(dwarfs.getParent());
+    assertSame(dwarfs, prof.get(TaleData.bashful.name).getParent());
+    assertSame(dwarfs, prof.get(TaleData.doc.name).getParent());
+    assertSame(dwarfs, prof.get(TaleData.dopey.name).getParent());
+    assertSame(dwarfs, prof.get(TaleData.grumpy.name).getParent());
+    assertSame(dwarfs, prof.get(TaleData.happy.name).getParent());
+    assertSame(dwarfs, prof.get(TaleData.sleepy.name).getParent());
+    assertSame(dwarfs, prof.get(TaleData.sneezy.name).getParent());
+  }
 
-    @Test public void testLoad() throws Exception
-    {
-        Profile prof = Helper.loadTaleIni();
-        Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
+  @Test
+  public void testLoad() throws Exception {
+    Profile prof = Helper.loadTaleIni();
+    Profile.Section dwarfs = prof.get(TaleData.PROP_DWARFS);
 
-        Helper.assertEquals(DwarfsData.bashful, dwarfs.getChild(Dwarfs.PROP_BASHFUL).as(Dwarf.class));
-        Helper.assertEquals(DwarfsData.doc, dwarfs.getChild(Dwarfs.PROP_DOC).as(Dwarf.class));
-        Helper.assertEquals(DwarfsData.dopey, dwarfs.getChild(Dwarfs.PROP_DOPEY).as(Dwarf.class));
-        Helper.assertEquals(DwarfsData.grumpy, dwarfs.getChild(Dwarfs.PROP_GRUMPY).as(Dwarf.class));
-        Helper.assertEquals(DwarfsData.happy, dwarfs.getChild(Dwarfs.PROP_HAPPY).as(Dwarf.class));
-        Helper.assertEquals(DwarfsData.sleepy, dwarfs.getChild(Dwarfs.PROP_SLEEPY).as(Dwarf.class));
-        Helper.assertEquals(DwarfsData.sneezy, dwarfs.getChild(Dwarfs.PROP_SNEEZY).as(Dwarf.class));
-    }
+    Helper.assertEquals(DwarfsData.bashful, dwarfs.getChild(Dwarfs.PROP_BASHFUL).as(Dwarf.class));
+    Helper.assertEquals(DwarfsData.doc, dwarfs.getChild(Dwarfs.PROP_DOC).as(Dwarf.class));
+    Helper.assertEquals(DwarfsData.dopey, dwarfs.getChild(Dwarfs.PROP_DOPEY).as(Dwarf.class));
+    Helper.assertEquals(DwarfsData.grumpy, dwarfs.getChild(Dwarfs.PROP_GRUMPY).as(Dwarf.class));
+    Helper.assertEquals(DwarfsData.happy, dwarfs.getChild(Dwarfs.PROP_HAPPY).as(Dwarf.class));
+    Helper.assertEquals(DwarfsData.sleepy, dwarfs.getChild(Dwarfs.PROP_SLEEPY).as(Dwarf.class));
+    Helper.assertEquals(DwarfsData.sneezy, dwarfs.getChild(Dwarfs.PROP_SNEEZY).as(Dwarf.class));
+  }
 }

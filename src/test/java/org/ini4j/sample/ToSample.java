@@ -15,40 +15,37 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                                 --------
-//|                                 ToSample
-//|
-//|ToSample
-//|
-//| Unmarshall Java Beans from Ini.Section.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//| Source code for beans: {{{Dwarf.java.html}Dwarf}},
-//| {{{DwarfBean.java.html}DwarfBean}}
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                                 --------
+// |                                 ToSample
+// |
+// |ToSample
+// |
+// | Unmarshall Java Beans from Ini.Section.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// | Source code for beans: {{{Dwarf.java.html}Dwarf}},
+// | {{{DwarfBean.java.html}DwarfBean}}
+// |
+// </editor-fold>
+// {
+import java.io.FileInputStream;
 import org.ini4j.Ini;
 
-import java.io.FileInputStream;
+public class ToSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-public class ToSample
-{
-    public static final String FILENAME = "dwarfs.ini";
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Ini ini = new Ini(new FileInputStream(filename));
+    DwarfBean happy = new DwarfBean();
 
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Ini ini = new Ini(new FileInputStream(filename));
-        DwarfBean happy = new DwarfBean();
-
-        ini.get("happy").to(happy);
-        System.out.println("Happy's age: " + happy.getAge());
-        System.out.println("Happy's homePage: " + happy.getHomePage());
-    }
+    ini.get("happy").to(happy);
+    System.out.println("Happy's age: " + happy.getAge());
+    System.out.println("Happy's homePage: " + happy.getHomePage());
+  }
 }
-//}
+// }

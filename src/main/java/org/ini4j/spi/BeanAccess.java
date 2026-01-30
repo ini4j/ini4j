@@ -15,19 +15,18 @@
  */
 package org.ini4j.spi;
 
-public interface BeanAccess
-{
-    void propAdd(String propertyName, String value);
+public interface BeanAccess {
+  void propAdd(String propertyName, String value);
 
-    String propDel(String propertyName);
+  String propDel(String propertyName);
 
-    String propGet(String propertyName);
+  String propGet(String propertyName);
 
-    String propGet(String propertyName, int index);
+  String propGet(String propertyName, int index);
 
-    int propLength(String propertyName);
+  int propLength(String propertyName);
 
-    String propSet(String propertyName, String value);
+  String propSet(String propertyName, String value);
 
-    String propSet(String propertyName, String value, int index);
+  String propSet(String propertyName, String value, int index);
 }

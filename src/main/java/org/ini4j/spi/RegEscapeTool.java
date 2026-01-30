@@ -15,269 +15,218 @@
  */
 package org.ini4j.spi;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import org.ini4j.Registry;
-
 import org.ini4j.Registry.Type;
 
-import java.io.UnsupportedEncodingException;
+public class RegEscapeTool extends EscapeTool {
+  private static final RegEscapeTool INSTANCE = ServiceFinder.findService(RegEscapeTool.class);
+  private static final Charset HEX_CHARSET = Charset.forName("UTF-16LE");
+  private static final int LOWER_DIGIT = 0x0f;
+  private static final int UPPER_DIGIT = 0xf0;
+  private static final int DIGIT_SIZE = 4;
 
-import java.nio.charset.Charset;
+  public static final RegEscapeTool getInstance() {
+    return INSTANCE;
+  }
 
-import java.util.Arrays;
+  public TypeValuesPair decode(String raw) {
+    Type type = type(raw);
+    String value =
+        (type == Type.REG_SZ) ? unquote(raw) : raw.substring(type.toString().length() + 1);
+    String[] values;
 
-public class RegEscapeTool extends EscapeTool
-{
-    private static final RegEscapeTool INSTANCE = ServiceFinder.findService(RegEscapeTool.class);
-    private static final Charset HEX_CHARSET = Charset.forName("UTF-16LE");
-    private static final int LOWER_DIGIT = 0x0f;
-    private static final int UPPER_DIGIT = 0xf0;
-    private static final int DIGIT_SIZE = 4;
+    switch (type) {
+      case REG_EXPAND_SZ:
+      case REG_MULTI_SZ:
+        value = bytes2string(binary(value));
+        break;
 
-    public static final RegEscapeTool getInstance()
-    {
-        return INSTANCE;
+      case REG_DWORD:
+        value = String.valueOf(Long.parseLong(value, HEX_RADIX));
+        break;
+
+      case REG_SZ:
+        break;
+
+      default:
+        break;
     }
 
-    public TypeValuesPair decode(String raw)
-    {
-        Type type = type(raw);
-        String value = (type == Type.REG_SZ) ? unquote(raw) : raw.substring(type.toString().length() + 1);
-        String[] values;
-
-        switch (type)
-        {
-
-            case REG_EXPAND_SZ:
-            case REG_MULTI_SZ:
-                value = bytes2string(binary(value));
-                break;
-
-            case REG_DWORD:
-                value = String.valueOf(Long.parseLong(value, HEX_RADIX));
-                break;
-
-            case REG_SZ:
-                break;
-
-            default:
-                break;
-        }
-
-        if (type == Type.REG_MULTI_SZ)
-        {
-            values = splitMulti(value);
-        }
-        else
-        {
-            values = new String[] { value };
-        }
-
-        return new TypeValuesPair(type, values);
+    if (type == Type.REG_MULTI_SZ) {
+      values = splitMulti(value);
+    } else {
+      values = new String[] {value};
     }
 
-    public String encode(TypeValuesPair data)
-    {
-        String ret = null;
+    return new TypeValuesPair(type, values);
+  }
 
-        if (data.getType() == Type.REG_SZ)
-        {
-            ret = quote(data.getValues()[0]);
-        }
-        else if (data.getValues()[0] != null)
-        {
-            ret = encode(data.getType(), data.getValues());
-        }
+  public String encode(TypeValuesPair data) {
+    String ret = null;
 
-        return ret;
+    if (data.getType() == Type.REG_SZ) {
+      ret = quote(data.getValues()[0]);
+    } else if (data.getValues()[0] != null) {
+      ret = encode(data.getType(), data.getValues());
     }
 
-    byte[] binary(String value)
-    {
-        byte[] bytes = new byte[value.length()];
-        int idx = 0;
-        int shift = DIGIT_SIZE;
+    return ret;
+  }
 
-        for (int i = 0; i < value.length(); i++)
-        {
-            char c = value.charAt(i);
+  byte[] binary(String value) {
+    byte[] bytes = new byte[value.length()];
+    int idx = 0;
+    int shift = DIGIT_SIZE;
 
-            if (Character.isWhitespace(c))
-            {
-                continue;
-            }
+    for (int i = 0; i < value.length(); i++) {
+      char c = value.charAt(i);
 
-            if (c == ',')
-            {
-                idx++;
-                shift = DIGIT_SIZE;
-            }
-            else
-            {
-                int digit = Character.digit(c, HEX_RADIX);
+      if (Character.isWhitespace(c)) {
+        continue;
+      }
 
-                if (digit >= 0)
-                {
-                    bytes[idx] |= digit << shift;
-                    shift = 0;
-                }
-            }
+      if (c == ',') {
+        idx++;
+        shift = DIGIT_SIZE;
+      } else {
+        int digit = Character.digit(c, HEX_RADIX);
+
+        if (digit >= 0) {
+          bytes[idx] |= digit << shift;
+          shift = 0;
         }
-
-        return Arrays.copyOfRange(bytes, 0, idx + 1);
+      }
     }
 
-    String encode(Type type, String[] values)
-    {
-        StringBuilder buff = new StringBuilder();
+    return Arrays.copyOfRange(bytes, 0, idx + 1);
+  }
 
-        buff.append(type.toString());
-        buff.append(Type.SEPARATOR_CHAR);
-        switch (type)
-        {
+  String encode(Type type, String[] values) {
+    StringBuilder buff = new StringBuilder();
 
-            case REG_EXPAND_SZ:
-                buff.append(hexadecimal(values[0]));
-                break;
+    buff.append(type.toString());
+    buff.append(Type.SEPARATOR_CHAR);
+    switch (type) {
+      case REG_EXPAND_SZ:
+        buff.append(hexadecimal(values[0]));
+        break;
 
-            case REG_DWORD:
-                buff.append(String.format("%08x", Long.parseLong(values[0])));
-                break;
+      case REG_DWORD:
+        buff.append(String.format("%08x", Long.parseLong(values[0])));
+        break;
 
-            case REG_MULTI_SZ:
-                int n = values.length;
+      case REG_MULTI_SZ:
+        int n = values.length;
 
-                for (int i = 0; i < n; i++)
-                {
-                    buff.append(hexadecimal(values[i]));
-                    buff.append(',');
-                }
-
-                buff.append("00,00");
-                break;
-
-            default:
-                buff.append(values[0]);
-                break;
+        for (int i = 0; i < n; i++) {
+          buff.append(hexadecimal(values[i]));
+          buff.append(',');
         }
 
-        return buff.toString();
+        buff.append("00,00");
+        break;
+
+      default:
+        buff.append(values[0]);
+        break;
     }
 
-    String hexadecimal(String value)
-    {
-        StringBuilder buff = new StringBuilder();
+    return buff.toString();
+  }
 
-        if ((value != null) && (value.length() != 0))
-        {
-            byte[] bytes = string2bytes(value);
+  String hexadecimal(String value) {
+    StringBuilder buff = new StringBuilder();
 
-            for (int i = 0; i < bytes.length; i++)
-            {
-                buff.append(Character.forDigit((bytes[i] & UPPER_DIGIT) >> DIGIT_SIZE, HEX_RADIX));
-                buff.append(Character.forDigit(bytes[i] & LOWER_DIGIT, HEX_RADIX));
-                buff.append(',');
-            }
+    if ((value != null) && (value.length() != 0)) {
+      byte[] bytes = string2bytes(value);
 
-            buff.append("00,00");
-        }
+      for (int i = 0; i < bytes.length; i++) {
+        buff.append(Character.forDigit((bytes[i] & UPPER_DIGIT) >> DIGIT_SIZE, HEX_RADIX));
+        buff.append(Character.forDigit(bytes[i] & LOWER_DIGIT, HEX_RADIX));
+        buff.append(',');
+      }
 
-        return buff.toString();
+      buff.append("00,00");
     }
 
-    Registry.Type type(String raw)
-    {
-        Registry.Type type;
+    return buff.toString();
+  }
 
-        if (raw.charAt(0) == DOUBLE_QUOTE)
-        {
-            type = Registry.Type.REG_SZ;
-        }
-        else
-        {
-            int idx = raw.indexOf(Registry.TYPE_SEPARATOR);
+  Registry.Type type(String raw) {
+    Registry.Type type;
 
-            type = (idx < 0) ? Registry.Type.REG_SZ : Registry.Type.fromString(raw.substring(0, idx));
-        }
+    if (raw.charAt(0) == DOUBLE_QUOTE) {
+      type = Registry.Type.REG_SZ;
+    } else {
+      int idx = raw.indexOf(Registry.TYPE_SEPARATOR);
 
-        return type;
+      type = (idx < 0) ? Registry.Type.REG_SZ : Registry.Type.fromString(raw.substring(0, idx));
     }
 
-    // XXX Java 1.4 compatibility hack
-    private String bytes2string(byte[] bytes)
-    {
-        String str;
+    return type;
+  }
 
-        try
-        {
-            str = new String(bytes, 0, bytes.length - 2, HEX_CHARSET);
-        }
-        catch (NoSuchMethodError x)
-        {
-            try
-            {
-                str = new String(bytes, 0, bytes.length, HEX_CHARSET.name());
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-                throw new IllegalStateException(ex);
-            }
-        }
+  // XXX Java 1.4 compatibility hack
+  private String bytes2string(byte[] bytes) {
+    String str;
 
-        return str;
+    try {
+      str = new String(bytes, 0, bytes.length - 2, HEX_CHARSET);
+    } catch (NoSuchMethodError x) {
+      try {
+        str = new String(bytes, 0, bytes.length, HEX_CHARSET.name());
+      } catch (UnsupportedEncodingException ex) {
+        throw new IllegalStateException(ex);
+      }
     }
 
-    private String[] splitMulti(String value)
-    {
-        int len = value.length();
-        int start;
-        int end;
-        int n = 0;
+    return str;
+  }
 
-        start = 0;
-        for (end = value.indexOf(0, start); end >= 0; end = value.indexOf(0, start))
-        {
-            n++;
-            start = end + 1;
-            if (start >= len)
-            {
-                break;
-            }
-        }
+  private String[] splitMulti(String value) {
+    int len = value.length();
+    int start;
+    int end;
+    int n = 0;
 
-        String[] values = new String[n];
-
-        start = 0;
-        for (int i = 0; i < n; i++)
-        {
-            end = value.indexOf(0, start);
-            values[i] = value.substring(start, end);
-            start = end + 1;
-        }
-
-        return values;
+    start = 0;
+    for (end = value.indexOf(0, start); end >= 0; end = value.indexOf(0, start)) {
+      n++;
+      start = end + 1;
+      if (start >= len) {
+        break;
+      }
     }
 
-    // XXX Java 1.4 compatibility hack
-    private byte[] string2bytes(String value)
-    {
-        byte[] bytes;
+    String[] values = new String[n];
 
-        try
-        {
-            bytes = value.getBytes(HEX_CHARSET);
-        }
-        catch (NoSuchMethodError x)
-        {
-            try
-            {
-                bytes = value.getBytes(HEX_CHARSET.name());
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-                throw new IllegalStateException(ex);
-            }
-        }
-
-        return bytes;
+    start = 0;
+    for (int i = 0; i < n; i++) {
+      end = value.indexOf(0, start);
+      values[i] = value.substring(start, end);
+      start = end + 1;
     }
+
+    return values;
+  }
+
+  // XXX Java 1.4 compatibility hack
+  private byte[] string2bytes(String value) {
+    byte[] bytes;
+
+    try {
+      bytes = value.getBytes(HEX_CHARSET);
+    } catch (NoSuchMethodError x) {
+      try {
+        bytes = value.getBytes(HEX_CHARSET.name());
+      } catch (UnsupportedEncodingException ex) {
+        throw new IllegalStateException(ex);
+      }
+    }
+
+    return bytes;
+  }
 }

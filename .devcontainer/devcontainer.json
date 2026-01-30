@@ -19,8 +19,21 @@
   "customizations": {
     "vscode": {
       "settings": {
+        "editor.formatOnSave": true,
+
+        // Java settings
         "java.configuration.updateBuildConfiguration": "automatic",
         "java.compile.nullAnalysis.mode": "automatic",
+        "[java]": {
+          "editor.defaultFormatter": "JoseVSeb.google-java-format-for-vs-code"
+        },
+        // explicitly turn off the Red Hat formatter engine
+        "java.format.enabled": false,
+
+        // XML settings
+        "[xml]": {
+          "editor.defaultFormatter": "redhat.vscode-xml"
+        },
 
         // Website development settings
         "[typescript]": {
@@ -58,6 +71,10 @@
 
         // Java Language Support
         "vscjava.vscode-java-pack",
+        "JoseVSeb.google-java-format-for-vs-code",
+
+        // XML Support
+        "redhat.vscode-xml",
 
         // Website development support
         "astro-build.astro-vscode",

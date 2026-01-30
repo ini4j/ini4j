@@ -22,38 +22,37 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class BasicRegistryTest extends Ini4jCase
-{
-    private static final String KEY = "key";
-    private static final String DUMMY = "dummy";
-    private static final String VERSION = "Windows Registry Editor Version 5.00";
+public class BasicRegistryTest extends Ini4jCase {
+  private static final String KEY = "key";
+  private static final String DUMMY = "dummy";
+  private static final String VERSION = "Windows Registry Editor Version 5.00";
 
-    @Test public void testVersion()
-    {
-        BasicRegistry reg = new BasicRegistry();
+  @Test
+  public void testVersion() {
+    BasicRegistry reg = new BasicRegistry();
 
-        assertEquals(VERSION, reg.getVersion());
-        reg.setVersion(DUMMY);
-        assertEquals(DUMMY, reg.getVersion());
-    }
+    assertEquals(VERSION, reg.getVersion());
+    reg.setVersion(DUMMY);
+    assertEquals(DUMMY, reg.getVersion());
+  }
 
-    @Test public void testWrapped() throws Exception
-    {
-        BasicRegistry reg = new BasicRegistry();
-        Registry.Key key1 = reg.add(KEY);
-        Registry.Key key2 = reg.add(KEY);
+  @Test
+  public void testWrapped() throws Exception {
+    BasicRegistry reg = new BasicRegistry();
+    Registry.Key key1 = reg.add(KEY);
+    Registry.Key key2 = reg.add(KEY);
 
-        assertNotNull(key1);
-        assertNotNull(key2);
-        assertTrue(reg.get(KEY) instanceof Registry.Key);
-        assertTrue(reg.get(KEY, 1) instanceof Registry.Key);
-        Registry.Key key3 = new BasicRegistryKey(reg, KEY);
+    assertNotNull(key1);
+    assertNotNull(key2);
+    assertTrue(reg.get(KEY) instanceof Registry.Key);
+    assertTrue(reg.get(KEY, 1) instanceof Registry.Key);
+    Registry.Key key3 = new BasicRegistryKey(reg, KEY);
 
-        assertSame(key1, reg.put(KEY, key3, 0));
-        assertSame(key2, reg.put(KEY, key3));
-        assertSame(key3, reg.remove(KEY, 1));
-        assertSame(key3, reg.remove(KEY));
-        key1 = reg.add(KEY);
-        assertSame(key1, reg.remove(key1));
-    }
+    assertSame(key1, reg.put(KEY, key3, 0));
+    assertSame(key2, reg.put(KEY, key3));
+    assertSame(key3, reg.remove(KEY, 1));
+    assertSame(key3, reg.remove(KEY));
+    key1 = reg.add(KEY);
+    assertSame(key1, reg.remove(key1));
+  }
 }

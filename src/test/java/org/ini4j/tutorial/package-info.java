@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 package org.ini4j.tutorial;
-//|
-//|                ---------
-//|                Tutorials
-//|
-//|Tutorials
-//|
-//| The following tutorials organized on different tpye of API that ini4j provide.
-//| The build process of [ini4j] guarantees compilability and runability, since no
-//| distribution may be created without compiling and running the tutorial codes.
-//|
+// |
+// |                ---------
+// |                Tutorials
+// |
+// |Tutorials
+// |
+// | The following tutorials organized on different tpye of API that ini4j provide.
+// | The build process of [ini4j] guarantees compilability and runability, since no
+// | distribution may be created without compiling and running the tutorial codes.
+// |

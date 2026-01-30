@@ -15,90 +15,79 @@
  */
 package org.ini4j;
 
-import org.ini4j.test.Helper;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+import java.util.prefs.Preferences;
+import org.ini4j.test.Helper;
 import org.junit.Test;
 
-import java.util.prefs.Preferences;
+public class IniPreferencesFactoryTest extends Ini4jCase {
+  private static final String DUMMY = "dummy";
 
-public class IniPreferencesFactoryTest extends Ini4jCase
-{
-    private static final String DUMMY = "dummy";
+  @Test
+  public void testGetIniLocation() throws Exception {
+    IniPreferencesFactory factory = new IniPreferencesFactory();
 
-    @Test public void testGetIniLocation() throws Exception
-    {
-        IniPreferencesFactory factory = new IniPreferencesFactory();
+    System.setProperty(DUMMY, DUMMY);
+    assertEquals(DUMMY, factory.getIniLocation(DUMMY));
+    System.getProperties().remove(DUMMY);
+    assertNull(factory.getIniLocation(DUMMY));
+  }
 
-        System.setProperty(DUMMY, DUMMY);
-        assertEquals(DUMMY, factory.getIniLocation(DUMMY));
-        System.getProperties().remove(DUMMY);
-        assertNull(factory.getIniLocation(DUMMY));
+  @SuppressWarnings("empty-statement")
+  @Test
+  public void testGetResourceAsStream() throws Exception {
+    IniPreferencesFactory factory = new IniPreferencesFactory();
+
+    // class path
+    assertNotNull(factory.getResourceAsStream(Helper.DWARFS_INI));
+
+    // url
+    String location = Helper.getResourceURL(Helper.DWARFS_INI).toString();
+
+    assertNotNull(factory.getResourceAsStream(location));
+
+    // invalid url should throw IllegalArgumentException
+    try {
+      factory.getResourceAsStream("http://");
+      fail();
+    } catch (IllegalArgumentException x) {
+      ;
     }
+  }
 
-    @SuppressWarnings("empty-statement")
-    @Test public void testGetResourceAsStream() throws Exception
-    {
-        IniPreferencesFactory factory = new IniPreferencesFactory();
-
-        // class path
-        assertNotNull(factory.getResourceAsStream(Helper.DWARFS_INI));
-
-        // url
-        String location = Helper.getResourceURL(Helper.DWARFS_INI).toString();
-
-        assertNotNull(factory.getResourceAsStream(location));
-
-        // invalid url should throw IllegalArgumentException
-        try
-        {
-            factory.getResourceAsStream("http://");
-            fail();
-        }
-        catch (IllegalArgumentException x)
-        {
-            ;
-        }
+  @Test
+  public void testNewIniPreferences() {
+    System.setProperty(DUMMY, DUMMY);
+    try {
+      new IniPreferencesFactory().newIniPreferences(DUMMY);
+      missing(IllegalArgumentException.class);
+    } catch (IllegalArgumentException x) {
+      //
+    } finally {
+      System.getProperties().remove(DUMMY);
     }
+  }
 
-    @Test public void testNewIniPreferences()
-    {
-        System.setProperty(DUMMY, DUMMY);
-        try
-        {
-            new IniPreferencesFactory().newIniPreferences(DUMMY);
-            missing(IllegalArgumentException.class);
-        }
-        catch (IllegalArgumentException x)
-        {
-            //
-        }
-        finally
-        {
-            System.getProperties().remove(DUMMY);
-        }
-    }
+  @Test
+  public void testSystemRoot() throws Exception {
+    Preferences prefs = Preferences.systemRoot();
 
-    @Test public void testSystemRoot() throws Exception
-    {
-        Preferences prefs = Preferences.systemRoot();
+    assertNotNull(prefs);
+    assertEquals(IniPreferences.class, prefs.getClass());
+    assertSame(prefs, Preferences.systemRoot());
+  }
 
-        assertNotNull(prefs);
-        assertEquals(IniPreferences.class, prefs.getClass());
-        assertSame(prefs, Preferences.systemRoot());
-    }
+  @Test
+  public void testUserRoot() throws Exception {
+    Preferences prefs = Preferences.userRoot();
 
-    @Test public void testUserRoot() throws Exception
-    {
-        Preferences prefs = Preferences.userRoot();
-
-        assertNotNull(prefs);
-        assertEquals(IniPreferences.class, prefs.getClass());
-        assertSame(prefs, Preferences.userRoot());
-    }
+    assertNotNull(prefs);
+    assertEquals(IniPreferences.class, prefs.getClass());
+    assertSame(prefs, Preferences.userRoot());
+  }
 }

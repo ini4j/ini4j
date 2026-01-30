@@ -17,35 +17,37 @@ package org.ini4j.test;
 
 import org.ini4j.test.DwarfsData.DwarfData;
 
-public final class TaleData
-{
-    public static final String PROP_DWARFS = "dwarfs";
-    public static final char PATH_SEPARATOR = '/';
-    public static final DwarfData bashful;
-    public static final DwarfData doc;
-    public static final DwarfData dopey;
-    public static final DwarfData grumpy;
-    public static final DwarfData happy;
-    public static final DwarfData sleepy;
-    public static final DwarfData sneezy;
+public final class TaleData {
+  public static final String PROP_DWARFS = "dwarfs";
+  public static final char PATH_SEPARATOR = '/';
+  public static final DwarfData bashful;
+  public static final DwarfData doc;
+  public static final DwarfData dopey;
+  public static final DwarfData grumpy;
+  public static final DwarfData happy;
+  public static final DwarfData sleepy;
+  public static final DwarfData sneezy;
 
-    static
-    {
-        bashful = newDwarfData(DwarfsData.bashful);
-        doc = newDwarfData(DwarfsData.doc);
-        dopey = newDwarfData(DwarfsData.dopey);
-        grumpy = newDwarfData(DwarfsData.grumpy);
-        happy = newDwarfData(DwarfsData.happy);
-        sleepy = newDwarfData(DwarfsData.sleepy);
-        sneezy = newDwarfData(DwarfsData.sneezy);
-    }
+  static {
+    bashful = newDwarfData(DwarfsData.bashful);
+    doc = newDwarfData(DwarfsData.doc);
+    dopey = newDwarfData(DwarfsData.dopey);
+    grumpy = newDwarfData(DwarfsData.grumpy);
+    happy = newDwarfData(DwarfsData.happy);
+    sleepy = newDwarfData(DwarfsData.sleepy);
+    sneezy = newDwarfData(DwarfsData.sneezy);
+  }
 
-    private TaleData()
-    {
-    }
+  private TaleData() {}
 
-    private static DwarfData newDwarfData(DwarfData orig)
-    {
-        return new DwarfData(PROP_DWARFS + PATH_SEPARATOR + orig.name, orig.age, orig.fortuneNumber, orig.height, orig.homeDir, orig.homePage.toString(), orig.weight);
-    }
+  private static DwarfData newDwarfData(DwarfData orig) {
+    return new DwarfData(
+        PROP_DWARFS + PATH_SEPARATOR + orig.name,
+        orig.age,
+        orig.fortuneNumber,
+        orig.height,
+        orig.homeDir,
+        orig.homePage.toString(),
+        orig.weight);
+  }
 }

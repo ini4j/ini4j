@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 package org.ini4j.sample;
-//|
-//|                -------
-//|                Samples
-//|
-//|Samples
-//|
-//| The simple (but useful) samples you can find here illustrate the usage of [ini4j].
-//| These are small, independent programs that may be translates and run.
-//| The build process of [ini4j] guarantees compilability and runability, since no
-//| distribution may be created without compiling and running these programs.
-//|
+// |
+// |                -------
+// |                Samples
+// |
+// |Samples
+// |
+// | The simple (but useful) samples you can find here illustrate the usage of [ini4j].
+// | These are small, independent programs that may be translates and run.
+// | The build process of [ini4j] guarantees compilability and runability, since no
+// | distribution may be created without compiling and running these programs.
+// |

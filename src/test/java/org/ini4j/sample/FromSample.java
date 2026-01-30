@@ -15,40 +15,37 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                               ----------
-//|                               FromSample
-//|
-//|FromSample
-//|
-//| Marshall Java Beans to Ini.Section.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//| Source code for beans: {{{Dwarf.java.html}Dwarf}},
-//| {{{DwarfBean.java.html}DwarfBean}}
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                               ----------
+// |                               FromSample
+// |
+// |FromSample
+// |
+// | Marshall Java Beans to Ini.Section.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// | Source code for beans: {{{Dwarf.java.html}Dwarf}},
+// | {{{DwarfBean.java.html}DwarfBean}}
+// |
+// </editor-fold>
+// {
+import java.net.URI;
 import org.ini4j.Ini;
 
-import java.net.URI;
+public class FromSample {
+  public static void main(String[] args) throws Exception {
+    Ini ini = new Ini();
+    DwarfBean doc = new DwarfBean();
 
-public class FromSample
-{
-    public static void main(String[] args) throws Exception
-    {
-        Ini ini = new Ini();
-        DwarfBean doc = new DwarfBean();
-
-        doc.setAge(123);
-        doc.setHeight(111);
-        doc.setWeight(22.1);
-        doc.setHomePage(new URI("http://foo.bar"));
-        ini.add("doc").from(doc);
-        ini.store(System.out);
-    }
+    doc.setAge(123);
+    doc.setHeight(111);
+    doc.setWeight(22.1);
+    doc.setHomePage(new URI("http://foo.bar"));
+    ini.add("doc").from(doc);
+    ini.store(System.out);
+  }
 }
-//}
+// }

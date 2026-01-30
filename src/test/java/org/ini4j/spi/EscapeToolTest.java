@@ -15,80 +15,76 @@
  */
 package org.ini4j.spi;
 
-import org.ini4j.Ini4jCase;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.ini4j.Ini4jCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class EscapeToolTest extends Ini4jCase
-{
-    private static final String VALUE1 = "simple";
-    private static final String ESCAPE1 = "simple";
-    private static final String VALUE2 = "Iv\ufffdn";
-    private static final String ESCAPE2 = "Iv\\ufffdn";
-    private static final String VALUE3 = "1\t2\n3\f4\b5\r6";
-    private static final String ESCAPE3 = "1\\t2\\n3\\f4\\b5\\r6";
-    private static final String VALUE4 = "Iv\u0017n";
-    private static final String ESCAPE4 = "Iv\\u0017n";
-    private static final String INVALID_UNICODE = "\\u98x";
-    private static final String UNQUOTED1 = "simple";
-    private static final String QUOTED1 = "\"simple\"";
-    private static final String UNQUOTED2 = "no\\csak\"";
-    private static final String QUOTED2 = "\"no\\\\csak\\\"\"";
-    private static final String UNQUOTED3 = "";
-    private static final String QUOTED3 = "";
-    protected EscapeTool instance;
+public class EscapeToolTest extends Ini4jCase {
+  private static final String VALUE1 = "simple";
+  private static final String ESCAPE1 = "simple";
+  private static final String VALUE2 = "Iv\ufffdn";
+  private static final String ESCAPE2 = "Iv\\ufffdn";
+  private static final String VALUE3 = "1\t2\n3\f4\b5\r6";
+  private static final String ESCAPE3 = "1\\t2\\n3\\f4\\b5\\r6";
+  private static final String VALUE4 = "Iv\u0017n";
+  private static final String ESCAPE4 = "Iv\\u0017n";
+  private static final String INVALID_UNICODE = "\\u98x";
+  private static final String UNQUOTED1 = "simple";
+  private static final String QUOTED1 = "\"simple\"";
+  private static final String UNQUOTED2 = "no\\csak\"";
+  private static final String QUOTED2 = "\"no\\\\csak\\\"\"";
+  private static final String UNQUOTED3 = "";
+  private static final String QUOTED3 = "";
+  protected EscapeTool instance;
 
-    @Before @Override public void setUp() throws Exception
-    {
-        super.setUp();
-        instance = EscapeTool.getInstance();
-    }
+  @Before
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    instance = EscapeTool.getInstance();
+  }
 
-    @Test public void testEscape() throws Exception
-    {
-        assertEquals(ESCAPE1, instance.escape(VALUE1));
-        assertEquals(ESCAPE2, instance.escape(VALUE2));
-        assertEquals(ESCAPE3, instance.escape(VALUE3));
-        assertEquals(ESCAPE4, instance.escape(VALUE4));
-    }
+  @Test
+  public void testEscape() throws Exception {
+    assertEquals(ESCAPE1, instance.escape(VALUE1));
+    assertEquals(ESCAPE2, instance.escape(VALUE2));
+    assertEquals(ESCAPE3, instance.escape(VALUE3));
+    assertEquals(ESCAPE4, instance.escape(VALUE4));
+  }
 
-    @Test public void testInvalidUnicode()
-    {
-        try
-        {
-            instance.unescape(INVALID_UNICODE);
-            missing(IllegalArgumentException.class);
-        }
-        catch (IllegalArgumentException x)
-        {
-            //
-        }
+  @Test
+  public void testInvalidUnicode() {
+    try {
+      instance.unescape(INVALID_UNICODE);
+      missing(IllegalArgumentException.class);
+    } catch (IllegalArgumentException x) {
+      //
     }
+  }
 
-    @Test public void testQuote() throws Exception
-    {
-        assertEquals(QUOTED1, instance.quote(UNQUOTED1));
-        assertEquals(QUOTED2, instance.quote(UNQUOTED2));
-        assertEquals(QUOTED3, instance.quote(UNQUOTED3));
-        assertNull(instance.quote(null));
-    }
+  @Test
+  public void testQuote() throws Exception {
+    assertEquals(QUOTED1, instance.quote(UNQUOTED1));
+    assertEquals(QUOTED2, instance.quote(UNQUOTED2));
+    assertEquals(QUOTED3, instance.quote(UNQUOTED3));
+    assertNull(instance.quote(null));
+  }
 
-    @Test public void testSingleton() throws Exception
-    {
-        assertEquals(EscapeTool.class, EscapeTool.getInstance().getClass());
-    }
+  @Test
+  public void testSingleton() throws Exception {
+    assertEquals(EscapeTool.class, EscapeTool.getInstance().getClass());
+  }
 
-    @SuppressWarnings("empty-statement")
-    @Test public void testUnescape() throws Exception
-    {
-        assertEquals(VALUE1, instance.unescape(ESCAPE1));
-        assertEquals(VALUE2, instance.unescape(ESCAPE2));
-        assertEquals(VALUE3, instance.unescape(ESCAPE3));
-        assertEquals(VALUE4, instance.unescape(ESCAPE4));
-        assertEquals("=", instance.unescape("\\="));
-    }
+  @SuppressWarnings("empty-statement")
+  @Test
+  public void testUnescape() throws Exception {
+    assertEquals(VALUE1, instance.unescape(ESCAPE1));
+    assertEquals(VALUE2, instance.unescape(ESCAPE2));
+    assertEquals(VALUE3, instance.unescape(ESCAPE3));
+    assertEquals(VALUE4, instance.unescape(ESCAPE4));
+    assertEquals("=", instance.unescape("\\="));
+  }
 }

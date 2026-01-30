@@ -15,31 +15,30 @@
  */
 package org.ini4j.spi;
 
-import org.ini4j.Ini4jCase;
-
 import static org.junit.Assert.assertEquals;
 
+import org.ini4j.Ini4jCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RegEscapeToolTest extends Ini4jCase
-{
-    protected RegEscapeTool instance;
+public class RegEscapeToolTest extends Ini4jCase {
+  protected RegEscapeTool instance;
 
-    @Before @Override public void setUp() throws Exception
-    {
-        super.setUp();
-        instance = RegEscapeTool.getInstance();
-    }
+  @Before
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    instance = RegEscapeTool.getInstance();
+  }
 
-    @Test public void testHexadecimal()
-    {
-        assertEquals(0, instance.hexadecimal(null).length());
-        assertEquals(0, instance.hexadecimal("").length());
-    }
+  @Test
+  public void testHexadecimal() {
+    assertEquals(0, instance.hexadecimal(null).length());
+    assertEquals(0, instance.hexadecimal("").length());
+  }
 
-    @Test public void testSingleton() throws Exception
-    {
-        assertEquals(RegEscapeTool.class, RegEscapeTool.getInstance().getClass());
-    }
+  @Test
+  public void testSingleton() throws Exception {
+    assertEquals(RegEscapeTool.class, RegEscapeTool.getInstance().getClass());
+  }
 }

@@ -17,14 +17,12 @@ package org.ini4j.tutorial;
 
 import java.io.File;
 
-public abstract class AbstractTutorial
-{
-    public static final String FILENAME = "../sample/dwarfs.ini";
+public abstract class AbstractTutorial {
+  public static final String FILENAME = "../sample/dwarfs.ini";
 
-    protected abstract void run(File arg) throws Exception;
+  protected abstract void run(File arg) throws Exception;
 
-    protected static File filearg(String[] args)
-    {
-        return new File((args.length > 0) ? args[0] : FILENAME);
-    }
+  protected static File filearg(String[] args) {
+    return new File((args.length > 0) ? args[0] : FILENAME);
+  }
 }

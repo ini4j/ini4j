@@ -15,93 +15,85 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                ----------------
-//|                DwarfsBean class
-//|
-//|DwarfsBean class
-//|
-//</editor-fold>
-//{
-public class DwarfsBean implements Dwarfs
-{
-    private Dwarf _bashful;
-    private Dwarf _doc;
-    private Dwarf _dopey;
-    private Dwarf _grumpy;
-    private Dwarf _happy;
-    private Dwarf _sleepy;
-    private Dwarf _sneezy;
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                ----------------
+// |                DwarfsBean class
+// |
+// |DwarfsBean class
+// |
+// </editor-fold>
+// {
+public class DwarfsBean implements Dwarfs {
+  private Dwarf _bashful;
+  private Dwarf _doc;
+  private Dwarf _dopey;
+  private Dwarf _grumpy;
+  private Dwarf _happy;
+  private Dwarf _sleepy;
+  private Dwarf _sneezy;
 
-    @Override public Dwarf getBashful()
-    {
-        return _bashful;
-    }
+  @Override
+  public Dwarf getBashful() {
+    return _bashful;
+  }
 
-    public void setBashful(Dwarf value)
-    {
-        _bashful = value;
-    }
+  public void setBashful(Dwarf value) {
+    _bashful = value;
+  }
 
-    @Override public Dwarf getDoc()
-    {
-        return _doc;
-    }
+  @Override
+  public Dwarf getDoc() {
+    return _doc;
+  }
 
-    public void setDoc(Dwarf value)
-    {
-        _doc = value;
-    }
+  public void setDoc(Dwarf value) {
+    _doc = value;
+  }
 
-    @Override public Dwarf getDopey()
-    {
-        return _dopey;
-    }
+  @Override
+  public Dwarf getDopey() {
+    return _dopey;
+  }
 
-    public void setDopey(Dwarf value)
-    {
-        _dopey = value;
-    }
+  public void setDopey(Dwarf value) {
+    _dopey = value;
+  }
 
-    @Override public Dwarf getGrumpy()
-    {
-        return _grumpy;
-    }
+  @Override
+  public Dwarf getGrumpy() {
+    return _grumpy;
+  }
 
-    public void setGrumpy(Dwarf value)
-    {
-        _grumpy = value;
-    }
+  public void setGrumpy(Dwarf value) {
+    _grumpy = value;
+  }
 
-    @Override public Dwarf getHappy()
-    {
-        return _happy;
-    }
+  @Override
+  public Dwarf getHappy() {
+    return _happy;
+  }
 
-    public void setHappy(Dwarf value)
-    {
-        _happy = value;
-    }
+  public void setHappy(Dwarf value) {
+    _happy = value;
+  }
 
-    @Override public Dwarf getSleepy()
-    {
-        return _sleepy;
-    }
+  @Override
+  public Dwarf getSleepy() {
+    return _sleepy;
+  }
 
-    public void setSleepy(Dwarf value)
-    {
-        _sleepy = value;
-    }
+  public void setSleepy(Dwarf value) {
+    _sleepy = value;
+  }
 
-    @Override public Dwarf getSneezy()
-    {
-        return _sneezy;
-    }
+  @Override
+  public Dwarf getSneezy() {
+    return _sneezy;
+  }
 
-    public void setSneezy(Dwarf value)
-    {
-        _sneezy = value;
-    }
+  public void setSneezy(Dwarf value) {
+    _sneezy = value;
+  }
 }
-//}
+// }

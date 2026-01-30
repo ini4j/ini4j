@@ -15,38 +15,35 @@
  */
 package org.ini4j.sample;
 
-//<editor-fold defaultstate="collapsed" desc="apt documentation">
-//|
-//|                               ---------
-//|                               IniSample
-//|
-//|IniSample
-//|
-//| The [ini4j] library has a simple API: the .ini file is a map of sections, while the section is a map of options.
-//| Due to the Java 1.5 generics these are type safe maps.
-//|
-//| This sample program expect the .ini file as a command line argument.
-//| If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
-//|
-//</editor-fold>
-//{
+// <editor-fold defaultstate="collapsed" desc="apt documentation">
+// |
+// |                               ---------
+// |                               IniSample
+// |
+// |IniSample
+// |
+// | The [ini4j] library has a simple API: the .ini file is a map of sections, while the section is
+// a map of options.
+// | Due to the Java 1.5 generics these are type safe maps.
+// |
+// | This sample program expect the .ini file as a command line argument.
+// | If there is no such argument, it use the {{{dwarfs.ini.html}dwarfs.ini}} file.
+// |
+// </editor-fold>
+// {
+import java.io.FileReader;
 import org.ini4j.Ini;
 
-import java.io.FileReader;
+public class IniSample {
+  public static final String FILENAME = "dwarfs.ini";
 
-public class IniSample
-{
-    public static final String FILENAME = "dwarfs.ini";
+  public static void main(String[] args) throws Exception {
+    String filename = (args.length > 0) ? args[0] : FILENAME;
+    Ini ini = new Ini(new FileReader(filename));
 
-    public static void main(String[] args) throws Exception
-    {
-        String filename = (args.length > 0) ? args[0] : FILENAME;
-        Ini ini = new Ini(new FileReader(filename));
-
-        for (String key : ini.get("sleepy").keySet())
-        {
-            System.out.println("sleepy/" + key + " = " + ini.get("sleepy").fetch(key));
-        }
+    for (String key : ini.get("sleepy").keySet()) {
+      System.out.println("sleepy/" + key + " = " + ini.get("sleepy").fetch(key));
     }
+  }
 }
-//}
+// }
