@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.net.URL;
 import org.ini4j.spi.WinEscapeTool;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
 public class Wini extends Ini {
   private static final long serialVersionUID = -2781377824232440728L;
   public static final char PATH_SEPARATOR = '\\';

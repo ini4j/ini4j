@@ -16,11 +16,7 @@
 package org.ini4j;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.net.URI;
 import org.ini4j.sample.Dwarf;
@@ -30,7 +26,7 @@ import org.ini4j.test.DwarfsData.DwarfData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class BasicOptionMapTest extends Ini4jCase {
+public class BasicOptionMapTest extends TestIni4jCase {
   private static final String FOO = "foo";
   private static BasicOptionMap _map;
 
@@ -40,7 +36,7 @@ public class BasicOptionMapTest extends Ini4jCase {
   }
 
   @Test
-  public void test_bug_2817403() throws Exception {
+  public void testbug2817403() throws Exception {
     OptionMap map = new BasicOptionMap();
 
     map.add("player.name", "Joe");
@@ -75,21 +71,14 @@ public class BasicOptionMapTest extends Ini4jCase {
     map.put("a", "${b}");
     map.put("b", "${a}");
 
-    try {
-      // Trigger the resolution
-      map.fetch("a");
+    // Trigger the resolution and verify it throws CircularReferenceException
+    CircularReferenceException e =
+        assertThrows(CircularReferenceException.class, () -> map.fetch("a"));
 
-      fail("Should have thrown CircularReferenceException due to circular reference");
-
-    } catch (CircularReferenceException e) {
-      // SUCCESS: The fix prevents infinite recursion
-      assertTrue(
-          "Message should indicate circular reference detected",
-          e.getMessage().contains("Circular reference") || e.getMessage().contains("depth limit"));
-
-    } catch (StackOverflowError e) {
-      fail("Reproduced CVE-2022-41404: StackOverflowError occurred during variable resolution");
-    }
+    // SUCCESS: The fix prevents infinite recursion
+    assertTrue(
+        "Message should indicate circular reference detected",
+        e.getMessage().contains("Circular reference") || e.getMessage().contains("depth limit"));
   }
 
   @Test
@@ -101,11 +90,11 @@ public class BasicOptionMapTest extends Ini4jCase {
     o = null;
     map.add(Dwarf.PROP_AGE, o);
     assertNull(map.get(Dwarf.PROP_AGE));
-    map.put(Dwarf.PROP_AGE, new Integer(DwarfsData.doc.age));
+    map.put(Dwarf.PROP_AGE, Integer.valueOf(DwarfsData.doc.age));
     assertNotNull(map.get(Dwarf.PROP_AGE));
     map.add(Dwarf.PROP_AGE, o, 0);
     assertNull(map.get(Dwarf.PROP_AGE, 0));
-    map.put(Dwarf.PROP_AGE, new Integer(DwarfsData.doc.age), 0);
+    map.put(Dwarf.PROP_AGE, Integer.valueOf(DwarfsData.doc.age), 0);
     assertNotNull(map.get(Dwarf.PROP_AGE, 0));
     map.put(Dwarf.PROP_AGE, o, 0);
     assertNull(map.get(Dwarf.PROP_AGE, 0));
@@ -124,7 +113,7 @@ public class BasicOptionMapTest extends Ini4jCase {
     o = String.valueOf(DwarfsData.happy.age);
     map.add(Dwarf.PROP_AGE, o, 0);
     assertEquals(
-        new Integer(DwarfsData.happy.age), (Integer) map.get(Dwarf.PROP_AGE, 0, int.class));
+        Integer.valueOf(DwarfsData.happy.age), (Integer) map.get(Dwarf.PROP_AGE, 0, int.class));
     o = String.valueOf(DwarfsData.doc.age);
     map.put(Dwarf.PROP_AGE, o, 0);
     assertEquals(DwarfsData.doc.age, (int) map.get(Dwarf.PROP_AGE, 0, int.class));
@@ -160,12 +149,9 @@ public class BasicOptionMapTest extends Ini4jCase {
   public void testFetchAllException() {
     OptionMap map = new BasicOptionMap();
 
-    try {
-      map.fetchAll(Dwarf.PROP_FORTUNE_NUMBER, String.class);
-      missing(IllegalArgumentException.class);
-    } catch (IllegalArgumentException x) {
-      //
-    }
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> map.fetchAll(Dwarf.PROP_FORTUNE_NUMBER, String.class));
   }
 
   @Test
@@ -216,12 +202,8 @@ public class BasicOptionMapTest extends Ini4jCase {
   public void testGetAllException() {
     OptionMap map = new BasicOptionMap();
 
-    try {
-      map.getAll(Dwarf.PROP_FORTUNE_NUMBER, String.class);
-      missing(IllegalArgumentException.class);
-    } catch (IllegalArgumentException x) {
-      //
-    }
+    assertThrows(
+        IllegalArgumentException.class, () -> map.getAll(Dwarf.PROP_FORTUNE_NUMBER, String.class));
   }
 
   @Test
@@ -274,17 +256,17 @@ public class BasicOptionMapTest extends Ini4jCase {
   public void testPut() {
     OptionMap map = new BasicOptionMap();
 
-    map.add(Dwarf.PROP_AGE, new Integer(DwarfsData.sneezy.age));
-    map.put(Dwarf.PROP_HEIGHT, new Double(DwarfsData.sneezy.height));
+    map.add(Dwarf.PROP_AGE, Integer.valueOf(DwarfsData.sneezy.age));
+    map.put(Dwarf.PROP_HEIGHT, Double.valueOf(DwarfsData.sneezy.height));
     map.add(Dwarf.PROP_HOME_DIR, DwarfsData.sneezy.homeDir);
-    map.add(Dwarf.PROP_WEIGHT, new Double(DwarfsData.sneezy.weight), 0);
+    map.add(Dwarf.PROP_WEIGHT, Double.valueOf(DwarfsData.sneezy.weight), 0);
     map.put(Dwarf.PROP_HOME_PAGE, null);
     map.put(Dwarf.PROP_HOME_PAGE, DwarfsData.sneezy.homePage);
-    map.add(Dwarf.PROP_FORTUNE_NUMBER, new Integer(DwarfsData.sneezy.fortuneNumber[1]));
-    map.add(Dwarf.PROP_FORTUNE_NUMBER, new Integer(DwarfsData.sneezy.fortuneNumber[2]));
-    map.add(Dwarf.PROP_FORTUNE_NUMBER, new Integer(0));
-    map.put(Dwarf.PROP_FORTUNE_NUMBER, new Integer(DwarfsData.sneezy.fortuneNumber[3]), 2);
-    map.add(Dwarf.PROP_FORTUNE_NUMBER, new Integer(DwarfsData.sneezy.fortuneNumber[0]), 0);
+    map.add(Dwarf.PROP_FORTUNE_NUMBER, Integer.valueOf(DwarfsData.sneezy.fortuneNumber[1]));
+    map.add(Dwarf.PROP_FORTUNE_NUMBER, Integer.valueOf(DwarfsData.sneezy.fortuneNumber[2]));
+    map.add(Dwarf.PROP_FORTUNE_NUMBER, Integer.valueOf(0));
+    map.put(Dwarf.PROP_FORTUNE_NUMBER, Integer.valueOf(DwarfsData.sneezy.fortuneNumber[3]), 2);
+    map.add(Dwarf.PROP_FORTUNE_NUMBER, Integer.valueOf(DwarfsData.sneezy.fortuneNumber[0]), 0);
     Helper.assertEquals(DwarfsData.sneezy, map.as(Dwarf.class));
   }
 
@@ -292,12 +274,9 @@ public class BasicOptionMapTest extends Ini4jCase {
   public void testPutAllException() {
     OptionMap map = new BasicOptionMap();
 
-    try {
-      map.putAll(Dwarf.PROP_FORTUNE_NUMBER, new Integer(0));
-      missing(IllegalArgumentException.class);
-    } catch (IllegalArgumentException x) {
-      //
-    }
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> map.putAll(Dwarf.PROP_FORTUNE_NUMBER, Integer.valueOf(0)));
   }
 
   @Test
@@ -338,12 +317,8 @@ public class BasicOptionMapTest extends Ini4jCase {
     // system environment
     input = "${@env/PATH}";
     buffer = new StringBuilder(input);
-    try {
-      _map.resolve(buffer);
-      assertEquals(System.getenv("PATH"), buffer.toString());
-    } catch (Error e) {
-      // retroweaver + JDK 1.4 throws Error on getenv
-    }
+    _map.resolve(buffer);
+    assertEquals(System.getenv("PATH"), buffer.toString());
 
     // unknown variable
     input = "${no such name}";

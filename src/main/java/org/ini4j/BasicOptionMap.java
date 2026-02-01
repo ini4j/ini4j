@@ -33,7 +33,7 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
   private static final int G_OPTION = 2;
   private static final int G_INDEX = 4;
   private static final long serialVersionUID = 325469712293707584L;
-  private BeanAccess _defaultBeanAccess;
+  private transient BeanAccess _defaultBeanAccess;
   private final boolean _propertyFirstUpper;
 
   public BasicOptionMap() {
@@ -286,7 +286,7 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
     }
   }
 
-  private void requireArray(Class clazz) {
+  private void requireArray(Class<?> clazz) {
     if (!clazz.isArray()) {
       throw new IllegalArgumentException("Array required");
     }

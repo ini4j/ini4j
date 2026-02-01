@@ -19,7 +19,8 @@ import org.ini4j.Config;
 import org.ini4j.Ini;
 import org.ini4j.Profile;
 
-public class IniBuilder extends AbstractProfileBuilder implements IniHandler {
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
+public class IniBuilder extends AbstractProfileBuilder {
   private Ini _ini;
 
   public static IniBuilder newInstance(Ini ini) {

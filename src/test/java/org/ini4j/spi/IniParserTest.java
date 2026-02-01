@@ -15,23 +15,19 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import org.easymock.EasyMock;
 import org.ini4j.Config;
-import org.ini4j.Ini4jCase;
 import org.ini4j.InvalidFileFormatException;
+import org.ini4j.TestIni4jCase;
 import org.ini4j.sample.Dwarf;
 import org.ini4j.sample.Dwarfs;
 import org.ini4j.test.DwarfsData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class IniParserTest extends Ini4jCase {
+public class IniParserTest extends TestIni4jCase {
   private static final String[] BAD = {
     "[section\noption=value\n",
     "[]\noption=value",

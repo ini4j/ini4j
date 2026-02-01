@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.prefs.Preferences;
 import java.util.prefs.PreferencesFactory;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP")
 public class IniPreferencesFactory implements PreferencesFactory {
   public static final String PROPERTIES = "ini4j.properties";
   public static final String KEY_USER = "org.ini4j.prefs.user";

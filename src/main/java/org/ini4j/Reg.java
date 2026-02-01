@@ -32,7 +32,8 @@ import org.ini4j.spi.IniHandler;
 import org.ini4j.spi.IniParser;
 import org.ini4j.spi.RegBuilder;
 
-public class Reg extends BasicRegistry implements Registry, Persistable, Configurable {
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings({"CT_CONSTRUCTOR_THROW", "EI_EXPOSE_REP"})
+public class Reg extends BasicRegistry implements Persistable, Configurable {
   private static final long serialVersionUID = -1485602876922985912L;
   protected static final String DEFAULT_SUFFIX = ".reg";
   protected static final String TMP_PREFIX = "reg-";
@@ -160,6 +161,7 @@ public class Reg extends BasicRegistry implements Registry, Persistable, Configu
     load(input.toURI().toURL());
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public void read(String registryKey) throws IOException {
     File tmp = createTempFile();
 
@@ -197,10 +199,14 @@ public class Reg extends BasicRegistry implements Registry, Persistable, Configu
   public void store(File output) throws IOException {
     OutputStream stream = new FileOutputStream(output);
 
-    store(stream);
-    stream.close();
+    try {
+      store(stream);
+    } finally {
+      stream.close();
+    }
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public void write() throws IOException {
     File tmp = createTempFile();
 
@@ -231,6 +237,7 @@ public class Reg extends BasicRegistry implements Registry, Persistable, Configu
     return getConfig().isPropertyFirstUpper();
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("DM_DEFAULT_ENCODING")
   void exec(String[] args) throws IOException {
     Process proc = Runtime.getRuntime().exec(args);
 
@@ -240,13 +247,18 @@ public class Reg extends BasicRegistry implements Registry, Persistable, Configu
       if (status != 0) {
         Reader in = new InputStreamReader(proc.getErrorStream());
         char[] buff = new char[STDERR_BUFF_SIZE];
-        int n = in.read(buff);
+        int n;
 
-        in.close();
+        try {
+          n = in.read(buff);
+        } finally {
+          in.close();
+        }
+
         throw new IOException(new String(buff, 0, n).trim());
       }
     } catch (InterruptedException x) {
-      throw (IOException) (new InterruptedIOException().initCause(x));
+      throw (IOException) new InterruptedIOException().initCause(x);
     }
   }
 

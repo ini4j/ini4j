@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.BackingStoreException;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP")
 public class IniPreferences extends AbstractPreferences {
 
   /** frequently used empty String array */

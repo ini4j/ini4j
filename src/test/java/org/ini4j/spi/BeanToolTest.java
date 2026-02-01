@@ -16,12 +16,7 @@
 package org.ini4j.spi;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +24,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.TimeZone;
 import org.ini4j.BasicOptionMapGate;
-import org.ini4j.Ini4jCase;
+import org.ini4j.TestIni4jCase;
 import org.ini4j.sample.Dwarf;
 import org.ini4j.sample.DwarfBean;
 import org.ini4j.test.DwarfsData;
@@ -37,7 +32,7 @@ import org.ini4j.test.Helper;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BeanToolTest extends Ini4jCase {
+public class BeanToolTest extends TestIni4jCase {
   protected BeanTool instance;
 
   @Before
@@ -54,31 +49,28 @@ public class BeanToolTest extends Ini4jCase {
   }
 
   @Test
-  public void testInjectIllegalArgument1() throws Exception {
+  public void testInjectIllegalArgument1() {
     TestMap map = new TestMap();
 
-    try {
-      instance.inject(map.newBeanAccess(), new BadBean());
-      missing(IllegalArgumentException.class);
-    } catch (IllegalArgumentException x) {
-      //
-    }
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          instance.inject(map.newBeanAccess(), new BadBean());
+        });
   }
 
   @Test
-  public void testInjectIllegalArgument2() throws Exception {
+  public void testInjectIllegalArgument2() {
     TestMap map = new TestMap();
 
     map.put("name", "bad");
-    try {
-      instance.inject(new BadBean(), map.newBeanAccess());
-      missing(IllegalArgumentException.class);
-    } catch (IllegalArgumentException x) {
-      //
-    }
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          instance.inject(new BadBean(), map.newBeanAccess());
+        });
   }
 
-  @SuppressWarnings("empty-statement")
   @Test
   public void testParse() throws Exception {
     String input = "6";
@@ -97,25 +89,16 @@ public class BeanToolTest extends Ini4jCase {
     assertEquals(0, instance.parse(null, byte.class).byteValue());
 
     // parse to null class mean exception
-    try {
-      instance.parse(input, null);
-      fail();
-    } catch (IllegalArgumentException x) {
-      ;
-    }
+    final String inputForNull = input;
+    assertThrows(IllegalArgumentException.class, () -> instance.parse(inputForNull, null));
 
     // invalid primitive value mean exception
-    try {
-      instance.parse("?", int.class);
-      fail();
-    } catch (IllegalArgumentException x) {
-      ;
-    }
+    assertThrows(IllegalArgumentException.class, () -> instance.parse("?", int.class));
 
     // standard, but not primitive types
     assertSame(input, instance.parse(input, String.class));
-    assertEquals(new Character('6'), instance.parse(input, Character.class));
-    assertEquals(new Byte(input), instance.parse(input, Byte.class));
+    assertEquals(Character.valueOf('6'), instance.parse(input, Character.class));
+    assertEquals(Byte.valueOf(input), instance.parse(input, Byte.class));
 
     // special values
     input = "http://www.ini4j.org";
@@ -128,11 +111,7 @@ public class BeanToolTest extends Ini4jCase {
     assertEquals(String.class, instance.parse(input, Class.class));
 
     // invalid value should throw IllegalArgumentException
-    try {
-      instance.parse("", URL.class);
-    } catch (IllegalArgumentException x) {
-      ;
-    }
+    assertThrows(IllegalArgumentException.class, () -> instance.parse("", URL.class));
   }
 
   @Test
@@ -167,7 +146,7 @@ public class BeanToolTest extends Ini4jCase {
     assertEquals(0, instance.zero(long.class).longValue());
     assertEquals(0.0f, instance.zero(float.class).floatValue(), Helper.DELTA);
     assertEquals(0.0, instance.zero(double.class).doubleValue(), Helper.DELTA);
-    assertNotNull((instance.zero(boolean.class)));
+    assertNotNull(instance.zero(boolean.class));
     assertFalse(instance.zero(boolean.class));
     assertEquals('\0', instance.zero(char.class).charValue());
   }
@@ -223,11 +202,13 @@ public class BeanToolTest extends Ini4jCase {
     private static final long serialVersionUID = 4818386732025655044L;
   }
 
-  private static class BadBean {
+  private static final class BadBean {
+    @SuppressWarnings("unused")
     public String getName() throws IOException {
       throw new IOException();
     }
 
+    @SuppressWarnings("unused")
     public void setName(String value) throws IOException {
       throw new IOException();
     }

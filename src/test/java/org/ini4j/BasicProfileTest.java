@@ -15,11 +15,6 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.net.URI;
 import org.ini4j.sample.Dwarf;
 import org.ini4j.sample.DwarfBean;
@@ -29,11 +24,10 @@ import org.ini4j.test.DwarfsData.DwarfData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class BasicProfileTest extends Ini4jCase {
+public class BasicProfileTest extends TestIni4jCase {
   private static final String SECTION = "section";
   private static final String NUMBER = "number";
   private static final String SINGLE = "single";
-  private static final String SOLO = "solo";
   private static final String LOCATION = "location";
   private static final String LOCATION_1 = "http://www.ini4j.org";
   private static final String LOCATION_2 = "http://ini4j.org";
@@ -89,7 +83,7 @@ public class BasicProfileTest extends Ini4jCase {
    * thanx to Gary Pampara for bug report
    */
   @Test
-  public void test_bug_2817403() throws Exception {
+  public void testbug2817403() throws Exception {
     BasicProfile prof = new BasicProfile();
     Profile.Section sec = prof.add("section");
 
@@ -271,12 +265,8 @@ public class BasicProfileTest extends Ini4jCase {
     // system environment
     input = "${@env/PATH}";
     buffer = new StringBuilder(input);
-    try {
-      prof.resolve(buffer, doc);
-      assertEquals(System.getenv("PATH"), buffer.toString());
-    } catch (Error e) {
-      // retroweaver + JDK 1.4 throws Error on getenv
-    }
+    prof.resolve(buffer, doc);
+    assertEquals(System.getenv("PATH"), buffer.toString());
 
     // unknown variable
     input = "${no such name}";
@@ -421,11 +411,11 @@ public class BasicProfileTest extends Ini4jCase {
     prof.remove(dup);
   }
 
-  public static interface DwarfsRW extends Dwarfs {
+  public interface DwarfsRW extends Dwarfs {
     void setBashful(Dwarf value);
   }
 
-  public static interface Global {
+  public interface Global {
     Section[] getMissing();
 
     Section[] getSection();
@@ -441,7 +431,7 @@ public class BasicProfileTest extends Ini4jCase {
     boolean hasSection();
   }
 
-  public static interface Section {
+  public interface Section {
     URI[] getLocation();
 
     void setLocation(URI[] value);

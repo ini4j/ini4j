@@ -15,15 +15,11 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import org.ini4j.Ini4jCase;
+import org.ini4j.TestIni4jCase;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class ServiceFinderTest extends Ini4jCase {
+public class ServiceFinderTest extends TestIni4jCase {
   static final String DUMMY = "dummy";
   static final String DUMMY_SERVICE = "org.ini4j.Dummy";
   static final String BAD_CONFIG_SERVICE = "org.ini4j.BadConfig";

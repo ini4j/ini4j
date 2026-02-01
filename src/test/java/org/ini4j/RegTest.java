@@ -16,9 +16,6 @@
 package org.ini4j;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,11 +31,8 @@ import org.ini4j.test.DwarfsData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class RegTest extends Ini4jCase {
+public class RegTest extends TestIni4jCase {
   private static final String DWARFS_PATH = Helper.DWARFS_REG_PATH + "\\dwarfs\\";
-
-  @Test
-  public void proba() throws Exception {}
 
   @Test
   public void testDwarfs() throws Exception {

@@ -15,17 +15,11 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
 import java.util.prefs.Preferences;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class IniPreferencesFactoryTest extends Ini4jCase {
+public class IniPreferencesFactoryTest extends TestIni4jCase {
   private static final String DUMMY = "dummy";
 
   @Test

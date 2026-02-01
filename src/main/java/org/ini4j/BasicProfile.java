@@ -247,7 +247,7 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
   private Section getOrAdd(String sectionName) {
     Section section = get(sectionName);
 
-    return ((section == null)) ? add(sectionName) : section;
+    return (section == null) ? add(sectionName) : section;
   }
 
   private int parseOptionIndex(Matcher m) {
@@ -260,7 +260,7 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
 
     return (sectionName == null)
         ? owner
-        : ((sectionIndex == -1) ? get(sectionName) : get(sectionName, sectionIndex));
+        : (sectionIndex == -1) ? get(sectionName) : get(sectionName, sectionIndex);
   }
 
   private int parseSectionIndex(Matcher m) {

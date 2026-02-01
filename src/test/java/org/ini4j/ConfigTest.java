@@ -16,10 +16,11 @@
 package org.ini4j;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ConfigTest extends Ini4jCase {
+public class ConfigTest extends TestIni4jCase {
   @Test
   public void testDefaults() {
     Config def = newDefaultConfig();
@@ -120,7 +121,7 @@ public class ConfigTest extends Ini4jCase {
     cfg.setTree(true);
     cfg.setPropertyFirstUpper(false);
     cfg.setLineSeparator(System.getProperty("line.separator"));
-    cfg.setFileEncoding(Charset.forName("UTF-8"));
+    cfg.setFileEncoding(StandardCharsets.UTF_8);
     cfg.setComment(true);
     cfg.setHeaderComment(true);
 

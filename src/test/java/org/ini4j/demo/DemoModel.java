@@ -31,7 +31,7 @@ import org.ini4j.Persistable;
 import org.ini4j.Reg;
 
 public class DemoModel implements Runnable {
-  public static enum Mode {
+  public enum Mode {
     INI,
     REG,
     OPTIONS;

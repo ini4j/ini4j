@@ -15,13 +15,11 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-
-import org.ini4j.Ini4jCase;
+import org.ini4j.TestIni4jCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WinEscapeToolTest extends Ini4jCase {
+public class WinEscapeToolTest extends TestIni4jCase {
   public static final String VALUE1 = "simple";
   public static final String ESCAPE1 = "simple";
   public static final String VALUE2 = "Iván";

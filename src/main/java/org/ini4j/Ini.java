@@ -31,6 +31,7 @@ import org.ini4j.spi.IniFormatter;
 import org.ini4j.spi.IniHandler;
 import org.ini4j.spi.IniParser;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings({"CT_CONSTRUCTOR_THROW", "EI_EXPOSE_REP"})
 public class Ini extends BasicProfile implements Persistable, Configurable {
   private static final long serialVersionUID = -6029486578113700585L;
   private Config _config;
@@ -133,8 +134,11 @@ public class Ini extends BasicProfile implements Persistable, Configurable {
   public void store(File output) throws IOException {
     OutputStream stream = new FileOutputStream(output);
 
-    store(stream);
-    stream.close();
+    try {
+      store(stream);
+    } finally {
+      stream.close();
+    }
   }
 
   protected IniHandler newBuilder() {

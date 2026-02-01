@@ -74,12 +74,12 @@ abstract class AbstractParser {
       value = unescapeValue(line.substring(idx + 1)).trim();
     }
 
-    if (name.length() == 0) {
+    if (name == null || name.length() == 0) {
       parseError(line, lineNumber);
     }
 
     if (getConfig().isLowerCaseOption()) {
-      name = name.toLowerCase(Locale.getDefault());
+      name = (name != null) ? name.toLowerCase(Locale.getDefault()) : null;
     }
 
     handler.handleOption(name, value);
@@ -101,10 +101,8 @@ abstract class AbstractParser {
     for (char c : _operators.toCharArray()) {
       int index = line.indexOf(c);
 
-      while ((index >= 0)) {
-        if ((index >= 0)
-            && ((index == 0) || (line.charAt(index - 1) != '\\'))
-            && ((idx == -1) || (index < idx))) {
+      while (index >= 0) {
+        if (((index == 0) || (line.charAt(index - 1) != '\\')) && ((idx == -1) || (index < idx))) {
           idx = index;
 
           break;

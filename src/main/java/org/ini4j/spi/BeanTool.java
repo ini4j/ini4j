@@ -58,8 +58,7 @@ public class BeanTool {
         }
       } catch (Exception x) {
         throw (IllegalArgumentException)
-            (new IllegalArgumentException("Failed to set property: " + pd.getDisplayName())
-                .initCause(x));
+            new IllegalArgumentException("Failed to set property: " + pd.getDisplayName(), x);
       }
     }
   }
@@ -154,8 +153,7 @@ public class BeanTool {
     return (T) o;
   }
 
-  @SuppressWarnings(Warnings.UNCHECKED)
-  protected Object parseSpecialValue(String value, Class clazz) throws IllegalArgumentException {
+  protected Object parseSpecialValue(String value, Class<?> clazz) throws IllegalArgumentException {
     Object o;
 
     try {
@@ -184,7 +182,7 @@ public class BeanTool {
     return o;
   }
 
-  private PropertyDescriptor[] getPropertyDescriptors(Class clazz) {
+  private PropertyDescriptor[] getPropertyDescriptors(Class<?> clazz) {
     try {
       return Introspector.getBeanInfo(clazz).getPropertyDescriptors();
     } catch (IntrospectionException x) {
@@ -192,7 +190,7 @@ public class BeanTool {
     }
   }
 
-  private Object parsePrimitiveValue(String value, Class clazz) throws IllegalArgumentException {
+  private Object parsePrimitiveValue(String value, Class<?> clazz) throws IllegalArgumentException {
     Object o = null;
 
     try {

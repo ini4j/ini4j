@@ -16,11 +16,6 @@
 package org.ini4j;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.ini4j.sample.Dwarf;
 import org.ini4j.sample.Dwarfs;
@@ -29,7 +24,7 @@ import org.ini4j.test.Helper;
 import org.ini4j.test.TaleData;
 import org.junit.Test;
 
-public class BasicProfileSectionTest extends Ini4jCase {
+public class BasicProfileSectionTest extends TestIni4jCase {
   @Test
   public void testAddChild() throws Exception {
     Profile prof = Helper.newTaleIni();

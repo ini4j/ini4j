@@ -17,6 +17,7 @@ package org.ini4j.spi;
 
 import org.ini4j.Registry.Type;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP")
 public class TypeValuesPair {
   private final Type _type;
   private final String[] _values;

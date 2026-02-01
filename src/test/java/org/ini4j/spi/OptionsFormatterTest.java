@@ -15,23 +15,20 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import org.easymock.EasyMock;
 import org.ini4j.Config;
-import org.ini4j.Ini4jCase;
 import org.ini4j.Options;
+import org.ini4j.TestIni4jCase;
 import org.ini4j.sample.Dwarf;
 import org.ini4j.sample.Dwarfs;
 import org.ini4j.test.DwarfsData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class OptionsFormatterTest extends Ini4jCase {
+public class OptionsFormatterTest extends TestIni4jCase {
   private static final String NL = System.getProperty("line.separator");
   private static final String DUMMY = "dummy";
   private static final String ESCAPE_KEY_UNESCAPED = "apple:orange=lemon";
