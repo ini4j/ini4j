@@ -198,7 +198,12 @@ public class ConfigParser implements Serializable {
 
   public void read(File file) throws IOException, ParsingException {
     try {
-      _ini.load(new FileReader(file));
+      FileReader reader = new FileReader(file, Config.getGlobal().getFileEncoding());
+      try {
+        _ini.load(reader);
+      } finally {
+        reader.close();
+      }
     } catch (InvalidFileFormatException x) {
       throw new ParsingException(x);
     }
@@ -252,7 +257,12 @@ public class ConfigParser implements Serializable {
   }
 
   public void write(File file) throws IOException {
-    _ini.store(new FileWriter(file));
+    FileWriter writer = new FileWriter(file, Config.getGlobal().getFileEncoding());
+    try {
+      _ini.store(writer);
+    } finally {
+      writer.close();
+    }
   }
 
   protected Ini getIni() {

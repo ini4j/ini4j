@@ -15,13 +15,11 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-
-import org.ini4j.Ini4jCase;
+import org.ini4j.TestIni4jCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RegEscapeToolTest extends Ini4jCase {
+public class RegEscapeToolTest extends TestIni4jCase {
   protected RegEscapeTool instance;
 
   @Before

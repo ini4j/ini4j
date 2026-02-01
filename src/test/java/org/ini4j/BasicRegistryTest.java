@@ -15,14 +15,9 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
-public class BasicRegistryTest extends Ini4jCase {
+public class BasicRegistryTest extends TestIni4jCase {
   private static final String KEY = "key";
   private static final String DUMMY = "dummy";
   private static final String VERSION = "Windows Registry Editor Version 5.00";

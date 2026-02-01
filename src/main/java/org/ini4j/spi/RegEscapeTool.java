@@ -15,15 +15,15 @@
  */
 package org.ini4j.spi;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.ini4j.Registry;
 import org.ini4j.Registry.Type;
 
 public class RegEscapeTool extends EscapeTool {
   private static final RegEscapeTool INSTANCE = ServiceFinder.findService(RegEscapeTool.class);
-  private static final Charset HEX_CHARSET = Charset.forName("UTF-16LE");
+  private static final Charset HEX_CHARSET = StandardCharsets.UTF_16LE;
   private static final int LOWER_DIGIT = 0x0f;
   private static final int UPPER_DIGIT = 0xf0;
   private static final int DIGIT_SIZE = 4;
@@ -41,7 +41,8 @@ public class RegEscapeTool extends EscapeTool {
     switch (type) {
       case REG_EXPAND_SZ:
       case REG_MULTI_SZ:
-        value = bytes2string(binary(value));
+        byte[] bytes = binary(value);
+        value = new String(bytes, 0, bytes.length - 2, HEX_CHARSET);
         break;
 
       case REG_DWORD:
@@ -141,11 +142,11 @@ public class RegEscapeTool extends EscapeTool {
     StringBuilder buff = new StringBuilder();
 
     if ((value != null) && (value.length() != 0)) {
-      byte[] bytes = string2bytes(value);
+      byte[] bytes = value.getBytes(HEX_CHARSET);
 
-      for (int i = 0; i < bytes.length; i++) {
-        buff.append(Character.forDigit((bytes[i] & UPPER_DIGIT) >> DIGIT_SIZE, HEX_RADIX));
-        buff.append(Character.forDigit(bytes[i] & LOWER_DIGIT, HEX_RADIX));
+      for (byte b : bytes) {
+        buff.append(Character.forDigit((b & UPPER_DIGIT) >> DIGIT_SIZE, HEX_RADIX));
+        buff.append(Character.forDigit(b & LOWER_DIGIT, HEX_RADIX));
         buff.append(',');
       }
 
@@ -167,23 +168,6 @@ public class RegEscapeTool extends EscapeTool {
     }
 
     return type;
-  }
-
-  // XXX Java 1.4 compatibility hack
-  private String bytes2string(byte[] bytes) {
-    String str;
-
-    try {
-      str = new String(bytes, 0, bytes.length - 2, HEX_CHARSET);
-    } catch (NoSuchMethodError x) {
-      try {
-        str = new String(bytes, 0, bytes.length, HEX_CHARSET.name());
-      } catch (UnsupportedEncodingException ex) {
-        throw new IllegalStateException(ex);
-      }
-    }
-
-    return str;
   }
 
   private String[] splitMulti(String value) {
@@ -211,22 +195,5 @@ public class RegEscapeTool extends EscapeTool {
     }
 
     return values;
-  }
-
-  // XXX Java 1.4 compatibility hack
-  private byte[] string2bytes(String value) {
-    byte[] bytes;
-
-    try {
-      bytes = value.getBytes(HEX_CHARSET);
-    } catch (NoSuchMethodError x) {
-      try {
-        bytes = value.getBytes(HEX_CHARSET.name());
-      } catch (UnsupportedEncodingException ex) {
-        throw new IllegalStateException(ex);
-      }
-    }
-
-    return bytes;
   }
 }

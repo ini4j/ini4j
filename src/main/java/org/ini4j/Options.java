@@ -31,6 +31,7 @@ import org.ini4j.spi.OptionsFormatter;
 import org.ini4j.spi.OptionsHandler;
 import org.ini4j.spi.OptionsParser;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings({"CT_CONSTRUCTOR_THROW", "EI_EXPOSE_REP"})
 public class Options extends BasicOptionMap implements Persistable, Configurable {
   private static final long serialVersionUID = -1119753444859181822L;
   private String _comment;
@@ -143,8 +144,11 @@ public class Options extends BasicOptionMap implements Persistable, Configurable
   public void store(File output) throws IOException {
     OutputStream stream = new FileOutputStream(output);
 
-    store(stream);
-    stream.close();
+    try {
+      store(stream);
+    } finally {
+      stream.close();
+    }
   }
 
   protected OptionsHandler newBuilder() {

@@ -15,14 +15,6 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
@@ -30,12 +22,12 @@ import java.beans.VetoableChangeListener;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
-import org.ini4j.Ini4jCase;
+import org.ini4j.TestIni4jCase;
 import org.ini4j.sample.Dwarf;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class AbstractBeanInvocationHandlerTest extends Ini4jCase {
+public class AbstractBeanInvocationHandlerTest extends TestIni4jCase {
   private static final String PROP_AGE = Dwarf.PROP_AGE;
   private static final String PROP_HEIGHT = Dwarf.PROP_HEIGHT;
 
@@ -43,7 +35,7 @@ public class AbstractBeanInvocationHandlerTest extends Ini4jCase {
   public void testGetProperty() throws Exception {
     Map<String, String> map = new HashMap<String, String>();
     MapBeanHandler handler = new MapBeanHandler(map);
-    Integer i = new Integer(23);
+    Integer i = Integer.valueOf(23);
 
     map.put(PROP_AGE, "23");
     assertEquals(i, (Integer) handler.getProperty(PROP_AGE, Integer.class));
@@ -157,7 +149,7 @@ public class AbstractBeanInvocationHandlerTest extends Ini4jCase {
     MapBeanHandler handler = new MapBeanHandler(map);
 
     // very special case: set string property to non stirng value implies string conversion
-    handler.setProperty(PROP_AGE, new Integer(23), String.class);
+    handler.setProperty(PROP_AGE, Integer.valueOf(23), String.class);
     assertEquals("23", handler.getProperty(PROP_AGE, String.class));
   }
 
@@ -210,7 +202,7 @@ public class AbstractBeanInvocationHandlerTest extends Ini4jCase {
     d.removeVetoableChangeListener(PROP_HEIGHT, l);
   }
 
-  static interface Dummy {
+  interface Dummy {
     boolean isDummy();
 
     void addDummy();
@@ -239,12 +231,12 @@ public class AbstractBeanInvocationHandlerTest extends Ini4jCase {
     }
 
     @Override
-    protected Object getPropertySpi(String property, Class clazz) {
+    protected Object getPropertySpi(String property, Class<?> clazz) {
       return _map.get(property);
     }
 
     @Override
-    protected void setPropertySpi(String property, Object value, Class clazz) {
+    protected void setPropertySpi(String property, Object value, Class<?> clazz) {
       _map.put(property, value.toString());
     }
 

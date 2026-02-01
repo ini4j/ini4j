@@ -15,10 +15,6 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -29,7 +25,7 @@ import java.net.URL;
 import org.ini4j.spi.WinEscapeToolTest;
 import org.junit.Test;
 
-public class WiniTest extends Ini4jCase {
+public class WiniTest extends TestIni4jCase {
   @Test
   public void testConstructors() throws Exception {
     File f = File.createTempFile("wini", "test");

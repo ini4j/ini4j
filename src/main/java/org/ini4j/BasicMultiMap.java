@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.ini4j.spi.Warnings;
 
@@ -34,6 +33,7 @@ public class BasicMultiMap<K, V> implements MultiMap<K, V>, Serializable {
     this(new LinkedHashMap<K, List<V>>());
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
   public BasicMultiMap(Map<K, List<V>> impl) {
     _impl = impl;
   }
@@ -149,8 +149,8 @@ public class BasicMultiMap<K, V> implements MultiMap<K, V>, Serializable {
         putAll((K) key, mm.getAll(key));
       }
     } else {
-      for (K key : map.keySet()) {
-        put(key, map.get(key));
+      for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+        put(entry.getKey(), entry.getValue());
       }
     }
   }

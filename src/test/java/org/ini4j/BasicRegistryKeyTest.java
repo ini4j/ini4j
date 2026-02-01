@@ -15,14 +15,10 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-
 import org.ini4j.Registry.Type;
 import org.junit.Test;
 
-public class BasicRegistryKeyTest extends Ini4jCase {
+public class BasicRegistryKeyTest extends TestIni4jCase {
   private static final String KEY = "key";
   private static final String DUMMY = "dummy";
   private static final String OPTION = "option";

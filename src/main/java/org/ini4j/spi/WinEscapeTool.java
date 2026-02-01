@@ -15,11 +15,15 @@
  */
 package org.ini4j.spi;
 
-public class WinEscapeTool extends EscapeTool {
+public final class WinEscapeTool extends EscapeTool {
   private static final int ANSI_HEX_DIGITS = 2;
   private static final int ANSI_OCTAL_DIGITS = 3;
   private static final int OCTAL_RADIX = 8;
   private static final WinEscapeTool INSTANCE = new WinEscapeTool();
+
+  private WinEscapeTool() {
+    // singleton
+  }
 
   public static WinEscapeTool getInstance() {
     return INSTANCE;

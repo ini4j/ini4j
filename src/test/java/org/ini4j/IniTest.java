@@ -15,8 +15,6 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,7 +28,7 @@ import org.ini4j.test.DwarfsData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class IniTest extends Ini4jCase {
+public class IniTest extends TestIni4jCase {
   private static final String COMMENT_ONLY = "# first line\n# second line\n";
   private static final String COMMENT_ONLY_VALUE = " first line\n second line";
   private static final String INI_ONE_HEADER = COMMENT_ONLY + "\n\n[section]\nkey=value\n";
@@ -92,7 +90,6 @@ public class IniTest extends Ini4jCase {
   @Test
   public void testMulti() throws Exception {
     Ini ini = new Ini(new StringReader(MULTI));
-    Ini.Section sec;
 
     assertEquals(1, ini.length("section"));
     assertEquals(5, ini.get("section", 0).length("option"));

@@ -16,11 +16,6 @@
 package org.ini4j;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 
 import java.util.prefs.Preferences;
 import org.ini4j.sample.Dwarf;
@@ -32,7 +27,7 @@ import org.ini4j.test.Helper;
 import org.ini4j.test.TaleData;
 import org.junit.Test;
 
-public class IniPreferencesTest extends Ini4jCase {
+public class IniPreferencesTest extends TestIni4jCase {
   private static final String DUMMY = "dummy";
 
   @Test

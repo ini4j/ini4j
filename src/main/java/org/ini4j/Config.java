@@ -17,8 +17,13 @@ package org.ini4j;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("PMD.ExcessivePublicCount")
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings({
+  "SING_SINGLETON_IMPLEMENTS_CLONEABLE",
+  "SING_SINGLETON_IMPLEMENTS_SERIALIZABLE"
+})
 public class Config implements Cloneable, Serializable {
   public static final String KEY_PREFIX = "org.ini4j.config.";
   public static final String PROP_EMPTY_OPTION = "emptyOption";
@@ -63,7 +68,7 @@ public class Config implements Cloneable, Serializable {
   public static final boolean DEFAULT_HEADER_COMMENT = true;
   public static final char DEFAULT_PATH_SEPARATOR = '/';
   public static final String DEFAULT_LINE_SEPARATOR = getSystemProperty("line.separator", "\n");
-  public static final Charset DEFAULT_FILE_ENCODING = Charset.forName("UTF-8");
+  public static final Charset DEFAULT_FILE_ENCODING = StandardCharsets.UTF_8;
   public static final int DEFAULT_MAX_RESOLVE_DEPTH = 16;
   private static final Config GLOBAL = new Config();
   private static final long serialVersionUID = 2865793267410367814L;
@@ -73,7 +78,7 @@ public class Config implements Cloneable, Serializable {
   private boolean _escape;
   private boolean _escapeKeyOnly;
   private boolean _escapeNewline;
-  private Charset _fileEncoding;
+  private transient Charset _fileEncoding;
   private boolean _globalSection;
   private String _globalSectionName;
   private boolean _headerComment;
@@ -90,6 +95,7 @@ public class Config implements Cloneable, Serializable {
   private boolean _unnamedSection;
   private int _maxResolveDepth;
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SING_SINGLETON_HAS_NONPRIVATE_CONSTRUCTOR")
   public Config() {
     reset();
   }
@@ -110,6 +116,7 @@ public class Config implements Cloneable, Serializable {
     return (value == null) ? defaultValue : value;
   }
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("MS_EXPOSE_REP")
   public static Config getGlobal() {
     return GLOBAL;
   }

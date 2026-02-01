@@ -1,42 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Copyright 2005,2009 Ivan SZKIBA
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-         http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
+<!-- Copyright 2005,2009 Ivan SZKIBA Licensed under the Apache License, Version
+    2.0 (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software distributed
+    under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+    OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+    the specific language governing permissions and limitations under the License. -->
 <jalopy vendor="TRIEMAX">
     <profile name="ini4j">
-  <html>
-   <output>
-    <blankLines>
-     <keepUpTo>2</keepUpTo>
-    </blankLines>
-    <indent>
-     <size>2</size>
-    </indent>
-    <wrap>
-     <attributes>never</attributes>
-     <keepBreak>
-      <tags>false</tags>
-      <text>false</text>
-     </keepBreak>
-     <size>80</size>
-     <text>necessary</text>
-    </wrap>
-   </output>
-  </html>
+        <html>
+            <output>
+                <blankLines>
+                    <keepUpTo>2</keepUpTo>
+                </blankLines>
+                <indent>
+                    <size>2</size>
+                </indent>
+                <wrap>
+                    <attributes>never</attributes>
+                    <keepBreak>
+                        <tags>false</tags>
+                        <text>false</text>
+                    </keepBreak>
+                    <size>80</size>
+                    <text>necessary</text>
+                </wrap>
+            </output>
+        </html>
         <internal>
             <version>36</version>
         </internal>
@@ -277,7 +267,7 @@
                         <doWhile>true</doWhile>
                         <for>true</for>
                         <ifElse>true</ifElse>
-      <singleIf>true</singleIf>
+                        <singleIf>true</singleIf>
                         <singleLine>false</singleLine>
                         <switch>false</switch>
                         <while>true</while>
@@ -292,7 +282,7 @@
                         <doWhile>false</doWhile>
                         <for>false</for>
                         <ifElse>false</ifElse>
-      <singleIf>false</singleIf>
+                        <singleIf>false</singleIf>
                         <switch>false</switch>
                         <while>false</while>
                     </remove>
@@ -320,9 +310,9 @@
                         <singleLine>false</singleLine>
                     </format>
                     <javadoc>
-      <blankLines>
-       <xdoclet>-1</xdoclet>
-      </blankLines>
+                        <blankLines>
+                            <xdoclet>-1</xdoclet>
+                        </blankLines>
                         <blockTagsShort>false</blockTagsShort>
                         <check>
                             <description>
@@ -348,9 +338,9 @@
                             <throwsTags>false</throwsTags>
                         </check>
                         <classShort>false</classShort>
-      <compact>
-       <attribute>false</attribute>
-      </compact>
+                        <compact>
+                            <attribute>false</attribute>
+                        </compact>
                         <enumShort>false</enumShort>
                         <failOnError>false</failOnError>
                         <fieldsShort>true</fieldsShort>
@@ -392,7 +382,7 @@
                             <removeMisused>false</removeMisused>
                             <sort>false</sort>
                             <sortAttributes>false</sortAttributes>
-       <sortXDoclet>false</sortXDoclet>
+                            <sortXDoclet>false</sortXDoclet>
                             <spelling>false</spelling>
                         </tags>
                         <templates>
@@ -1078,9 +1068,9 @@ test\w+
                 <timePattern>hh:mm</timePattern>
             </locale>
             <misc>
-    <checkout>false</checkout>
-    <encoding>UTF-8</encoding>
-    <forceEncoding>false</forceEncoding>
+                <checkout>false</checkout>
+                <encoding>UTF-8</encoding>
+                <forceEncoding>false</forceEncoding>
                 <forceFormatting>false</forceFormatting>
                 <forceLineSeparator>false</forceLineSeparator>
                 <formatOnCheckin>false</formatOnCheckin>
@@ -1103,4 +1093,3 @@ test\w+
         </shared>
     </profile>
 </jalopy>
-

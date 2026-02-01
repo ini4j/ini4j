@@ -35,7 +35,7 @@ public abstract class AbstractBeanInvocationHandler implements InvocationHandler
   private static final String WRITE_PREFIX = "set";
   private static final String HAS_PREFIX = "has";
 
-  private static enum Prefix {
+  private enum Prefix {
     READ(READ_PREFIX),
     READ_BOOLEAN(READ_BOOLEAN_PREFIX),
     WRITE(WRITE_PREFIX),
@@ -47,7 +47,7 @@ public abstract class AbstractBeanInvocationHandler implements InvocationHandler
     private int _len;
     private String _value;
 
-    private Prefix(String value) {
+    Prefix(String value) {
       _value = value;
       _len = value.length();
     }
@@ -135,6 +135,7 @@ public abstract class AbstractBeanInvocationHandler implements InvocationHandler
 
   protected abstract boolean hasPropertySpi(String property);
 
+  @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("REC_CATCH_EXCEPTION")
   protected synchronized Object getProperty(String property, Class<?> clazz) {
     Object o;
 

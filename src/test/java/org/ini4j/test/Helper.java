@@ -35,7 +35,7 @@ import org.ini4j.spi.IniParser;
 import org.ini4j.test.DwarfsData.DwarfData;
 import org.junit.Assert;
 
-public class Helper {
+public final class Helper {
   private static final String RESOURCE_PREFIX = "org/ini4j/sample/";
   private static final File _sourceDir =
       new File(System.getProperty("basedir") + "/src/test/java/");

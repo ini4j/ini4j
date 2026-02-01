@@ -15,15 +15,11 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 
-public class CommonMultiMapTest extends Ini4jCase {
+public class CommonMultiMapTest extends TestIni4jCase {
   private static final String KEY = "key";
   private static final String VALUE = "value";
   private static final String COMMENT = "comment";

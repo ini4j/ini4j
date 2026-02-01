@@ -15,13 +15,6 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConfigParserTest extends Ini4jCase {
+public class ConfigParserTest extends TestIni4jCase {
   private static final String SECTION = "section";
   private static final String OPTION = "option";
   private static final String DWARFS_PATH = "org/ini4j/addon/dwarfs-py.ini";

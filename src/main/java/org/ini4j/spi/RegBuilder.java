@@ -21,6 +21,7 @@ import org.ini4j.Reg;
 import org.ini4j.Registry.Key;
 import org.ini4j.Registry.Type;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
 public class RegBuilder extends AbstractProfileBuilder {
   private Reg _reg;
 

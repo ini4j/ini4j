@@ -40,12 +40,11 @@ public class CommonMultiMap<K, V> extends BasicMultiMap<K, V> implements Comment
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void putAll(Map<? extends K, ? extends V> map) {
     super.putAll(map);
     if (map instanceof CommonMultiMap) {
-      Map<String, String> meta = ((CommonMultiMap) map)._meta;
+      Map<String, Object> meta = ((CommonMultiMap<? extends K, ? extends V>) map)._meta;
 
       if (meta != null) {
         meta().putAll(meta);

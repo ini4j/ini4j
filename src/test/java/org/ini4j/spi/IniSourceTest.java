@@ -15,18 +15,15 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import org.easymock.EasyMock;
 import org.ini4j.Config;
-import org.ini4j.Ini4jCase;
+import org.ini4j.TestIni4jCase;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class IniSourceTest extends Ini4jCase {
+public class IniSourceTest extends TestIni4jCase {
   private static final String COMMENTS = ";#";
   private static final String NESTED_TXT = "nested.txt";
   private static final String NESTED = ":" + NESTED_TXT;

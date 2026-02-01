@@ -87,16 +87,16 @@ public class SampleRunnerTest {
     }
   }
 
-  private final Class _clazz;
+  private final Class<?> _clazz;
   private final File _sourceFile;
 
-  public SampleRunnerTest(Class sampleClass) throws Exception {
+  public SampleRunnerTest(Class<?> sampleClass) throws Exception {
     _clazz = sampleClass;
     _sourceFile = sourceFile(_clazz);
   }
 
   @Parameters
-  public static Collection data() {
+  public static Collection<?> data() {
     return Arrays.asList(
         new Object[][] {
 
@@ -138,6 +138,7 @@ public class SampleRunnerTest {
     } finally {
       System.setOut(saved);
       out.flush();
+      out.close();
     }
 
     document(_sourceFile, "//");
@@ -245,11 +246,11 @@ public class SampleRunnerTest {
     return new File(dir, name.equals(PACKAGE_INFO) ? APT_INDEX : (name + APT_SUFFIX));
   }
 
-  private static File source2index(Class clazz) throws Exception {
+  private static File source2index(Class<?> clazz) throws Exception {
     return source2document(sourceFile(clazz.getPackage()));
   }
 
-  private static File sourceFile(Class clazz) throws Exception {
+  private static File sourceFile(Class<?> clazz) throws Exception {
     return Helper.getSourceFile(clazz.getName().replaceAll("\\.", "/") + JAVA_SUFFIX);
   }
 

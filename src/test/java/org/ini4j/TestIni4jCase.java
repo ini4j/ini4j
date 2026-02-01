@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 import org.ini4j.test.Helper;
 import org.junit.Before;
 
-public class Ini4jCase extends TestCase {
+public abstract class TestIni4jCase extends TestCase {
   @Override
   @Before
   public void setUp() throws Exception {

@@ -18,6 +18,7 @@ package org.ini4j.spi;
 import org.ini4j.Config;
 import org.ini4j.Options;
 
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
 public class OptionsBuilder implements OptionsHandler {
   private boolean _header;
   private String _lastComment;

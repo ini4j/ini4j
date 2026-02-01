@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 class UnicodeInputStreamReader extends Reader {
   private static final int BOM_SIZE = 4;
 
-  private static enum Bom {
+  private enum Bom {
     UTF32BE("UTF-32BE", new byte[] {(byte) 0x00, (byte) 0x00, (byte) 0xFE, (byte) 0xFF}),
     UTF32LE("UTF-32LE", new byte[] {(byte) 0xFF, (byte) 0xFE, (byte) 0x00, (byte) 0x00}),
     UTF16BE("UTF-16BE", new byte[] {(byte) 0xFE, (byte) 0xFF}),
@@ -35,7 +35,7 @@ class UnicodeInputStreamReader extends Reader {
     private Charset _charset;
 
     @SuppressWarnings("PMD.ArrayIsStoredDirectly")
-    private Bom(String charsetName, byte[] bytes) {
+    Bom(String charsetName, byte[] bytes) {
       try {
         _charset = Charset.forName(charsetName);
       } catch (Exception x) {
@@ -87,11 +87,13 @@ class UnicodeInputStreamReader extends Reader {
     _defaultEncoding = defaultEnc;
   }
 
+  @Override
   public void close() throws IOException {
     init();
     _reader.close();
   }
 
+  @Override
   public int read(char[] cbuf, int off, int len) throws IOException {
     init();
 
@@ -124,7 +126,7 @@ class UnicodeInputStreamReader extends Reader {
     }
 
     if (unread > 0) {
-      _stream.unread(data, (n - unread), unread);
+      _stream.unread(data, n - unread, unread);
     }
 
     _reader = new InputStreamReader(_stream, encoding);

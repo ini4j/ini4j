@@ -57,7 +57,7 @@ public interface Registry extends Profile {
     public static final String REMOVE = String.valueOf(REMOVE_CHAR);
     private final String _prefix;
 
-    private Type(String prefix) {
+    Type(String prefix) {
       _prefix = prefix;
     }
 

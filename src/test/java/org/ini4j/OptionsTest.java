@@ -15,13 +15,6 @@
  */
 package org.ini4j;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,7 +27,7 @@ import org.ini4j.test.DwarfsData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class OptionsTest extends Ini4jCase {
+public class OptionsTest extends TestIni4jCase {
   private static final String[] _badOptions = {"=value\n", "\\u000d\\u000d=value\n"};
   private static final String COMMENT_ONLY = "# first line\n# second line\n";
   private static final String COMMENT_ONLY_VALUE = " first line\n second line";

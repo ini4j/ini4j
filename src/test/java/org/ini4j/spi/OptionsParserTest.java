@@ -15,28 +15,24 @@
  */
 package org.ini4j.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.io.StringReader;
 import org.easymock.EasyMock;
 import org.ini4j.Config;
-import org.ini4j.Ini4jCase;
 import org.ini4j.InvalidFileFormatException;
+import org.ini4j.TestIni4jCase;
 import org.ini4j.sample.Dwarf;
 import org.ini4j.sample.Dwarfs;
 import org.ini4j.test.DwarfsData;
 import org.ini4j.test.Helper;
 import org.junit.Test;
 
-public class OptionsParserTest extends Ini4jCase {
+public class OptionsParserTest extends TestIni4jCase {
   private static final String CFG_EMPTY_OPTION = "option\n";
   private static final String NONAME = "=value\n";
   private static final String OPTION = "option";
@@ -71,9 +67,6 @@ public class OptionsParserTest extends Ini4jCase {
     parser.parse(new StringReader(CFG_EMPTY_OPTION), handler);
     EasyMock.verify(handler);
   }
-
-  @Test
-  public void testEscape() throws Exception {}
 
   @Test
   public void testNewInstance() throws Exception {
@@ -211,8 +204,16 @@ public class OptionsParserTest extends Ini4jCase {
     formatter.setOutput(new PrintWriter(new OutputStreamWriter(out)));
     formatter.handleOption(OPTION, UNICODE_STRING);
     formatter.getOutput().flush();
-    Reader in = new InputStreamReader(new ByteArrayInputStream(out.toByteArray()));
-    String line = new BufferedReader(in).readLine();
+    BufferedReader in =
+        new BufferedReader(new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
+    String line;
+
+    try {
+
+      line = in.readLine();
+    } finally {
+      in.close();
+    }
 
     assertEquals(OPTION + " = " + UNICODE_STRING, EscapeTool.getInstance().unescape(line));
   }

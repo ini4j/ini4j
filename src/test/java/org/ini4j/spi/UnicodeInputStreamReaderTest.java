@@ -18,25 +18,25 @@ package org.ini4j.spi;
 import java.nio.charset.Charset;
 import org.ini4j.Config;
 import org.ini4j.Ini;
-import org.ini4j.Ini4jCase;
 import org.ini4j.InvalidFileFormatException;
+import org.ini4j.TestIni4jCase;
 import org.junit.Test;
 
-public class UnicodeInputStreamReaderTest extends Ini4jCase {
+public class UnicodeInputStreamReaderTest extends TestIni4jCase {
   @Test
-  public void _testUTF32BE() throws Exception {
+  public void testUTF32BE() throws Exception {
     test("UTF-32BE.ini", "UTF-32BE");
   }
 
   @Test
-  public void _testUTF32BE_BOM() throws Exception {
+  public void testUTF32BEBOM() throws Exception {
     test("UTF-32BE-BOM.ini", null);
     test("UTF-32BE-BOM.ini", "UTF-8");
     test("UTF-32BE-BOM.ini", "UTF-16");
   }
 
   @Test
-  public void _testUTF32BE_fail() throws Exception {
+  public void testUTF32BEfail() throws Exception {
     try {
       test("UTF-32BE.ini", "ISO-8859-1");
       missing(IllegalStateException.class);
@@ -46,19 +46,19 @@ public class UnicodeInputStreamReaderTest extends Ini4jCase {
   }
 
   @Test
-  public void _testUTF32LE() throws Exception {
+  public void testUTF32LE() throws Exception {
     test("UTF-32LE.ini", "UTF-32LE");
   }
 
   @Test
-  public void _testUTF32LE_BOM() throws Exception {
+  public void testUTF32LEBOM() throws Exception {
     test("UTF-32LE-BOM.ini", null);
     test("UTF-32LE-BOM.ini", "UTF-8");
     test("UTF-32LE-BOM.ini", "UTF-16");
   }
 
   @Test
-  public void _testUTF32LE_fail() throws Exception {
+  public void testUTF32LEfail() throws Exception {
     try {
       test("UTF-32LE.ini", "ISO-8859-1");
       missing(IllegalStateException.class);
@@ -68,7 +68,7 @@ public class UnicodeInputStreamReaderTest extends Ini4jCase {
   }
 
   @Test
-  public void t_e_s_tUTF16BE_fail() throws Exception {
+  public void testUTF16BEfail() throws Exception {
     try {
       test("UTF-16BE.ini", "ISO-8859-1");
       missing(IllegalStateException.class);
@@ -78,7 +78,7 @@ public class UnicodeInputStreamReaderTest extends Ini4jCase {
   }
 
   @Test
-  public void t_e_s_tUTF16LE_fail() throws Exception {
+  public void testUTF16LEfail() throws Exception {
     try {
       test("UTF-16LE.ini", "ISO-8859-1");
       missing(IllegalStateException.class);
@@ -93,7 +93,7 @@ public class UnicodeInputStreamReaderTest extends Ini4jCase {
   }
 
   @Test
-  public void testUTF16BE_BOM() throws Exception {
+  public void testUTF16BEBOM() throws Exception {
     test("UTF-16BE-BOM.ini", null);
     test("UTF-16BE-BOM.ini", "UTF-8");
     test("UTF-16BE-BOM.ini", "UTF-16");
@@ -105,7 +105,7 @@ public class UnicodeInputStreamReaderTest extends Ini4jCase {
   }
 
   @Test
-  public void testUTF16LE_BOM() throws Exception {
+  public void testUTF16LEBOM() throws Exception {
     test("UTF-16LE-BOM.ini", null);
     test("UTF-16LE-BOM.ini", "UTF-8");
     test("UTF-16LE-BOM.ini", "UTF-16");
@@ -118,27 +118,20 @@ public class UnicodeInputStreamReaderTest extends Ini4jCase {
   }
 
   @Test
-  public void testUTF8_BOM() throws Exception {
+  public void testUTF8BOM() throws Exception {
     test("UTF-8-BOM.ini", null);
     test("UTF-8-BOM.ini", "UTF-8");
     test("UTF-8-BOM.ini", "UTF-16");
   }
 
   @Test
-  public void testUTF8_fail() throws Exception {
+  public void testUTF8fail() throws Exception {
     try {
       test("UTF-8.ini", "UTF-16");
       missing(InvalidFileFormatException.class);
     } catch (InvalidFileFormatException x) {
       //
     }
-  }
-
-  private UnicodeInputStreamReader instantiate(String filename, String defaultEncoding) {
-    Charset charset =
-        (defaultEncoding == null) ? Charset.defaultCharset() : Charset.forName(defaultEncoding);
-
-    return new UnicodeInputStreamReader(getClass().getResourceAsStream(filename), charset);
   }
 
   private void test(String filename, String defaultEncoding) throws Exception {
