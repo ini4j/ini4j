@@ -7,7 +7,8 @@
     <artifactId>ini4j</artifactId>
     <version>0.6.0-SNAPSHOT</version>
     <name>ini4j</name>
-    <description>Java API for handling configuration files in Windows .ini format.</description>
+    <description>Java API for handling configuration files in Windows .ini
+        format.</description>
     <packaging>jar</packaging>
     <url>https://github.com/ini4j/ini4j</url>
 
@@ -69,6 +70,12 @@
             <version>2.0b4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.8.6</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -84,20 +91,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>java.util.prefs.PreferencesFactory</name>
-                            <value>org.ini4j.IniPreferencesFactory</value>
-                        </property>
-                        <property>
-                            <name>org.ini4j.prefs.user</name>
-                            <value>org/ini4j/sample/dwarfs.ini</value>
-                        </property>
-                        <property>
-                            <name>org.ini4j.prefs.system</name>
-                            <value>org/ini4j/sample/dwarfs.ini</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <java.util.prefs.PreferencesFactory>org.ini4j.IniPreferencesFactory</java.util.prefs.PreferencesFactory>
+                        <org.ini4j.prefs.user>org/ini4j/sample/dwarfs.ini</org.ini4j.prefs.user>
+                        <org.ini4j.prefs.system>org/ini4j/sample/dwarfs.ini</org.ini4j.prefs.system>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
@@ -171,15 +169,23 @@
                             <reflowLongStrings>true</reflowLongStrings>
                         </googleJavaFormat>
                     </java>
-                    <xml>
-                        <includes>
-                            <include>pom.xml</include>
-                            <include>src/**/*.xml</include>
-                        </includes>
-                        <eclipseWtp>
-                            <type>XML</type>
-                        </eclipseWtp>
-                    </xml>
+                    <formats>
+                        <format>
+                            <includes>
+                                <include>pom.xml</include>
+                                <include>src/**/*.xml</include>
+                            </includes>
+                            <eclipseWtp>
+                                <type>XML</type>
+                                <version>4.21.0</version>
+                            </eclipseWtp>
+                            <indent>
+                                <spaces>true</spaces>
+                            </indent>
+                            <trimTrailingWhitespace />
+                            <endWithNewline />
+                        </format>
+                    </formats>
                 </configuration>
                 <executions>
                     <execution>
@@ -209,4 +215,55 @@
             </testResource>
         </testResources>
     </build>
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>4.9.8.2</version>
+                        <executions>
+                            <execution>
+                                <id>spotbugs-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Medium</threshold>
+                            <failOnError>true</failOnError>
+                            <xmlOutput>true</xmlOutput>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>3.28.0</version>
+                        <executions>
+                            <execution>
+                                <id>pmd-check</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                    <goal>cpd-check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <failOnViolation>true</failOnViolation>
+                            <printFailingErrors>true</printFailingErrors>
+                            <linkXRef>false</linkXRef>
+                            <minimumTokens>150</minimumTokens>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
