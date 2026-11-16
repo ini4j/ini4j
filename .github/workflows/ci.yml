@@ -39,3 +39,11 @@ jobs:
             **/target/surefire-reports/*.xml
             **/target/site/
           retention-days: 7
+
+      - name: Upload Javadoc
+        if: success()
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+        with:
+          name: javadoc
+          path: target/apidocs/
+          retention-days: 7
