@@ -19,6 +19,22 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+/**
+ * A {@link BasicMultiMap} that also keeps a comment for each key.
+ *
+ * <p>The comments are kept in a separate map and are removed together with the key by {@link
+ * #remove(Object)}, by {@link #remove(Object, int)} when it removes the last value of the key, and
+ * by {@link #clear()}. A key removed in another way, for example through {@link #keySet()}, keeps
+ * its comment. Adding or replacing values does not change comments.
+ *
+ * <p>{@link #putAll(Map)} from another {@code CommonMultiMap} also copies all the per-key data of
+ * that map, which are its comments and, for a {@link Registry.Key}, the types of its values.
+ *
+ * @param <K> the type of the keys
+ * @param <V> the type of the values
+ * @see CommentedMap
+ * @since 0.5.0
+ */
 public class CommonMultiMap<K, V> extends BasicMultiMap<K, V> implements CommentedMap<K, V> {
   private static final long serialVersionUID = 3012579878005541746L;
   private static final String SEPARATOR = ";#;";

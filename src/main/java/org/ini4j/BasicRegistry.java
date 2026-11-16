@@ -19,10 +19,20 @@ import org.ini4j.spi.IniHandler;
 import org.ini4j.spi.RegEscapeTool;
 import org.ini4j.spi.TypeValuesPair;
 
+/**
+ * The default implementation of {@link Registry}.
+ *
+ * <p>It is a {@link BasicProfile} whose sections are {@link Registry.Key}s. The methods that return
+ * a section return a key instead. The version header starts as {@link Registry#VERSION}.
+ *
+ * @see Reg
+ * @since 0.5.0
+ */
 public class BasicRegistry extends BasicProfile implements Registry {
   private static final long serialVersionUID = -6432826330714504802L;
   private String _version;
 
+  /** Creates an empty registry with the version header {@link Registry#VERSION}. */
   public BasicRegistry() {
     _version = VERSION;
   }
