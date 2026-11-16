@@ -15,8 +15,28 @@
  */
 package org.ini4j.spi;
 
+/**
+ * The events that the parsers and the formatters of both file formats share.
+ *
+ * <p>A parser calls these methods while it reads a file, and a profile calls them while it is
+ * stored. The formats add their own start and end events: see {@link IniHandler} and {@link
+ * OptionsHandler}.
+ *
+ * @since 0.5.0
+ */
 interface HandlerBase {
+  /**
+   * Receives a comment.
+   *
+   * @param comment the text of the comment, see the description of the subinterface
+   */
   void handleComment(String comment);
 
+  /**
+   * Receives an option.
+   *
+   * @param optionName the name of the option
+   * @param optionValue the value of the option
+   */
   void handleOption(String optionName, String optionValue);
 }
