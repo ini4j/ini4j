@@ -15,7 +15,16 @@
  */
 package org.ini4j.spi;
 
+/**
+ * Constants for {@link SuppressWarnings}.
+ *
+ * <p>The class only gives a name to the strings, so the library uses one spelling. It cannot be
+ * instantiated.
+ *
+ * @since 0.4.1
+ */
 public final class Warnings {
+  /** The name of the {@code unchecked} warning. */
   public static final String UNCHECKED = "unchecked";
 
   private Warnings() {
