@@ -22,6 +22,23 @@ import java.io.Reader;
 import java.net.URL;
 import org.ini4j.Config;
 
+/**
+ * Reads the logical lines of an INI or options file for the parsers.
+ *
+ * <p>The source reads a line at a time and trims it. It skips blank lines, which also end a
+ * comment. It sends the comment lines to the handler (see {@link
+ * IniHandler#handleComment(String)}). Comment lines that follow each other are one comment, which
+ * is sent when a blank line, a line that is not a comment, or the end of the input comes. When
+ * {@link org.ini4j.Config#isEscapeNewline()} is on, a line that ends with an odd number of
+ * backslashes continues in the next line. When {@link org.ini4j.Config#isInclude()} is on, a line
+ * of the form {@code <location>} or {@code <?location>} is replaced by the lines of that location.
+ * At the end of the input, the reader is closed.
+ *
+ * <p>Because comments are sent while the source looks for the next line, they reach the handler
+ * before the parser handles that line.
+ *
+ * @since 0.5.0
+ */
 class IniSource {
   public static final char INCLUDE_BEGIN = '<';
   public static final char INCLUDE_END = '>';
@@ -54,6 +71,13 @@ class IniSource {
     _base = input;
   }
 
+  /**
+   * Returns the number of the line that was read last.
+   *
+   * <p>While lines of an included file are read, it is the line number in that file.
+   *
+   * @return the line number, which is 1 for the first line and 0 before any line has been read
+   */
   int getLineNumber() {
     int ret;
 
@@ -66,6 +90,17 @@ class IniSource {
     return ret;
   }
 
+  /**
+   * Returns the next logical line.
+   *
+   * <p>The line is trimmed and is neither blank nor a comment. The comments that were collected on
+   * the way have been sent to the handler by the time the method returns, and so have those at the
+   * end of the input when {@code null} is returned. Blank lines are skipped and not sent.
+   *
+   * @return the line, or {@code null} at the end of the input
+   * @throws IOException if reading fails, or an include line cannot be opened and is not optional,
+   *     or its location is malformed
+   */
   String readLine() throws IOException {
     String line;
 
@@ -174,7 +209,7 @@ class IniSource {
       }
     }
 
-    // handle end comments
+    // report the comments at the end of the input
     if ((line == null) && (comment.length() != 0)) {
       handleComment(comment);
     }

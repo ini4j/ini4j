@@ -22,6 +22,16 @@ import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 
+/**
+ * A reader for a stream whose character set is chosen by its byte order mark.
+ *
+ * <p>If the stream starts with a byte order mark of UTF-8, UTF-16 or UTF-32 (the ones the JVM
+ * supports), the mark is skipped and its character set is used. Otherwise the default character set
+ * that was given to the constructor is used. The check runs when the stream is first read or
+ * closed.
+ *
+ * @since 0.5.2
+ */
 class UnicodeInputStreamReader extends Reader {
   private static final int BOM_SIZE = 4;
 
@@ -101,8 +111,15 @@ class UnicodeInputStreamReader extends Reader {
   }
 
   /**
-   * Read-ahead four bytes and check for BOM marks. Extra bytes are unread back to the stream, only
-   * BOM bytes are skipped.
+   * Reads the first bytes of the stream and looks for a byte order mark.
+   *
+   * <p>Up to four bytes are read. If they start with a byte order mark, the mark is skipped and the
+   * bytes after it are pushed back to the stream. Otherwise all the bytes that were read are pushed
+   * back. The method does nothing after the first call. The number of bytes to push back after a
+   * byte order mark assumes that four bytes were read. If the input is shorter and starts with a
+   * byte order mark, bytes of the mark can be pushed back and then read as text.
+   *
+   * @throws IOException if reading fails
    */
   protected void init() throws IOException {
     if (_reader != null) {
