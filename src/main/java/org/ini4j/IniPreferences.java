@@ -24,19 +24,51 @@ import java.util.List;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.BackingStoreException;
 
+/**
+ * A {@link java.util.prefs.Preferences} tree on top of an {@link Ini}.
+ *
+ * <p>The root node is the {@code Ini} itself. Its child nodes are the sections, and the keys of a
+ * section node are its options. A section named {@code a/b} (with the default path separator) is
+ * the child {@code b} of the section {@code a}. The root node has no keys: {@code put} and {@code
+ * remove} throw an {@link UnsupportedOperationException}, and {@code get} returns the default
+ * value.
+ *
+ * <p>Asking for a node that does not exist creates the section in the {@code Ini} at once. All
+ * changes stay in memory: {@code flush} and {@code sync} do nothing, so nothing is written to a
+ * file. To keep the changes, store the {@code Ini}, which you hold if you created this object with
+ * {@link #IniPreferences(Ini)}.
+ *
+ * <p>The nodes use the locking of {@link java.util.prefs.AbstractPreferences}. The {@link Ini}
+ * itself is not synchronized.
+ *
+ * <p>This example reads and changes a value:
+ *
+ * <pre>{@code
+ * Ini ini = new Ini(new File("dwarfs.ini"));
+ * Preferences prefs = new IniPreferences(ini);
+ * Preferences bashful = prefs.node("bashful");
+ *
+ * int age = bashful.getInt("age", -1);
+ * bashful.putDouble("weight", 55.6);
+ * ini.store();
+ * }</pre>
+ *
+ * @see IniPreferencesFactory
+ * @since 0.3.0
+ */
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP")
 public class IniPreferences extends AbstractPreferences {
 
-  /** frequently used empty String array */
+  /** A shared empty array of strings. */
   private static final String[] EMPTY = {};
 
-  /** underlaying <code>Ini</code> implementation */
+  /** The {@code Ini} that holds the data. */
   private final Ini _ini;
 
   /**
-   * Constructs a new preferences node on top of <code>Ini</code> instance.
+   * Creates the root node on top of an {@link Ini}.
    *
-   * @param ini underlaying <code>Ini</code> instance
+   * @param ini the {@code Ini} that holds the data; it is used directly, not copied
    */
   public IniPreferences(Ini ini) {
     super(null, "");
@@ -44,14 +76,11 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Constructs a new preferences node based on newly loaded <code>Ini</code> instance.
+   * Creates the root node on top of a new {@link Ini} that is loaded from a reader.
    *
-   * <p>This is just a helper constructor, to make simpler constructing <code>IniPreferences</code>
-   * directly from <code>Reader</code>.
-   *
-   * @param input the <code>Reader</code> containing <code>Ini</code> data
-   * @throws IOException if an I/O error occured
-   * @throws InvalidFileFormatException if <code>Ini</code> parsing error occured
+   * @param input the reader that provides the INI data
+   * @throws IOException if reading fails
+   * @throws InvalidFileFormatException if the data is not valid
    */
   public IniPreferences(Reader input) throws IOException, InvalidFileFormatException {
     super(null, "");
@@ -59,14 +88,11 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Constructs a new preferences node based on newly loaded <code>Ini</code> instance.
+   * Creates the root node on top of a new {@link Ini} that is loaded from a stream.
    *
-   * <p>This is just a helper constructor, to make simpler constructing <code>IniPreferences</code>
-   * directly from <code>InputStream</code>.
-   *
-   * @param input the <code>InputStream</code> containing <code>Ini</code> data
-   * @throws IOException if an I/O error occured
-   * @throws InvalidFileFormatException if <code>Ini</code> parsing error occured
+   * @param input the stream that provides the INI data
+   * @throws IOException if reading fails
+   * @throws InvalidFileFormatException if the data is not valid
    */
   public IniPreferences(InputStream input) throws IOException, InvalidFileFormatException {
     super(null, "");
@@ -74,14 +100,11 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Constructs a new preferences node based on newly loaded <code>Ini</code> instance.
+   * Creates the root node on top of a new {@link Ini} that is loaded from a URL.
    *
-   * <p>This is just a helper constructor, to make simpler constructing <code>IniPreferences</code>
-   * directly from <code>URL</code>.
-   *
-   * @param input the <code>URL</code> containing <code>Ini</code> data
-   * @throws IOException if an I/O error occured
-   * @throws InvalidFileFormatException if <code>Ini</code> parsing error occured
+   * @param input the location of the INI data
+   * @throws IOException if reading fails
+   * @throws InvalidFileFormatException if the data is not valid
    */
   public IniPreferences(URL input) throws IOException, InvalidFileFormatException {
     super(null, "");
@@ -89,25 +112,23 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Provide access to underlaying {@link org.ini4j.Ini} implementation.
+   * Returns the {@link Ini} that holds the data.
    *
-   * @return <code>Ini</code> implementation
+   * @return the {@code Ini}, not a copy
    */
   protected Ini getIni() {
     return _ini;
   }
 
   /**
-   * Implements the <CODE>getSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#getSpi(String)}.
+   * Not supported. The root node has no keys.
    *
-   * <p>This implementation doesn't support this operation, so allways throws
-   * UnsupportedOperationException.
+   * <p>{@link java.util.prefs.Preferences#get(String, String)} catches the exception, so it returns
+   * the default value for every key of the root node.
    *
-   * @return if the value associated with the specified key at this preference node, or null if
-   *     there is no association for this key, or the association cannot be determined at this time.
-   * @param key key to getvalue for
-   * @throws UnsupportedOperationException this implementation allways throws this exception
+   * @param key the key
+   * @return nothing, the method always throws
+   * @throws UnsupportedOperationException always
    */
   @Override
   protected String getSpi(String key) throws UnsupportedOperationException {
@@ -115,12 +136,14 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>childrenNamesSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#childrenNamesSpi()}.
+   * Returns the names of the child nodes, which are the sections that are not below another
+   * section.
    *
-   * @return an array containing the names of the children of this preference node.
-   * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-   *     backing store, or inability to communicate with it.
+   * <p>A section is below another one if its name contains the path separator of the {@link Config}
+   * of the {@link Ini}.
+   *
+   * @return the names of the top level sections
+   * @throws BackingStoreException never thrown by this implementation
    */
   @Override
   protected String[] childrenNamesSpi() throws BackingStoreException {
@@ -136,11 +159,13 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>childSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#childSpi(String)}.
+   * Returns the child node for a section.
    *
-   * @param name child name
-   * @return child node
+   * <p>If the {@link Ini} has no such section yet, it is added at once, and the node is reported as
+   * new.
+   *
+   * @param name the name of the section
+   * @return the node of the section
    */
   @Override
   protected SectionPreferences childSpi(String name) {
@@ -155,13 +180,9 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>flushSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#flushSpi()}.
+   * Does nothing. The changes stay in the {@link Ini} in memory and are not written anywhere.
    *
-   * <p>This implementation does nothing.
-   *
-   * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-   *     backing store, or inability to communicate with it.
+   * @throws BackingStoreException never thrown by this implementation
    */
   @Override
   protected void flushSpi() throws BackingStoreException {
@@ -169,14 +190,10 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>keysSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#keysSpi()}.
+   * Returns no keys. The root node has no keys.
    *
-   * <p>This implementation allways return an empty array.
-   *
-   * @return an empty array.
-   * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-   *     backing store, or inability to communicate with it.
+   * @return an empty array
+   * @throws BackingStoreException never thrown by this implementation
    */
   @Override
   protected String[] keysSpi() throws BackingStoreException {
@@ -184,15 +201,11 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>putSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#putSpi(String,String)}.
+   * Not supported. The root node has no keys.
    *
-   * <p>This implementation doesn;t support this operation, so allways throws
-   * UnsupportedOperationException.
-   *
-   * @param key key to set value for
-   * @param value new value for key
-   * @throws UnsupportedOperationException this implementation allways throws this exception
+   * @param key the key
+   * @param value the value
+   * @throws UnsupportedOperationException always
    */
   @Override
   protected void putSpi(String key, String value) throws UnsupportedOperationException {
@@ -200,14 +213,10 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>removeNodeSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#removeNodeSpi()}.
+   * Not supported. The root node cannot be removed.
    *
-   * <p>This implementation doesn;t support this operation, so allways throws
-   * UnsupportedOperationException.
-   *
-   * @throws UnsupportedOperationException this implementation allways throws this exception
-   * @throws BackingStoreException this implementation never throws this exception
+   * @throws UnsupportedOperationException always
+   * @throws BackingStoreException never thrown by this implementation
    */
   @Override
   protected void removeNodeSpi() throws BackingStoreException, UnsupportedOperationException {
@@ -215,11 +224,10 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>removeSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#removeSpi(String)}.
+   * Not supported. The root node has no keys.
    *
-   * @param key key to remove
-   * @throws UnsupportedOperationException this implementation allways throws this exception
+   * @param key the key
+   * @throws UnsupportedOperationException always
    */
   @Override
   protected void removeSpi(String key) throws UnsupportedOperationException {
@@ -227,30 +235,37 @@ public class IniPreferences extends AbstractPreferences {
   }
 
   /**
-   * Implements the <CODE>syncSpi</CODE> method as per the specification in {@link
-   * java.util.prefs.AbstractPreferences#syncSpi()}.
+   * Does nothing. The data is not read again from anywhere.
    *
-   * <p>This implementation does nothing.
-   *
-   * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-   *     backing store, or inability to communicate with it.
+   * @throws BackingStoreException never thrown by this implementation
    */
   @Override
   protected void syncSpi() throws BackingStoreException {
     assert true;
   }
 
+  /**
+   * The node of one section.
+   *
+   * <p>The keys of the node are the option names of the section. {@code get} returns the last value
+   * of an option with its variables resolved, {@code put} replaces the last value and {@code
+   * remove} removes all the values. The child nodes are the sections below this one in the section
+   * tree, and a child that does not exist is added to the {@link Ini} when it is requested.
+   * Removing the node removes the section from the {@link Ini}.
+   *
+   * @since 0.3.0
+   */
   protected class SectionPreferences extends AbstractPreferences {
 
-    /** underlaying <code>Section</code> implementation */
+    /** The section of this node. */
     private final Ini.Section _section;
 
     /**
-     * Constructs a new SectionPreferences instance on top of Ini.Section instance.
+     * Creates a node for a section.
      *
-     * @param parent parent preferences node
-     * @parem section underlaying Ini.Section instance
-     * @param isNew indicate is this a new node or already existing one
+     * @param parent the parent node
+     * @param section the section of this node
+     * @param isNew whether the node is new, which is the case if the section did not exist before
      */
     SectionPreferences(AbstractPreferences parent, Ini.Section section, boolean isNew) {
       super(parent, section.getSimpleName());
@@ -259,13 +274,9 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>flush</CODE> method as per the specification in {@link
-     * java.util.prefs.Preferences#flush()}.
+     * Calls {@code flush()} of the parent node, which does nothing.
      *
-     * <p>This implementation just call parent's <code>flush()</code> method.
-     *
-     * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-     *     backing store, or inability to communicate with it.
+     * @throws BackingStoreException never thrown by this implementation
      */
     @Override
     public void flush() throws BackingStoreException {
@@ -273,13 +284,9 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>sync</CODE> method as per the specification in {@link
-     * java.util.prefs.Preferences#sync()}.
+     * Calls {@code sync()} of the parent node, which does nothing.
      *
-     * <p>This implementation just call parent's <code>sync()</code> method.
-     *
-     * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-     *     backing store, or inability to communicate with it.
+     * @throws BackingStoreException never thrown by this implementation
      */
     @Override
     public void sync() throws BackingStoreException {
@@ -287,13 +294,13 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>getSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#getSpi(String)}.
+     * Returns the last value of an option, with variables resolved.
      *
-     * @return if the value associated with the specified key at this preference node, or null if
-     *     there is no association for this key, or the association cannot be determined at this
-     *     time.
-     * @param key key to getvalue for
+     * @param key the option name
+     * @return the value, or {@code null} if the section has no such option
+     * @throws CircularReferenceException if the variables are nested deeper than {@link
+     *     Config#getMaxResolveDepth()}; {@link java.util.prefs.Preferences#get(String, String)}
+     *     catches it and returns the default value
      */
     @Override
     protected String getSpi(String key) {
@@ -301,14 +308,10 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>childrenNamesSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#childrenNamesSpi()}.
+     * Returns the names of the child nodes, which are the direct sub-sections of the section.
      *
-     * <p>This implementation allways returns an empty array.
-     *
-     * @return an emty array.
-     * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-     *     backing store, or inability to communicate with it.
+     * @return the names of the sub-sections, relative to this section
+     * @throws BackingStoreException never thrown by this implementation
      */
     @Override
     protected String[] childrenNamesSpi() throws BackingStoreException {
@@ -316,14 +319,13 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>childSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#childSpi(String)}.
+     * Returns the child node for a sub-section.
      *
-     * <p>This implementation doesn't support this operation.
+     * <p>If the sub-section does not exist yet, it is added to the {@link Ini} at once, and the
+     * node is reported as new.
      *
-     * @throws UnsupportedOperationException this implementation allways throws this exception
-     * @param name child name
-     * @return child node
+     * @param name the name of the sub-section, relative to this section
+     * @return the node of the sub-section
      */
     @Override
     protected SectionPreferences childSpi(String name) throws UnsupportedOperationException {
@@ -338,13 +340,9 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>flushSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#flushSpi()}.
+     * Does nothing. The changes stay in the {@link Ini} in memory and are not written anywhere.
      *
-     * <p>This implementation does nothing.
-     *
-     * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-     *     backing store, or inability to communicate with it.
+     * @throws BackingStoreException never thrown by this implementation
      */
     @Override
     protected void flushSpi() throws BackingStoreException {
@@ -352,12 +350,10 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>keysSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#keysSpi()}.
+     * Returns the keys of the node.
      *
-     * @return an array of the keys that have an associated value in this preference node.
-     * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-     *     backing store, or inability to communicate with it.
+     * @return the option names of the section
+     * @throws BackingStoreException never thrown by this implementation
      */
     @Override
     protected String[] keysSpi() throws BackingStoreException {
@@ -365,11 +361,10 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>putSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#putSpi(String,String)}.
+     * Replaces the last value of an option, or adds the option.
      *
-     * @param key key to set value for
-     * @param value new value of key
+     * @param key the option name
+     * @param value the new value
      */
     @Override
     protected void putSpi(String key, String value) {
@@ -377,11 +372,9 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>removeNodeSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#removeNodeSpi()}.
+     * Removes the sections that have the name of this node from the {@link Ini}.
      *
-     * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-     *     backing store, or inability to communicate with it.
+     * @throws BackingStoreException never thrown by this implementation
      */
     @Override
     protected void removeNodeSpi() throws BackingStoreException {
@@ -389,10 +382,9 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>removeSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#removeSpi(String)}.
+     * Removes all the values of an option.
      *
-     * @param key key to remove
+     * @param key the option name
      */
     @Override
     protected void removeSpi(String key) {
@@ -400,13 +392,9 @@ public class IniPreferences extends AbstractPreferences {
     }
 
     /**
-     * Implements the <CODE>syncSpi</CODE> method as per the specification in {@link
-     * java.util.prefs.AbstractPreferences#syncSpi()}.
+     * Does nothing. The data is not read again from anywhere.
      *
-     * <p>This implementation does nothing.
-     *
-     * @throws BackingStoreException if this operation cannot be completed due to a failure in the
-     *     backing store, or inability to communicate with it.
+     * @throws BackingStoreException never thrown by this implementation
      */
     @Override
     protected void syncSpi() throws BackingStoreException {
