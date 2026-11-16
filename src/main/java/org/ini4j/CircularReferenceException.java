@@ -16,11 +16,12 @@
 package org.ini4j;
 
 /**
- * Exception thrown when a circular reference is detected during variable resolution.
+ * Signals that variable substitution went deeper than the allowed depth.
  *
- * <p>This exception is thrown when the maximum recursion depth is exceeded while resolving variable
- * substitutions in INI files or option maps. This typically indicates a circular reference in the
- * configuration, such as:
+ * <p>The variables in a value can refer to options whose values contain variables again, and the
+ * resolver follows them one level at a time. The exception is thrown when the nesting reaches the
+ * limit set by {@link Config#getMaxResolveDepth()}. The usual cause is a circular reference, such
+ * as:
  *
  * <pre>
  * [section1]
@@ -30,23 +31,25 @@ package org.ini4j;
  * b = ${section1/a}
  * </pre>
  *
- * <p>This exception prevents {@link StackOverflowError} that would otherwise occur from infinite
- * recursion.
+ * <p>The limit also stops a very deep chain of references that is not circular. It is an {@link
+ * IllegalArgumentException}, so it is unchecked. The limit prevents the {@link StackOverflowError}
+ * that unbounded recursion would cause.
  *
- * <p><b>Security Note:</b> This exception is part of the fix for CVE-2022-41404, which addressed a
- * Denial of Service vulnerability where circular variable references could crash the JVM.
+ * <p>The limit was added to fix CVE-2022-41404, a denial of service through circular variable
+ * references.
  *
  * @see Config#getMaxResolveDepth()
  * @see Config#setMaxResolveDepth(int)
+ * @see OptionMap#fetch(Object)
  * @since 0.6.0
  */
 public class CircularReferenceException extends IllegalArgumentException {
   private static final long serialVersionUID = 1L;
 
   /**
-   * Constructs a new circular reference exception with the specified maximum resolve depth.
+   * Creates an exception with a standard message that names the depth limit.
    *
-   * @param maxResolveDepth the maximum recursion depth that was exceeded
+   * @param maxResolveDepth the depth limit that was reached
    */
   public CircularReferenceException(int maxResolveDepth) {
     super(
@@ -59,7 +62,7 @@ public class CircularReferenceException extends IllegalArgumentException {
   }
 
   /**
-   * Constructs a new circular reference exception with the specified detail message.
+   * Creates an exception with a detail message.
    *
    * @param message the detail message
    */
@@ -68,7 +71,7 @@ public class CircularReferenceException extends IllegalArgumentException {
   }
 
   /**
-   * Constructs a new circular reference exception with the specified detail message and cause.
+   * Creates an exception with a detail message and a cause.
    *
    * @param message the detail message
    * @param cause the cause

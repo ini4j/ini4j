@@ -17,9 +17,25 @@ package org.ini4j;
 
 import java.io.IOException;
 
+/**
+ * Signals that the content being loaded is not valid for the format.
+ *
+ * <p>The parsers throw it, for example, for a line that is neither a section header nor an option,
+ * or for a registry file with a missing or unsupported version header. The message of a parse error
+ * names the line number and the line. It is an {@link IOException}, so the {@code load} methods of
+ * {@link Persistable} declare it without a new checked type.
+ *
+ * @see Persistable#load()
+ * @since 0.5.0
+ */
 public class InvalidFileFormatException extends IOException {
   private static final long serialVersionUID = -4354616830804732309L;
 
+  /**
+   * Constructs an exception with a detail message.
+   *
+   * @param message the detail message
+   */
   public InvalidFileFormatException(String message) {
     super(message);
   }
