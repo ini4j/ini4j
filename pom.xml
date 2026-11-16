@@ -150,8 +150,8 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <failOnError>false</failOnError>
-                            <doclint>none</doclint>
+                            <failOnError>true</failOnError>
+                            <doclint>all,-missing</doclint>
                         </configuration>
                     </execution>
                 </executions>

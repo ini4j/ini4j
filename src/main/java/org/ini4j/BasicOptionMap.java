@@ -22,6 +22,25 @@ import org.ini4j.spi.BeanAccess;
 import org.ini4j.spi.BeanTool;
 import org.ini4j.spi.Warnings;
 
+/**
+ * The default implementation of {@link OptionMap}.
+ *
+ * <p>It is a {@link CommonMultiMap} of option names to values, so every option name can have
+ * several values and a comment. The conversion, variable and bean methods are described in {@link
+ * OptionMap}. Variables are resolved by the {@code fetch} methods, except {@link #fetch(Object,
+ * String)}, up to the depth given by the configuration (see {@link Config#getMaxResolveDepth()}).
+ * This class uses {@link Config#getGlobal()} for that limit; {@link Options} and the sections of an
+ * {@link Ini} use their own configuration.
+ *
+ * <p>The {@link #as(Class)} methods create a dynamic proxy with the context class loader of the
+ * calling thread, so the interface must be visible from that class loader.
+ *
+ * <p>The thread safety of {@link BasicMultiMap} applies.
+ *
+ * @see Options
+ * @see Profile.Section
+ * @since 0.5.0
+ */
 public class BasicOptionMap extends CommonMultiMap<String, String> implements OptionMap {
   private static final char SUBST_CHAR = '$';
   private static final String SYSTEM_PROPERTY_PREFIX = "@prop/";
@@ -36,10 +55,21 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
   private transient BeanAccess _defaultBeanAccess;
   private final boolean _propertyFirstUpper;
 
+  /**
+   * Creates an empty option map.
+   *
+   * <p>The names of bean properties are used as they are for the option names.
+   */
   public BasicOptionMap() {
     this(false);
   }
 
+  /**
+   * Creates an empty option map and tells how bean property names map to option names.
+   *
+   * @param propertyFirstUpper if {@code true}, the first letter of a bean property name is changed
+   *     to upper case to get the option name (see {@link #as(Class)})
+   */
   public BasicOptionMap(boolean propertyFirstUpper) {
     _propertyFirstUpper = propertyFirstUpper;
   }
@@ -110,6 +140,26 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
     return fetchInternal(key, index, 0);
   }
 
+  /**
+   * Returns the value of an option at the given position, with variables resolved at a given
+   * nesting depth.
+   *
+   * <p>The {@code fetch} methods call this method, except {@link #fetch(Object, String)}, which
+   * does not resolve variables. A subclass can override it to change how variables are resolved.
+   * {@code depth} is {@code 0} when a value is fetched by a caller, and it is one more for a value
+   * that is fetched because a variable refers to it. When {@code depth} has reached the limit of
+   * {@link Config#getMaxResolveDepth()}, a value that contains a dollar sign throws a {@link
+   * CircularReferenceException}, whether or not it holds a valid variable. A value without a dollar
+   * sign is returned as it is.
+   *
+   * @param key the option name
+   * @param index the position of the value
+   * @param depth the current nesting depth of variable references
+   * @return the value with its variables resolved, or {@code null} if the option is missing
+   * @throws IndexOutOfBoundsException if the option exists and the index is out of range
+   * @throws CircularReferenceException if {@code depth} has reached the depth limit and the value
+   *     contains a dollar sign
+   */
   protected String fetchInternal(Object key, int index, int depth) {
     String value = get(key, index);
 
@@ -253,6 +303,19 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
     resolve(buffer, 0);
   }
 
+  /**
+   * Replaces the variables in a buffer with their values.
+   *
+   * <p>The buffer is changed in place. After each replacement the scan starts again from the
+   * beginning, so a value that holds a variable is resolved as well. A variable whose option,
+   * environment variable or system property is missing stays in the text. The variable syntax is
+   * described in {@link OptionMap}.
+   *
+   * @param buffer the text to resolve
+   * @param depth the nesting depth of this call
+   * @throws CircularReferenceException if {@code depth} has reached {@link
+   *     Config#getMaxResolveDepth()}
+   */
   void resolve(StringBuilder buffer, int depth) {
     if (depth >= getConfig().getMaxResolveDepth()) {
       throw new CircularReferenceException(getConfig().getMaxResolveDepth());
@@ -271,7 +334,7 @@ public class BasicOptionMap extends CommonMultiMap<String, String> implements Op
         value = Config.getSystemProperty(name.substring(SYSTEM_PROPERTY_PREFIX_LEN));
       } else {
         if (index == -1) {
-          // When no index specified, use the default behavior: get the last value
+          // When no index is specified, use the default behavior: get the last value
           int len = length(name);
           value = (len == 0) ? null : fetchInternal(name, len - 1, depth + 1);
         } else {

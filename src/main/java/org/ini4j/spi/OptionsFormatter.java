@@ -19,7 +19,29 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import org.ini4j.Config;
 
+/**
+ * Writes the events of a file of options as text.
+ *
+ * <p>Comments and options are written as described in {@link #handleComment(String)} and {@link
+ * #handleOption(String, String)}. The writer is flushed at the end of the file and is never closed.
+ *
+ * @see OptionsHandler
+ * @see OptionsParser
+ * @since 0.5.0
+ */
 public class OptionsFormatter extends AbstractFormatter implements OptionsHandler {
+  /**
+   * Creates a formatter of this class, or of the class that a provider names.
+   *
+   * <p>The lookup is the same as in {@link IniParser#newInstance()}, with the name {@code
+   * org.ini4j.spi.OptionsFormatter}.
+   *
+   * @param out the writer for the text; it is used directly if it is a {@link java.io.PrintWriter},
+   *     and wrapped in one otherwise
+   * @param config the configuration to use
+   * @return a new formatter
+   * @throws IllegalArgumentException if the provider cannot be found or created
+   */
   public static OptionsFormatter newInstance(Writer out, Config config) {
     OptionsFormatter instance = newInstance();
 
@@ -29,10 +51,12 @@ public class OptionsFormatter extends AbstractFormatter implements OptionsHandle
     return instance;
   }
 
+  /** Flushes the writer. */
   public void endOptions() {
     getOutput().flush();
   }
 
+  /** Does nothing. */
   public void startOptions() {
     assert true;
   }

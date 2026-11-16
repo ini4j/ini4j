@@ -32,11 +32,45 @@ import org.ini4j.spi.IniHandler;
 import org.ini4j.spi.IniParser;
 import org.ini4j.spi.RegBuilder;
 
+/**
+ * A {@link Registry} that reads and writes Windows registry export files, and on Windows can
+ * exchange keys with the real registry.
+ *
+ * <p>A {@code .reg} file starts with a version header (see {@link Registry#VERSION}), followed by
+ * keys written as sections, whose options are the registry values with their types. The model is
+ * described in {@link Registry}. The load methods require the first line to be the version header,
+ * and they skip the line after it.
+ *
+ * <p>A new {@code Reg} has its own copy of the global {@link Config} with the settings of this
+ * format: escaping is off, the global section is off, an option without a value, an option with
+ * several values and a section without options are allowed, operators are written without spaces,
+ * the path separator is a backslash ({@link Registry#KEY_SEPARATOR}), the file encoding is {@link
+ * Registry#FILE_ENCODING} and the line separator is {@link Registry#LINE_SEPARATOR}.
+ *
+ * <p>Only the methods {@link #read(String)}, {@link #write()} and the constructor that takes a key
+ * name work with the real registry. They run the Windows {@code reg} command, so they are for
+ * Windows only (see {@link #isWindows()}) and throw an {@link UnsupportedOperationException}
+ * elsewhere. All the other methods work on every system.
+ *
+ * <p>The thread safety of {@link BasicMultiMap} applies.
+ *
+ * @see Registry
+ * @since 0.5.0
+ */
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings({"CT_CONSTRUCTOR_THROW", "EI_EXPOSE_REP"})
 public class Reg extends BasicRegistry implements Persistable, Configurable {
   private static final long serialVersionUID = -1485602876922985912L;
+
+  /**
+   * The file name suffix of the temporary files used by {@link #read(String)} and {@link #write()}.
+   */
   protected static final String DEFAULT_SUFFIX = ".reg";
+
+  /**
+   * The file name prefix of the temporary files used by {@link #read(String)} and {@link #write()}.
+   */
   protected static final String TMP_PREFIX = "reg-";
+
   private static final int STDERR_BUFF_SIZE = 8192;
   private static final String PROP_OS_NAME = "os.name";
   private static final boolean WINDOWS =
@@ -46,6 +80,10 @@ public class Reg extends BasicRegistry implements Persistable, Configurable {
   private Config _config;
   private File _file;
 
+  /**
+   * Creates an empty registry with its own configuration, which has the settings of the registry
+   * file format.
+   */
   public Reg() {
     Config cfg = Config.getGlobal().clone();
 
@@ -61,32 +99,81 @@ public class Reg extends BasicRegistry implements Persistable, Configurable {
     _config = cfg;
   }
 
+  /**
+   * Creates a registry and reads a key of the real registry into it.
+   *
+   * <p>It is the same as {@link #Reg()} followed by {@link #read(String)}.
+   *
+   * @param registryKey the path of the key, for example {@code HKEY_CURRENT_USER\Software\ini4j}
+   * @throws IOException if the {@code reg} command fails
+   * @throws UnsupportedOperationException if this is not Windows
+   */
   public Reg(String registryKey) throws IOException {
     this();
     read(registryKey);
   }
 
+  /**
+   * Creates a registry, remembers the file and loads it.
+   *
+   * @param input the file to read and later to write
+   * @throws IOException if reading fails
+   * @throws InvalidFileFormatException if the version header is missing or unsupported, or the
+   *     content is not valid
+   */
   public Reg(File input) throws IOException, InvalidFileFormatException {
     this();
     _file = input;
     load();
   }
 
+  /**
+   * Creates a registry and loads it from a URL.
+   *
+   * @param input the location to read
+   * @throws IOException if reading fails
+   * @throws InvalidFileFormatException if the version header is missing or unsupported, or the
+   *     content is not valid
+   */
   public Reg(URL input) throws IOException, InvalidFileFormatException {
     this();
     load(input);
   }
 
+  /**
+   * Creates a registry and loads it from a stream.
+   *
+   * @param input the stream to read
+   * @throws IOException if reading fails
+   * @throws InvalidFileFormatException if the version header is missing or unsupported, or the
+   *     content is not valid
+   */
   public Reg(InputStream input) throws IOException, InvalidFileFormatException {
     this();
     load(input);
   }
 
+  /**
+   * Creates a registry and loads it from a reader.
+   *
+   * @param input the reader to read
+   * @throws IOException if reading fails
+   * @throws InvalidFileFormatException if the version header is missing or unsupported, or the
+   *     content is not valid
+   */
   public Reg(Reader input) throws IOException, InvalidFileFormatException {
     this();
     load(input);
   }
 
+  /**
+   * Tells whether the program runs on Windows.
+   *
+   * <p>The answer is taken from the system property {@code os.name}, which must start with {@code
+   * Windows}. It is read once, when this class is loaded.
+   *
+   * @return {@code true} on Windows
+   */
   public static boolean isWindows() {
     return WINDOWS;
   }
@@ -161,6 +248,18 @@ public class Reg extends BasicRegistry implements Persistable, Configurable {
     load(input.toURI().toURL());
   }
 
+  /**
+   * Reads a key of the real registry into this object.
+   *
+   * <p>The key is exported with {@code reg export} to a temporary file, and that file is loaded.
+   * The temporary file is deleted afterwards. As with every load, the content is added to what the
+   * object holds already.
+   *
+   * @param registryKey the path of the key, for example {@code HKEY_CURRENT_USER\Software\ini4j}
+   * @throws IOException if the {@code reg} command fails (the message is the text it wrote to its
+   *     error output) or the exported file cannot be loaded
+   * @throws UnsupportedOperationException if this is not Windows
+   */
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public void read(String registryKey) throws IOException {
     File tmp = createTempFile();
@@ -206,6 +305,16 @@ public class Reg extends BasicRegistry implements Persistable, Configurable {
     }
   }
 
+  /**
+   * Writes this object to the real registry.
+   *
+   * <p>The content is stored to a temporary file, which is imported with {@code reg import}, and
+   * then deleted. This changes the registry of the machine.
+   *
+   * @throws IOException if the {@code reg} command fails (the message is the text it wrote to its
+   *     error output)
+   * @throws UnsupportedOperationException if this is not Windows
+   */
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
   public void write() throws IOException {
     File tmp = createTempFile();
@@ -218,6 +327,13 @@ public class Reg extends BasicRegistry implements Persistable, Configurable {
     }
   }
 
+  /**
+   * Creates the handler that builds this object while a file is parsed.
+   *
+   * <p>A subclass can override it to change how the parsed events are turned into keys and values.
+   *
+   * @return a new builder for this object
+   */
   protected IniHandler newBuilder() {
     return RegBuilder.newInstance(this);
   }

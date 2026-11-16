@@ -20,25 +20,44 @@ import org.ini4j.Config;
 import org.ini4j.Ini;
 import org.ini4j.Profile;
 
+/**
+ * The common part of the builders that fill a {@link org.ini4j.Profile} from the events of a
+ * parser.
+ *
+ * <p>The rules are described in {@link IniBuilder}.
+ *
+ * @since 0.5.0
+ */
 abstract class AbstractProfileBuilder implements IniHandler {
   private Profile.Section _currentSection;
   private boolean _header;
   private String _lastComment;
 
+  /**
+   * Ends the file. A comment that is the only content of the file becomes the comment of the
+   * profile, if {@link org.ini4j.Config#isComment()} and {@link org.ini4j.Config#isHeaderComment()}
+   * are on. The rules are described in {@link IniBuilder}.
+   */
   @Override
   public void endIni() {
 
-    // comment only .ini files....
+    // a file that has nothing but a comment
     if ((_lastComment != null) && _header) {
       setHeaderComment();
     }
   }
 
+  /** Ends the current section. */
   @Override
   public void endSection() {
     _currentSection = null;
   }
 
+  /**
+   * Receives a comment.
+   *
+   * @param comment the text of the comment
+   */
   @Override
   public void handleComment(String comment) {
     if ((_lastComment != null) && _header) {
@@ -49,6 +68,16 @@ abstract class AbstractProfileBuilder implements IniHandler {
     _lastComment = comment;
   }
 
+  /**
+   * Adds an option to the current section.
+   *
+   * <p>The value is added or replaces the last value as {@link org.ini4j.Config#isMultiOption()}
+   * says. A held comment becomes the comment of the option.
+   *
+   * @param name the name of the option
+   * @param value the value of the option, or {@code null}
+   * @throws NullPointerException if there is no current section
+   */
   @Override
   public void handleOption(String name, String value) {
     _header = false;
@@ -64,6 +93,7 @@ abstract class AbstractProfileBuilder implements IniHandler {
     }
   }
 
+  /** Starts the file. */
   @Override
   public void startIni() {
     if (getConfig().isHeaderComment()) {
@@ -71,6 +101,15 @@ abstract class AbstractProfileBuilder implements IniHandler {
     }
   }
 
+  /**
+   * Starts a section.
+   *
+   * <p>The section is added to the profile, or an existing one is reused as {@link
+   * org.ini4j.Config#isMultiSection()} says. A held comment becomes the comment of the section, or
+   * of the profile if no section or option came before it and header comments are on.
+   *
+   * @param sectionName the name of the section
+   */
   @Override
   public void startSection(String sectionName) {
     if (getConfig().isMultiSection()) {

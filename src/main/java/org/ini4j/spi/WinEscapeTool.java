@@ -15,6 +15,20 @@
  */
 package org.ini4j.spi;
 
+/**
+ * The escape form of Windows INI files.
+ *
+ * <p>It is like {@link EscapeTool}, but a character without a short form is written as a backslash,
+ * the letter {@code x} and two hexadecimal digits that hold the low byte of the character, so
+ * characters above {@code U+00FF} lose their upper byte. When reading, a backslash and {@code x}
+ * with two hexadecimal digits, or {@code o} with three octal digits, gives the character with that
+ * code, and a backslash with {@code u} has no special meaning. {@link
+ * org.ini4j.Wini#escape(String)} uses it.
+ *
+ * <p>The class has no state, so it can be used from several threads.
+ *
+ * @since 0.5.0
+ */
 public final class WinEscapeTool extends EscapeTool {
   private static final int ANSI_HEX_DIGITS = 2;
   private static final int ANSI_OCTAL_DIGITS = 3;
@@ -25,6 +39,11 @@ public final class WinEscapeTool extends EscapeTool {
     // singleton
   }
 
+  /**
+   * Returns the shared instance. It does not use the provider lookup.
+   *
+   * @return the instance
+   */
   public static WinEscapeTool getInstance() {
     return INSTANCE;
   }

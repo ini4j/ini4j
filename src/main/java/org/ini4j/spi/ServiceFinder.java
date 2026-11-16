@@ -22,10 +22,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 /**
- * JDK JAR Services API alap� service keres� oszt�ly.
+ * Finds the provider of a service and creates it.
  *
- * @author Szkiba Iv�n
- * @version $Name: $
+ * <p>It follows the JAR Services API of the JDK, with a system property as an extra first source.
+ * Every {@code newInstance()} method of the SPI classes uses it, and so do the shared instances of
+ * {@link EscapeTool}, {@link RegEscapeTool} and {@link BeanTool}. The public description of the
+ * lookup is in {@link IniParser#newInstance()}.
+ *
+ * @since 0.4.1
  */
 final class ServiceFinder {
   private static final String SERVICES_PATH = "META-INF/services/";
@@ -33,28 +37,27 @@ final class ServiceFinder {
   private ServiceFinder() {}
 
   /**
-   * Service objektum keres�s �s p�ld�nyos�t�s
+   * Finds the provider class of a service and creates an instance of it.
    *
-   * <p>a JDK JAR specifik�ci�ban defini�lt <B>Services API</B>-nak megfelel�en service oszt�ly
-   * keres�s, majd pedig p�ld�ny k�pz�s a context ClassLoader seg�ts�g�vel.
+   * <p>The name of the provider class is looked up in this order: the system property that is named
+   * like the service class, then the first line of the resource {@code META-INF/services/} and the
+   * name of the service class (see {@link #findServiceClassName(String)}). If neither gives a name,
+   * the service class itself is the provider. The class is loaded with the context class loader of
+   * the current thread, and created with its constructor that has no arguments.
    *
-   * <p>Az implement�l� oszt�ly n�v keres�se a <CODE>serviceId</CODE> nev� system property
-   * vizsg�lat�val kezd�dik. Amennyiben nincs ilyen property, �gy a keres�s a <CODE>
-   * /META-INF/services/<I>serviceId</I></CODE> nev� file tartalm�val folytat�dik. Amennyiben nincs
-   * ilyen nev� file, �gy a param�terk�nt �tadott <CODE>defaultService</CODE> lesz az oszt�ly neve.
+   * <p>The result is never {@code null}: every failure throws an exception.
    *
-   * <p>A fenti keres�st k�vet�en t�rt�nik a p�ld�ny k�pz�s. A visszat�r�si �rt�k mindig egy val�di
-   * objektum, l�v�n minden hiba exception-t gener�l.
-   *
-   * @param <T> type
-   * @param clazz keresett oszt�ly/service neve
-   * @throws IllegalArgumentException keres�si vagy p�ld�nyos�t�si hiba eset�n
-   * @return a keresett oszt�ly implement�l� objektum
+   * @param <T> the type of the service
+   * @param clazz the service class, which is also the default provider
+   * @return a new instance of the provider
+   * @throws IllegalArgumentException if the provider cannot be found or created, for any reason
+   *     that is an {@link Exception}; the cause tells why
    */
   static <T> T findService(Class<T> clazz) {
     try {
 
-      // ez a cast nem lenne szükséges, de úgy a ClassCastException csak a hívónál jön...
+      // The cast is not needed, but without it a ClassCastException would show up only at the
+      // caller.
       return clazz.cast(findServiceClass(clazz).getDeclaredConstructor().newInstance());
     } catch (Exception x) {
       throw (IllegalArgumentException)
@@ -64,6 +67,19 @@ final class ServiceFinder {
     }
   }
 
+  /**
+   * Finds the provider class of a service.
+   *
+   * <p>The name comes from {@link #findServiceClassName(String)}. If there is no name, the result
+   * is the service class itself. A name is loaded with the context class loader of the current
+   * thread, or with {@link Class#forName(String)} if the thread has none.
+   *
+   * @param <T> the type of the service
+   * @param clazz the service class
+   * @return the provider class
+   * @throws IllegalArgumentException if the named class cannot be found
+   * @throws LinkageError if the JVM fails to load or link the class; it is not wrapped
+   */
   @SuppressWarnings(Warnings.UNCHECKED)
   static <T> Class<? extends T> findServiceClass(Class<T> clazz) throws IllegalArgumentException {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -87,6 +103,17 @@ final class ServiceFinder {
     return ret;
   }
 
+  /**
+   * Finds the name of the provider class of a service.
+   *
+   * <p>The first source that gives a value wins. The sources are the system property that has the
+   * service name as its name, and the first line of the resource {@code META-INF/services/}
+   * followed by the service name. A system property that cannot be read because of a security
+   * manager is skipped. See {@link #loadLine(String)} for the resource.
+   *
+   * @param serviceId the fully qualified name of the service class
+   * @return the name of the provider class, or {@code null} if there is none
+   */
   static String findServiceClassName(String serviceId) throws IllegalArgumentException {
     String serviceClassName = null;
 
@@ -108,6 +135,18 @@ final class ServiceFinder {
     return serviceClassName;
   }
 
+  /**
+   * Reads the provider name from a service resource.
+   *
+   * <p>Only the first line of the resource is read, with the UTF-8 character set, using the context
+   * class loader of the current thread (or the system class loader if there is none). The line is
+   * trimmed and cut at the first white space or {@code #}. A blank first line gives {@code null},
+   * and a line that starts with {@code #} gives an empty text. Any failure while reading is ignored
+   * and gives {@code null}.
+   *
+   * @param servicePath the path of the resource
+   * @return the name from the first line, or {@code null}
+   */
   @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("REC_CATCH_EXCEPTION")
   private static String loadLine(String servicePath) {
     String ret = null;

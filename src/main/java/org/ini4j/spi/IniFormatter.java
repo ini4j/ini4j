@@ -19,7 +19,33 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import org.ini4j.Config;
 
+/**
+ * Writes the events of an INI file as text.
+ *
+ * <p>Each section is written as a header {@code [name]} followed by its options, and an empty line
+ * ends the section. If {@link org.ini4j.Config#isGlobalSection()} is on, the section that has the
+ * name {@link org.ini4j.Config#getGlobalSectionName()} has no header. Section names are escaped
+ * like option names. Comments and options are written as described in {@link
+ * #handleComment(String)} and {@link #handleOption(String, String)}. The writer is flushed at the
+ * end of the file and is never closed.
+ *
+ * @see IniHandler
+ * @see IniParser
+ * @since 0.4.1
+ */
 public class IniFormatter extends AbstractFormatter implements IniHandler {
+  /**
+   * Creates a formatter of this class, or of the class that a provider names.
+   *
+   * <p>The lookup is the same as in {@link IniParser#newInstance()}, with the name {@code
+   * org.ini4j.spi.IniFormatter}.
+   *
+   * @param out the writer for the text; it is used directly if it is a {@link java.io.PrintWriter},
+   *     and wrapped in one otherwise
+   * @param config the configuration to use
+   * @return a new formatter
+   * @throws IllegalArgumentException if the provider cannot be found or created
+   */
   public static IniFormatter newInstance(Writer out, Config config) {
     IniFormatter instance = newInstance();
 
@@ -29,21 +55,29 @@ public class IniFormatter extends AbstractFormatter implements IniHandler {
     return instance;
   }
 
+  /** Flushes the writer. */
   @Override
   public void endIni() {
     getOutput().flush();
   }
 
+  /** Writes an empty line. */
   @Override
   public void endSection() {
     getOutput().print(getConfig().getLineSeparator());
   }
 
+  /** Does nothing. */
   @Override
   public void startIni() {
     assert true;
   }
 
+  /**
+   * Writes the header of a section, unless it is the global section.
+   *
+   * @param sectionName the name of the section
+   */
   @Override
   public void startSection(String sectionName) {
     setHeader(false);

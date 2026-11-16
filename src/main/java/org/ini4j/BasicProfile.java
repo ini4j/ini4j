@@ -23,6 +23,27 @@ import org.ini4j.spi.AbstractBeanInvocationHandler;
 import org.ini4j.spi.BeanTool;
 import org.ini4j.spi.IniHandler;
 
+/**
+ * The default implementation of {@link Profile}.
+ *
+ * <p>It is a {@link CommonMultiMap} of section names to sections, so a name can have several
+ * sections and each section has a comment. The sections are {@link Profile.Section}s that resolve
+ * variables through this profile, so a variable can name an option of another section (see {@link
+ * #fetch(Object, Object)}).
+ *
+ * <p>This class works with the path separator {@link #PATH_SEPARATOR} and with {@link
+ * Config#getGlobal()} for the limit of variable nesting. {@link Ini} and {@link Reg} take the path
+ * separator, the tree mode and the property naming rule from their own {@link Config} instead.
+ *
+ * <p>The {@link #as(Class)} methods create a dynamic proxy with the context class loader of the
+ * calling thread, so the interface must be visible from that class loader.
+ *
+ * <p>The thread safety of {@link BasicMultiMap} applies.
+ *
+ * @see Ini
+ * @see BasicRegistry
+ * @since 0.5.0
+ */
 public class BasicProfile extends CommonMultiMap<String, Profile.Section> implements Profile {
   private static final String SECTION_SYSTEM_PROPERTIES = "@prop";
   private static final String SECTION_ENVIRONMENT = "@env";
@@ -38,10 +59,19 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
   private final boolean _propertyFirstUpper;
   private final boolean _treeMode;
 
+  /** Creates an empty profile that is not in tree mode and uses bean property names as they are. */
   public BasicProfile() {
     this(false, false);
   }
 
+  /**
+   * Creates an empty profile.
+   *
+   * @param treeMode if {@code true}, {@link #add(String)} also adds the missing parent sections of
+   *     a new section
+   * @param propertyFirstUpper if {@code true}, the first letter of a bean property name is changed
+   *     to upper case to get the section name (see {@link #as(Class)})
+   */
   public BasicProfile(boolean treeMode, boolean propertyFirstUpper) {
     _treeMode = treeMode;
     _propertyFirstUpper = propertyFirstUpper;
@@ -166,6 +196,21 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
     resolve(buffer, owner, 0);
   }
 
+  /**
+   * Replaces the variables in a buffer with their values.
+   *
+   * <p>The buffer is changed in place. After each replacement the scan starts again from the
+   * beginning, so a value that holds a variable is resolved as well. A variable whose option,
+   * section, environment variable or system property is missing stays in the text. The variable
+   * syntax is described in {@link Profile#fetch(Object, Object)}.
+   *
+   * @param buffer the text to resolve
+   * @param owner the section of the option that holds the text; a variable without a section name
+   *     refers to it
+   * @param depth the nesting depth of this call
+   * @throws CircularReferenceException if {@code depth} has reached {@link
+   *     Config#getMaxResolveDepth()}
+   */
   void resolve(StringBuilder buffer, Section owner, int depth) {
     if (depth >= getConfig().getMaxResolveDepth()) {
       throw new CircularReferenceException(getConfig().getMaxResolveDepth());
@@ -187,7 +232,7 @@ public class BasicProfile extends CommonMultiMap<String, Profile.Section> implem
       } else if (section instanceof BasicProfileSection) {
         BasicProfileSection bps = (BasicProfileSection) section;
         if (optionIndex == -1) {
-          // When no index specified, use the default behavior: get the last value
+          // When no index is specified, use the default behavior: get the last value
           int len = bps.length(optionName);
           value = (len == 0) ? null : bps.fetchInternal(optionName, len - 1, depth + 1);
         } else {

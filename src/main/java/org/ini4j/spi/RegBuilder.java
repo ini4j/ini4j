@@ -21,10 +21,34 @@ import org.ini4j.Reg;
 import org.ini4j.Registry.Key;
 import org.ini4j.Registry.Type;
 
+/**
+ * Fills a {@link org.ini4j.Reg} from the events of an {@link IniParser}.
+ *
+ * <p>Sections, options and comments are handled as described in {@link IniBuilder}. In addition,
+ * each option is a registry value. A name in double quotes is unquoted, and the name {@code @} is
+ * kept as it is. The raw value is decoded by {@link RegEscapeTool}: the value types that are not
+ * {@link org.ini4j.Registry.Type#REG_SZ} are remembered in the key with {@link
+ * org.ini4j.Registry.Key#putType(String, org.ini4j.Registry.Type)}, and a multi-string value gives
+ * one value for each string, or only the last string if {@link org.ini4j.Config#isMultiOption()} is
+ * off. A comment before a value is the comment of its name.
+ *
+ * @see org.ini4j.Reg
+ * @since 0.5.0
+ */
 @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
 public class RegBuilder extends AbstractProfileBuilder {
   private Reg _reg;
 
+  /**
+   * Creates a builder of this class, or of the class that a provider names, for a {@code Reg}.
+   *
+   * <p>The lookup is the same as in {@link IniParser#newInstance()}, with the name {@code
+   * org.ini4j.spi.RegBuilder}.
+   *
+   * @param reg the object to fill; it is used directly, not copied
+   * @return a new builder
+   * @throws IllegalArgumentException if the provider cannot be found or created
+   */
   public static RegBuilder newInstance(Reg reg) {
     RegBuilder instance = newInstance();
 
@@ -33,10 +57,25 @@ public class RegBuilder extends AbstractProfileBuilder {
     return instance;
   }
 
+  /**
+   * Sets the object to fill.
+   *
+   * @param value the object to fill; it is used directly, not copied
+   */
   public void setReg(Reg value) {
     _reg = value;
   }
 
+  /**
+   * Adds a registry value to the current key.
+   *
+   * @param rawName the name as written in the file, in double quotes unless it is {@code @}
+   * @param rawValue the value as written in the file, with its type prefix if it has one
+   * @throws NullPointerException if there is no current key
+   * @throws StringIndexOutOfBoundsException if {@code rawName} or {@code rawValue} is empty
+   * @throws IllegalArgumentException if the value cannot be decoded, for example a {@code dword}
+   *     that is not a hexadecimal number
+   */
   @Override
   public void handleOption(String rawName, String rawValue) {
     String name =
